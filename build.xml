@@ -1,17 +1,23 @@
 <project>
 
+    <property name=  "build_dir" value="Build/"/>
+    <property name="classes_dir" value="${build_dir}/classes/"/>
+    <property name=   "jars_dir" value="${build_dir}/jars/"/>
+
+    <property name= "test_HTTPS_server_jar" value="${jars_dir}/test_HTTPS_server.jar"/>
+
     <target name="clean">
-        <delete dir="build"/>
+<!--        <delete dir="build"/> -->
     </target>
 
     <target name="compile">
-        <mkdir dir="build/classes"/>
-        <javac srcdir="." destdir="build/classes"/>
+        <mkdir                dir="${build_dir}/classes"/>
+        <javac srcdir="." destdir="${build_dir}/classes"/>
     </target>
 
     <target name="jar">
-        <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/test_HTTPS_server.jar" basedir="build/classes">
+        <mkdir dir="${jars_dir}"/>
+        <jar destfile="${test_HTTPS_server_jar}" basedir="${classes_dir}">
             <manifest>
                 <attribute name="Main-Class" value="test_HTTPS_server"/>
             </manifest>
@@ -19,7 +25,7 @@
     </target>
 
     <target name="run">
-        <java jar="build/jar/test_HTTPS_server.jar" fork="true"/>
+        <java jar="${test_HTTPS_server_jar}" fork="true"/>
     </target>
 
 </project>
