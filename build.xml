@@ -9,19 +9,19 @@
 
     <target name="compile">
         <mkdir                dir="${classes_dir}"/>
-        <javac srcdir="." destdir="${classes_dir}" includeantruntime="false"/>  <!-- the “includeantruntime="false"” part is to work around an Ant misfeature -->
+        <javac srcdir="." destdir="${classes_dir}" includeantruntime="false"/>  <!-- the “includeantruntime="false"” part is to work around an Ant misfeature: <https://stackoverflow.com/questions/5103384/ant-warning-includeantruntime-was-not-set> -->
     </target>
 
     <target name="jar" depends="jars"/>  <!-- alias "jar" -> "jars" -->
 
     <target name="jars" depends="compile">
         <mkdir dir="${jars_dir}"/>
-        <jar destfile="${test_HTTPS_server_jar}" basedir="${classes_dir}">
+        <jar destfile="${test_HTTPS_server_jar}" basedir="${classes_dir}" includes="test*.class">
             <manifest>
                 <attribute name="Main-Class" value="test_HTTPS_server"/>
             </manifest>
         </jar>
-        <jar destfile="${CM_jar}" basedir="${classes_dir}">
+        <jar destfile="${CM_jar}" basedir="${classes_dir}" includes="Configuration_Master*.class">
             <manifest>
                 <attribute name="Main-Class" value="Configuration_Master"/>
             </manifest>
