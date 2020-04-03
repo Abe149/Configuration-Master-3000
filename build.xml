@@ -15,7 +15,9 @@
         <javac srcdir="." destdir="${build_dir}/classes"/>
     </target>
 
-    <target name="jar">
+    <target name="jar" depends="jars"/>  <!-- alias "jar" -> "jars" -->
+
+    <target name="jars" depends="compile">
         <mkdir dir="${jars_dir}"/>
         <jar destfile="${test_HTTPS_server_jar}" basedir="${classes_dir}">
             <manifest>
@@ -24,7 +26,7 @@
         </jar>
     </target>
 
-    <target name="run">
+    <target name="run" depends="jars">
         <java jar="${test_HTTPS_server_jar}" fork="true"/>
     </target>
 
