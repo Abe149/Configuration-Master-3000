@@ -17,4 +17,5 @@
 =UAT    ␟Namespace 1␟key 5␟“string value for... maturity level "UAT"                :: Namespace 1 :: key 5”
 ≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”
 
-# maturity levels and namespaces can be entered as ‘*’ [without the quotes], meaning “all”
+# maturity levels and namespaces can be specified as ‘*’ [without the quotes], meaning “all”;
+#   for a maturity level, this is equivalent to specifying “≥0”
