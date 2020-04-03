@@ -1,4 +1,4 @@
-<project>
+<project name="Configuration Master 3000" default="jars">
 
     <property name=  "build_dir" value="Build/"/>
     <property name="classes_dir" value="${build_dir}/classes/"/>
