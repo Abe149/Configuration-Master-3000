@@ -41,8 +41,8 @@ import java.net.URLDecoder;
 // https://stackoverflow.com/questions/2308479/simple-java-https-server
 
 
-public class Configuration_Master {
-    private final static Logger myLogger = Logger.getLogger(Configuration_Master.class.getName()); // https://www.vogella.com/tutorials/Logging/article.html
+public class Configuration_Master_server {
+    private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
     public static class TestHandler implements HttpHandler {
         @Override
