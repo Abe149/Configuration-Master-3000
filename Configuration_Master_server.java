@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import java.net.URLDecoder;
 
@@ -167,9 +168,9 @@ public class Configuration_Master_server {
             SSLContext sslContext = SSLContext.getInstance("TLS");
 
             // initialise the keystore
-            char[] password = "Configuration_Master_3000".toCharArray();
+            final char[] password = "Configuration_Master_3000".toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream(data_directory + "/Configuration_Master.keystore");
+            FileInputStream fis = new FileInputStream(data_directory + "/Configuration_Master.keystore"); // HARD-CODED
             ks.load(fis, password);
 
             // set up the key manager factory
@@ -179,6 +180,16 @@ public class Configuration_Master_server {
             // set up the trust manager factory
             TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
             tmf.init(ks);
+
+
+
+            // set up the engine
+
+            BufferedReader maturityLevel_aliases_input = new BufferedReader(new FileReader(data_directory + "/maturity-level_aliases")); // HARD-CODED
+            ArrayList<BufferedReader> schema_inputs = new ArrayList<BufferedReader>();
+            ArrayList<BufferedReader> config_inputs = new ArrayList<BufferedReader>();
+
+
 
             // set up the HTTPS context and parameters
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
