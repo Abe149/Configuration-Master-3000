@@ -51,7 +51,8 @@ public class Configuration_Master {
               + he.getProtocol() + "\nHTTP request method: " + he.getRequestMethod() + "\nRequest URI [toASCIIString()]: ''"
               + he.getRequestURI().toASCIIString() + "''\nRequest URI [toString()]: ''" + he.getRequestURI().toString() + "''\n"
               + "Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''\n";
-            HttpsExchange httpsExchange = (HttpsExchange) he;
+
+            // HttpsExchange httpsExchange = (HttpsExchange) he;
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = he.getResponseBody();
@@ -60,11 +61,19 @@ public class Configuration_Master {
         }
     }
 
+
     public static class GetHandler implements HttpHandler {
         private static String my_prefix;
 
         public GetHandler(String prefix_in) {
             my_prefix = prefix_in;
+        }
+
+        protected static void http_assert(HttpExchange he, boolean do_assert, int status) throws IOException {
+            if (do_assert) {
+                he.sendResponseHeaders(status, 0); // 0 as in "0 bytes in content"
+                throw new IOException();
+            }
         }
 
         @Override
@@ -81,8 +90,49 @@ public class Configuration_Master {
             final String decoded_and_stripped_URI = decoded_URI.substring(my_prefix.length());
             myLogger.info("Request URI [toString()], decoded and prefix-stripped: ''" + decoded_and_stripped_URI + "''");
 
+            final String[] request_components = decoded_and_stripped_URI.split(","); // IMPORTANT string constant
+            // myLogger.info("Request components: " + request_components); // useless output...  thanks, Java  :-(
+
+            String maturity_level_string = "", namespace = "", key = "";
+
+            for (String rc : request_components) {
+                myLogger.info("Request component: ''" + rc + "''");
+                final String lowered_and_despaced = rc.toLowerCase().replaceAll(" ", "");
+                myLogger.info("Request component, lowered and despaced: ''" + lowered_and_despaced + "''");
+
+                // TO DO: clean this up, DRY-wise...  maybe with a[n] [inner?] class-level method, maybe with a lambda
+
+                if (lowered_and_despaced.startsWith("maturity_level=")) {
+                    http_assert(he, "".equals(maturity_level_string), 400); // TO DO: make the error handling more elegant
+                    maturity_level_string = lowered_and_despaced.substring("maturity_level=".length());
+                    myLogger.info("Maturity level of request, as a string: ''" + maturity_level_string + "''");
+                }
+
+                if (lowered_and_despaced.startsWith("namespace=")) {
+                    http_assert(he, "".equals(namespace), 400); // TO DO: make the error handling more elegant
+                    namespace = lowered_and_despaced.substring("namespace=".length());
+                    myLogger.info("Namespace of request: ''" + namespace + "''");
+                }
+
+                if (lowered_and_despaced.startsWith("key=")) {
+                    myLogger.info("Key of request: ''" + key + "''");
+                    myLogger.info("should assert?: " + String.valueOf(! "".equals(key)));
+                    http_assert(he, "".equals(key), 400); // TO DO: make the error handling more elegant
+                    key = lowered_and_despaced.substring("key=".length());
+                    myLogger.info("Key of request: ''" + key + "''");
+                }
+            }
+
+
+
+
+
+
             String response = "Configuration Master 3000 got a ''get:'' request.";
-            HttpsExchange httpsExchange = (HttpsExchange) he;
+
+
+
+            // HttpsExchange httpsExchange = (HttpsExchange) he;
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = he.getResponseBody();
