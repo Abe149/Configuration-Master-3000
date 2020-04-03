@@ -61,6 +61,12 @@ public class Configuration_Master {
     }
 
     public static class GetHandler implements HttpHandler {
+        private static String my_prefix;
+
+        public GetHandler(String prefix_in) {
+            my_prefix = prefix_in;
+        }
+
         @Override
         public void handle(HttpExchange he) throws IOException {
             
@@ -68,9 +74,14 @@ public class Configuration_Master {
             myLogger.info("HTTP request method: " + he.getRequestMethod());
             myLogger.info("Request URI [toASCIIString()]: ''" + he.getRequestURI().toASCIIString() + "''");
             myLogger.info("Request URI [toString()]: ''" + he.getRequestURI().toString() + "''");
-            myLogger.info("Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''");
+            final String decoded_URI = URLDecoder.decode(he.getRequestURI().toString());
+            myLogger.info("Request URI [toString()], decoded: ''" + decoded_URI + "''");
 
-            String response = "Configuration Master 3000 got a ''get'' request.";
+            assert decoded_URI.startsWith(my_prefix);
+            final String decoded_and_stripped_URI = decoded_URI.substring(my_prefix.length());
+            myLogger.info("Request URI [toString()], decoded and prefix-stripped: ''" + decoded_and_stripped_URI + "''");
+
+            String response = "Configuration Master 3000 got a ''get:'' request.";
             HttpsExchange httpsExchange = (HttpsExchange) he;
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
@@ -129,7 +140,10 @@ public class Configuration_Master {
                 }
             });
             httpsServer.createContext("/test", new TestHandler());
-            httpsServer.createContext("/get:", new  GetHandler());
+
+            final String get_prefix = "/get:"; // DRY
+            httpsServer.createContext(get_prefix, new  GetHandler(get_prefix));
+
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             httpsServer.start();
 
