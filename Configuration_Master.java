@@ -69,9 +69,14 @@ public class Configuration_Master {
             my_prefix = prefix_in;
         }
 
-        protected static void http_assert(HttpExchange he, boolean do_assert, int status) throws IOException {
-            if (do_assert) {
-                he.sendResponseHeaders(status, 0); // 0 as in "0 bytes in content"
+        protected static void http_assert(HttpExchange he, boolean assertion, int status, String desc) throws IOException {
+            if (! assertion) {
+                final String response = "Assertion failed: " + desc;
+                myLogger.warning(response);
+                he.sendResponseHeaders(status, response.getBytes().length);
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
                 throw new IOException();
             }
         }
@@ -103,21 +108,20 @@ public class Configuration_Master {
                 // TO DO: clean this up, DRY-wise...  maybe with a[n] [inner?] class-level method, maybe with a lambda
 
                 if (lowered_and_despaced.startsWith("maturity_level=")) {
-                    http_assert(he, "".equals(maturity_level_string), 400); // TO DO: make the error handling more elegant
+                    http_assert(he, "".equals(maturity_level_string), 400, "each request must include exactly one maturity level");
                     maturity_level_string = lowered_and_despaced.substring("maturity_level=".length());
                     myLogger.info("Maturity level of request, as a string: ''" + maturity_level_string + "''");
                 }
 
                 if (lowered_and_despaced.startsWith("namespace=")) {
-                    http_assert(he, "".equals(namespace), 400); // TO DO: make the error handling more elegant
+                    http_assert(he, "".equals(namespace), 400, "each request must include exactly one namespace");
                     namespace = lowered_and_despaced.substring("namespace=".length());
                     myLogger.info("Namespace of request: ''" + namespace + "''");
                 }
 
                 if (lowered_and_despaced.startsWith("key=")) {
-                    myLogger.info("Key of request: ''" + key + "''");
-                    myLogger.info("should assert?: " + String.valueOf(! "".equals(key)));
-                    http_assert(he, "".equals(key), 400); // TO DO: make the error handling more elegant
+                    //myLogger.info("should assert?: " + String.valueOf(! "".equals(key))); // DEBUG
+                    http_assert(he, "".equals(key), 400, "each request must include exactly one key");
                     key = lowered_and_despaced.substring("key=".length());
                     myLogger.info("Key of request: ''" + key + "''");
                 }
@@ -128,7 +132,7 @@ public class Configuration_Master {
 
 
 
-            String response = "Configuration Master 3000 got a ''get:'' request.";
+            String response = "Configuration Master 3000 got a ''get:'' request.\n";
 
 
 
