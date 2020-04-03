@@ -189,6 +189,9 @@ public class Configuration_Master_server {
             ArrayList<BufferedReader> schema_inputs = new ArrayList<BufferedReader>();
             ArrayList<BufferedReader> config_inputs = new ArrayList<BufferedReader>();
 
+            BufferedReader[] dummy_for_conversion = new BufferedReader[0];
+
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion));
 
 
             // set up the HTTPS context and parameters
