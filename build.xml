@@ -6,13 +6,6 @@
 
     <property name= "test_HTTPS_server_jar" value="${jars_dir}/test_HTTPS_server.jar"/>
 
-    <target name="clean">
-        <delete file="${test_HTTPS_server_jar}"/>
-        <delete>
-            <fileset dir="${classes_dir}" includes="*.class"/>
-        </delete>
-    </target>
-
     <target name="compile">
         <mkdir                dir="${classes_dir}"/>
         <javac srcdir="." destdir="${classes_dir}"/>
@@ -31,6 +24,31 @@
 
     <target name="run" depends="jars">
         <java jar="${test_HTTPS_server_jar}" fork="true"/>
+    </target>
+
+
+    <!-- from <https://stackoverflow.com/questions/1472803/ant-how-to-delete-only-empty-directories-recursively> -->
+    <!-- Find and delete empty folders under dir -->
+    <macrodef name="deleteEmptySubdirsRecursively">
+        <attribute name="dir"/>
+        <sequential>
+            <delete includeemptydirs="true">
+                <fileset dir="@{dir}"  >
+                    <and>
+                        <size value="0"/>
+                        <type type="dir"/>
+                    </and>
+                </fileset>
+            </delete>
+        </sequential>
+    </macrodef>
+
+    <target name="clean">
+        <delete file="${test_HTTPS_server_jar}" failonerror="false" verbose="true"/>
+        <delete                                 failonerror="false" verbose="true">
+            <fileset dir="${classes_dir}" includes="*.class"/>
+        </delete>
+        <deleteEmptySubdirsRecursively dir="${build_dir}"/>
     </target>
 
 </project>
