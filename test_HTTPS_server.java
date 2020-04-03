@@ -43,7 +43,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class test_HTTPS_server {
 
 
-    public static class MyHandler implements HttpHandler {
+    public static class TestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = "Hello World.";
@@ -104,7 +104,7 @@ public class test_HTTPS_server {
                     }
                 }
             });
-            httpsServer.createContext("/test", new MyHandler());
+            httpsServer.createContext("/test", new TestHandler());
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             httpsServer.start();
 
