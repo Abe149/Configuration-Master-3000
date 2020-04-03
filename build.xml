@@ -5,6 +5,7 @@
     <property name=   "jars_dir" value="${build_dir}/jars/"/>
 
     <property name= "test_HTTPS_server_jar" value="${jars_dir}/test_HTTPS_server.jar"/>
+    <property name=                "CM_jar" value="${jars_dir}/Configuration_Master.jar"/>
 
     <target name="compile">
         <mkdir                dir="${classes_dir}"/>
@@ -20,10 +21,19 @@
                 <attribute name="Main-Class" value="test_HTTPS_server"/>
             </manifest>
         </jar>
+        <jar destfile="${CM_jar}" basedir="${classes_dir}">
+            <manifest>
+                <attribute name="Main-Class" value="Configuration_Master"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run_test" depends="jars">
+        <java jar="${test_HTTPS_server_jar}" fork="true"/>
     </target>
 
     <target name="run" depends="jars">
-        <java jar="${test_HTTPS_server_jar}" fork="true"/>
+        <java jar="${CM_jar}" fork="true"/>
     </target>
 
 
@@ -45,6 +55,7 @@
 
     <target name="clean">
         <delete file="${test_HTTPS_server_jar}" failonerror="false" verbose="true"/>
+        <delete file=               "${CM_jar}" failonerror="false" verbose="true"/>
         <delete                                 failonerror="false" verbose="true">
             <fileset dir="${classes_dir}" includes="*.class"/>
         </delete>
