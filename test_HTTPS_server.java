@@ -28,6 +28,11 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpsExchange;
 
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ArrayBlockingQueue;
+
+
 
 
 // "Configuration_Master.keystore", "self-signed"
@@ -41,7 +46,7 @@ public class test_HTTPS_server {
     public static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = "This is the response";
+            String response = "Hello World.";
             HttpsExchange httpsExchange = (HttpsExchange) t;
             t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, response.getBytes().length);
@@ -100,7 +105,7 @@ public class test_HTTPS_server {
                 }
             });
             httpsServer.createContext("/test", new MyHandler());
-            httpsServer.setExecutor(null); // creates a default executor
+            httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             httpsServer.start();
 
         } catch (Exception exception) {
