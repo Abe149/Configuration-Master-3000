@@ -157,7 +157,7 @@ public class Configuration_Master_server {
 
         try {
             // set up the socket address
-            InetSocketAddress address = new InetSocketAddress(4430); // 4430 instead of 443 on purpose, for non-root use
+            InetSocketAddress address = new InetSocketAddress(4430); // IMPORTANT hard-coded value: 4430 instead of 443 on purpose, for non-root use
 
             // initialise the HTTPS server
             HttpsServer httpsServer = HttpsServer.create(address, 0);
@@ -207,7 +207,7 @@ public class Configuration_Master_server {
             httpsServer.start();
 
         } catch (Exception exception) {
-            System.out.println("Failed to create HTTPS server on port " + 8000 + " of localhost");
+            System.out.println("\033[31mAn exception was caught in the Configuration Master server.  Stack trace to follow.\033[0m");
             exception.printStackTrace();
 
         }
