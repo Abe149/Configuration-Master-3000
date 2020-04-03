@@ -71,11 +71,16 @@ public class Configuration_Master {
 
         protected static void http_assert(HttpExchange he, boolean assertion, int status, String desc) throws IOException {
             if (! assertion) {
-                final String response = "Assertion failed: " + desc;
-                myLogger.warning(response);
-                he.sendResponseHeaders(status, response.getBytes().length);
+                final String base_response = "Assertion failed: " + desc;
+                final String extended_response = base_response + "; returning HTTP status code " + String.valueOf(status);
+                System.out.println("\033[31m" + extended_response + "\033[0m");
+                final String extended_response_plus_newline = extended_response + '\n';
+                myLogger.warning(extended_response_plus_newline);
+
+                final byte[] extended_response_plus_newline_arrayOfBytes = extended_response_plus_newline.getBytes();
+                he.sendResponseHeaders(status, extended_response_plus_newline_arrayOfBytes.length);
                 OutputStream os = he.getResponseBody();
-                os.write(response.getBytes());
+                os.write(extended_response_plus_newline_arrayOfBytes);
                 os.close();
                 throw new IOException();
             }
@@ -120,19 +125,19 @@ public class Configuration_Master {
                 }
 
                 if (lowered_and_despaced.startsWith("key=")) {
-                    //myLogger.info("should assert?: " + String.valueOf(! "".equals(key))); // DEBUG
                     http_assert(he, "".equals(key), 400, "each request must include exactly one key");
                     key = lowered_and_despaced.substring("key=".length());
                     myLogger.info("Key of request: ''" + key + "''");
                 }
             }
 
+            http_assert(he, ! "".equals(maturity_level_string), 400, "each request must include a maturity level");
+            http_assert(he, ! "".equals(namespace            ), 400, "each request must include a namespace");
+            http_assert(he, ! "".equals(key                  ), 400, "each request must include a key");
 
 
 
-
-
-            String response = "Configuration Master 3000 got a ''get:'' request.\n";
+            String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n";
 
 
 
