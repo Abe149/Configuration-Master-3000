@@ -32,8 +32,8 @@
     <macrodef name="deleteEmptySubdirsRecursively">
         <attribute name="dir"/>
         <sequential>
-            <delete includeemptydirs="true">
-                <fileset dir="@{dir}"  >
+            <delete includeemptydirs="true" failonerror="false" verbose="true">
+                <fileset dir="@{dir}">
                     <and>
                         <size value="0"/>
                         <type type="dir"/>
