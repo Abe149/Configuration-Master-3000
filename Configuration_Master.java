@@ -32,8 +32,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import java.util.logging.Logger;
 
-
+import java.net.URLDecoder;
 
 // "Configuration_Master.keystore", "self-signed"
 
@@ -41,15 +42,19 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 
 public class Configuration_Master {
+    private final static Logger myLogger = Logger.getLogger(Configuration_Master.class.getName()); // https://www.vogella.com/tutorials/Logging/article.html
 
     public static class TestHandler implements HttpHandler {
         @Override
-        public void handle(HttpExchange t) throws IOException {
-            String response = "Hello World from Configuration Master 3000 !!!";
-            HttpsExchange httpsExchange = (HttpsExchange) t;
-            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            t.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = t.getResponseBody();
+        public void handle(HttpExchange he) throws IOException {
+            String response = "Hello World from Configuration Master 3000 !!!\n\nProtocol: "
+              + he.getProtocol() + "\nHTTP request method: " + he.getRequestMethod() + "\nRequest URI [toASCIIString()]: ''"
+              + he.getRequestURI().toASCIIString() + "''\nRequest URI [toString()]: ''" + he.getRequestURI().toString() + "''\n"
+              + "Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''\n";
+            HttpsExchange httpsExchange = (HttpsExchange) he;
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
             os.write(response.getBytes());
             os.close();
         }
@@ -57,12 +62,19 @@ public class Configuration_Master {
 
     public static class GetHandler implements HttpHandler {
         @Override
-        public void handle(HttpExchange t) throws IOException {
+        public void handle(HttpExchange he) throws IOException {
+            
+            myLogger.info("Protocol: " + he.getProtocol());
+            myLogger.info("HTTP request method: " + he.getRequestMethod());
+            myLogger.info("Request URI [toASCIIString()]: ''" + he.getRequestURI().toASCIIString() + "''");
+            myLogger.info("Request URI [toString()]: ''" + he.getRequestURI().toString() + "''");
+            myLogger.info("Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''");
+
             String response = "Configuration Master 3000 got a ''get'' request.";
-            HttpsExchange httpsExchange = (HttpsExchange) t;
-            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            t.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = t.getResponseBody();
+            HttpsExchange httpsExchange = (HttpsExchange) he;
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
             os.write(response.getBytes());
             os.close();
         }
@@ -117,7 +129,7 @@ public class Configuration_Master {
                 }
             });
             httpsServer.createContext("/test", new TestHandler());
-            httpsServer.createContext("/get/", new  GetHandler());
+            httpsServer.createContext("/get:", new  GetHandler());
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             httpsServer.start();
 
