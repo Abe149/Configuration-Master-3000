@@ -42,6 +42,9 @@ import java.net.URLDecoder;
 
 
 public class Configuration_Master_server {
+
+    private final static String data_directory = "data/"; // DRY
+
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
     public static class TestHandler implements HttpHandler {
@@ -166,7 +169,7 @@ public class Configuration_Master_server {
             // initialise the keystore
             char[] password = "Configuration_Master_3000".toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("Configuration_Master.keystore");
+            FileInputStream fis = new FileInputStream(data_directory + "/Configuration_Master.keystore");
             ks.load(fis, password);
 
             // set up the key manager factory
