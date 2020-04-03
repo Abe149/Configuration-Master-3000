@@ -46,7 +46,7 @@ public class Configuration_Master {
     public static class TestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = "Hello World.";
+            String response = "Hello World from Configuration Master 3000 !!!";
             HttpsExchange httpsExchange = (HttpsExchange) t;
             t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, response.getBytes().length);
