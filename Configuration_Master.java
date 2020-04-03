@@ -42,11 +42,23 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class Configuration_Master {
 
-
     public static class TestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
             String response = "Hello World from Configuration Master 3000 !!!";
+            HttpsExchange httpsExchange = (HttpsExchange) t;
+            t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            t.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+    }
+
+    public static class GetHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = "Configuration Master 3000 got a ''get'' request.";
             HttpsExchange httpsExchange = (HttpsExchange) t;
             t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.sendResponseHeaders(200, response.getBytes().length);
@@ -105,6 +117,7 @@ public class Configuration_Master {
                 }
             });
             httpsServer.createContext("/test", new TestHandler());
+            httpsServer.createContext("/get/", new  GetHandler());
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             httpsServer.start();
 
