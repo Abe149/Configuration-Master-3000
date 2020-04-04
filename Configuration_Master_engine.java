@@ -7,13 +7,13 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
-  private class schema_key_tuple {
+  private class tuple_for_key_of_a_schema_or_config {
     private maturityLevel_comparison_types the_MLC;
     private int                            the_maturity_level_to_which_to_compare;
     private String                         the_namespace;
     private String                         the_key; // confusing, innit?  ;-)
 
-    schema_key_tuple(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
+    tuple_for_key_of_a_schema_or_config(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
       the_MLC                                = MLC_in;
       the_maturity_level_to_which_to_compare = maturity_level_in;
       the_namespace                          = namespace_in;
@@ -21,13 +21,13 @@ public class Configuration_Master_engine {
     }
 
     public String toString() { // for debugging etc.
-      return " schema_key_tuple<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=''" + the_namespace + "'', the_key=''" + the_key + "''> ";
+      return " tuple_for_key_of_a_schema_or_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=''" + the_namespace + "'', the_key=''" + the_key + "''> ";
     }
   }
 
 
-  private Hashtable<String, value_types> typenames_to_types;
-  private Hashtable<schema_key_tuple, value_types> the_schema;
+  private Hashtable<String                             , value_types> typenames_to_types;
+  private Hashtable<tuple_for_key_of_a_schema_or_config, value_types> the_schema;
 
 
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
@@ -109,7 +109,7 @@ public class Configuration_Master_engine {
         System.err.println();
       }
 
-      the_schema = new Hashtable<schema_key_tuple, value_types>();
+      the_schema = new Hashtable<tuple_for_key_of_a_schema_or_config, value_types>();
 
     } catch (IOException ioe) {
 
