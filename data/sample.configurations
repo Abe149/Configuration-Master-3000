@@ -15,6 +15,12 @@
 
 *␟*␟test URL␟<http://www.fsf.org/>
 
+# *␟*␟bad key 1, not in schema␟“string value”
+# *␟*␟bad key 2, not in schema␟“”
+# *␟*␟bad key 3, not in schema␟ 0
+# *␟*␟bad key 4, not in schema␟-1
+# *␟*␟bad key 5, not in schema␟ 1
+# *␟*␟bad key 6, not in schema␟ <> ⍝ invalid URL
 
 
 

@@ -203,7 +203,12 @@ public class Configuration_Master_engine {
 
     final tuple_for_key_of_a_config the_key_of_the_config = new tuple_for_key_of_a_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key);
 
-    switch (get_type_from_schema(the_key_of_the_config)) { // first, just parse
+    // first, just parse; we will validate later
+    value_types the_VT = get_type_from_schema(the_key_of_the_config);
+    if (null == the_VT) {
+      throw new IOException("Error while type checking; do you have a configuration that is not represented in the schema?  Key: " + the_key_of_the_config);
+    }
+    switch (the_VT) {
       case             integer:
       case nonnegative_integer:
       case    positive_integer:
@@ -222,6 +227,8 @@ public class Configuration_Master_engine {
       default:
         throw new IOException("Internal implementation error: unrecognized value-type in configuration parser.");
     }
+
+    // TO DO: validate!
 
     return new parsed_line_for_a_config(the_key_of_the_config, the_value);
   }
