@@ -460,13 +460,16 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 19: config line parse: " + parse_result);
           }
 
-          // ... WIP / TO DO ... //
+          if (null != parse_result)  the_configurations.put(parse_result.key, parse_result.value); // save it if it`s good
 
         } // end while
       } // end for BufferedReader config_input : config_inputs
 
-
-// saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
+      if (verbosity > 0) {
+        System.err.println();
+        System.err.println("INFO: the_configurations: " + the_configurations);
+        System.err.println();
+      }
 
     } catch (IOException ioe) {
 
