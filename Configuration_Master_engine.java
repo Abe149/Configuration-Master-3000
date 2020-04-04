@@ -39,7 +39,8 @@ public class Configuration_Master_engine {
   }
 
 
-  private Hashtable<String                             , value_types> typenames_to_types;
+  private Hashtable<String                             , value_types> typenames_to_types; // unfortunately, initializing a hashtable in Java is a {can of worms / Pandora`s box}, so we`ll do it the old-fashioned way
+
   private Hashtable<tuple_for_key_of_a_schema_or_config, value_types> the_schema;
 
 
@@ -57,6 +58,15 @@ public class Configuration_Master_engine {
 
 
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
+
+    // there should be a more-elegant way to do this...
+    typenames_to_types = new Hashtable<String, value_types>();
+    typenames_to_types.put("integer"            , value_types.integer);
+    typenames_to_types.put("nonnegative_integer", value_types.nonnegative_integer);
+    typenames_to_types.put("positive_integer"   , value_types.positive_integer);
+    typenames_to_types.put("nonempty_string"    , value_types.nonempty_string);
+    typenames_to_types.put("string"             , value_types.string);
+    typenames_to_types.put("URL"                , value_types.URL);
 
     maturityLevel_aliases = new Hashtable<String, Integer>();
 
@@ -136,6 +146,18 @@ public class Configuration_Master_engine {
       }
 
       the_schema = new Hashtable<tuple_for_key_of_a_schema_or_config, value_types>();
+      for (BufferedReader schema_input : schema_inputs) {
+        while (schema_input.ready()) {
+          String line = schema_input.readLine();
+          if (verbosity > 1) {
+            System.err.println("TESTING 13: schema input line: ''" + line + "''");
+
+            semiParsed_line_for_a_schema_or_config___values_are_all_Strings semiparse_result = parse_a_line_for_a_schema_or_config(line);
+            System.err.println("TESTING 14: schema line partial parse: " + semiparse_result);
+
+          }
+        }
+      }
 
     } catch (IOException ioe) {
 
