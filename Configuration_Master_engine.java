@@ -176,6 +176,16 @@ public class Configuration_Master_engine {
             semiParsed_line_for_a_schema_or_config___values_are_all_Strings semiparse_result = parse_a_line_for_a_schema_or_config(line);
             System.err.println("TESTING 14: schema line partial parse: " + semiparse_result);
 
+            if (semiparse_result.key.the_maturity_level_to_which_to_compare < 0 || null == semiparse_result.key.the_namespace || null == semiparse_result.key.the_key || null == semiparse_result.value) {
+              if (verbosity > 2) {
+                System.err.println("TESTING 15: schema line partial parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
+              }
+            } else { // looks like a valid line
+              if (verbosity > 2) {
+                System.err.println("TESTING 16: schema line partial parse indicates a line with valid data!  Hooray!!!");
+              }
+            }
+
           }
         }
       }
