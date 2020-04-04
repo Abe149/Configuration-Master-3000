@@ -191,7 +191,8 @@ public class Configuration_Master_server {
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion));
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), 5); // WIP: 5 is a HARD-CODED verbosity level
+
 
 
             // set up the HTTPS context and parameters
