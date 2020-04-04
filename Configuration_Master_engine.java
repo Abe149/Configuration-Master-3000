@@ -62,11 +62,16 @@ public class Configuration_Master_engine {
             System.err.println("TESTING: number: " + number);
             System.err.println();
           }
-        }
 
-
+          maturityLevel_aliases.put(alias, number);
+        } // if line.length() > 0
 
       } // end while maturityLevel_aliases_input.ready()
+
+      if (verbosity > 1) {
+        System.err.println("INFO: maturityLevel_aliases: " + maturityLevel_aliases);
+        System.err.println();
+      }
 
     } catch (IOException ioe) {
 
