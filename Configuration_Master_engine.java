@@ -12,13 +12,13 @@ public class Configuration_Master_engine {
   }
 
   private class tuple_for_key_of_a_config {
-    public maturityLevel_comparison_types the_MLC;
+    public maturityLevel_comparison_types the_MLC_kind;
     public int                            the_maturity_level_to_which_to_compare;
     public String                         the_namespace;
     public String                         the_key; // confusing, innit?  ;-)
 
-    tuple_for_key_of_a_config(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
-      the_MLC                                = MLC_in;
+    tuple_for_key_of_a_config(maturityLevel_comparison_types MLCt_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
+      the_MLC_kind                           = MLCt_in;
       the_maturity_level_to_which_to_compare = maturity_level_in;
       the_namespace                          = namespace_in;
       the_key                                = key_in;
@@ -26,19 +26,19 @@ public class Configuration_Master_engine {
 
     @Override
     public int hashCode() {
-      return (the_MLC==null ? 0 : the_MLC.hashCode()) ^ the_maturity_level_to_which_to_compare ^ (the_namespace==null ? 0 :  the_namespace.hashCode()) ^ (the_key==null ? 0 : the_key.hashCode());
+      return (the_MLC_kind==null ? 0 : the_MLC_kind.hashCode()) ^ the_maturity_level_to_which_to_compare ^ (the_namespace==null ? 0 :  the_namespace.hashCode()) ^ (the_key==null ? 0 : the_key.hashCode());
     }
 
     @Override
     public boolean equals(Object o) {
       if (! tuple_for_key_of_a_config.class.isInstance(o))  return false;
       final tuple_for_key_of_a_config other = (tuple_for_key_of_a_config) o;
-      return the_MLC.equals(other.the_MLC) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
+      return the_MLC_kind.equals(other.the_MLC_kind) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
     }
 
     @Override
     public String toString() { // for debugging etc.
-      return " tuple_for_key_of_a_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
+      return " tuple_for_key_of_a_config<the_MLC_kind=" + the_MLC_kind + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
   }
 
@@ -133,17 +133,10 @@ public class Configuration_Master_engine {
 
 
   private value_types get_type_from_schema(tuple_for_key_of_a_config the_key_of_the_config) {
-/*
-    public maturityLevel_comparison_types the_MLC;
-    public int                            the_maturity_level_to_which_to_compare;
-    public String                         the_namespace;
-    public String                         the_key; // confusing, innit?  ;-)
-*/
-
-    if (null == the_key_of_the_config.the_MLC || null == the_key_of_the_config.the_namespace || null == the_key_of_the_config.the_key)  return null;
+    if (null == the_key_of_the_config.the_namespace || null == the_key_of_the_config.the_key)  return null;
 
     for (tuple_for_key_of_a_schema key_to_compare : the_schema.keySet()) {
-      if ( // WIP WIP WIP
+      if (
              (the_key_of_the_config.the_namespace.equals(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
           &&
              (the_key_of_the_config.the_key.equals(key_to_compare.the_key) || "*".equals(key_to_compare.the_key))
@@ -157,11 +150,11 @@ public class Configuration_Master_engine {
 
 
   private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line) throws IOException {
-    maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
+    maturityLevel_comparison_types the_MLC_kind                           = maturityLevel_comparison_types.equal_to;
     int                            the_maturity_level_to_which_to_compare = -1;
-    String                         the_namespace = null;
-    String                         the_key       = null;
-    String                         the_value_str = null;
+    String                         the_namespace                          = null;
+    String                         the_key                                = null;
+    String                         the_value_str                          = null;
 
     line = line.trim();
     if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
@@ -176,15 +169,15 @@ public class Configuration_Master_engine {
 
       final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
       switch (the_MLC_operator_as_a_char) {
-        case '<': the_MLC = maturityLevel_comparison_types.less_than;
+        case '<': the_MLC_kind = maturityLevel_comparison_types.less_than;
           break;
-        case '≤': the_MLC = maturityLevel_comparison_types.less_than_or_equal_to;
+        case '≤': the_MLC_kind = maturityLevel_comparison_types.less_than_or_equal_to;
           break;
-        case '=': the_MLC = maturityLevel_comparison_types.equal_to;
+        case '=': the_MLC_kind = maturityLevel_comparison_types.equal_to;
           break;
-        case '≥': the_MLC = maturityLevel_comparison_types.greater_than_or_equal_to;
+        case '≥': the_MLC_kind = maturityLevel_comparison_types.greater_than_or_equal_to;
           break;
-        case '>': the_MLC = maturityLevel_comparison_types.greater_than;
+        case '>': the_MLC_kind = maturityLevel_comparison_types.greater_than;
           break;
         default:
           throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
@@ -201,7 +194,7 @@ public class Configuration_Master_engine {
 
     config_algebraic_type the_value;
 
-    final tuple_for_key_of_a_config the_key_of_the_config = new tuple_for_key_of_a_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key);
+    final tuple_for_key_of_a_config the_key_of_the_config = new tuple_for_key_of_a_config(the_MLC_kind, the_maturity_level_to_which_to_compare, the_namespace, the_key);
 
     // first, just parse; we will validate later
     value_types the_VT = get_type_from_schema(the_key_of_the_config);
@@ -249,7 +242,7 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
-        if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking
+        if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking... <https://docs.oracle.com/javase/6/docs/api/java/net/URL.html#URL(java.lang.String)>
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
         }
         break;
@@ -462,7 +455,7 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 19: config line parse: " + parse_result);
           }
 
-          // ... WIP ... //
+          // ... WIP / TO DO ... //
 
         } // end while
       } // end for BufferedReader config_input : config_inputs
@@ -481,5 +474,22 @@ public class Configuration_Master_engine {
 
 
 
+
+/* for later, for the configuration getter:
+
+        switch (the_key_of_the_config.the_MLC_kind) {
+          case :
+            break;
+          case :
+            break;
+          case :
+            break;
+          case :
+            break;
+          case :
+            break;
+        }
+
+*/
 
 } // end of class "Configuration_Master_engine"
