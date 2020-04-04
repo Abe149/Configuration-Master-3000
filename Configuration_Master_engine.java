@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.Hashtable;
 import java.util.regex.*;
+import java.net.URL;
+import java.net.MalformedURLException;
   
 
 public class Configuration_Master_engine {
@@ -247,7 +249,9 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
-        if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking... <https://docs.oracle.com/javase/6/docs/api/java/net/URL.html#URL(java.lang.String)>
+        // the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
+        // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking... <https://docs.oracle.com/javase/6/docs/api/java/net/URL.html#URL(java.lang.String)>
+        if (the_value.get_as_String().length() < 1 || ! is_this_string_a_valid_URL(the_value.get_as_String())) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
         }
         break;
@@ -258,6 +262,15 @@ public class Configuration_Master_engine {
     return new parsed_line_for_a_config(the_key_of_the_config, the_value);
   }
 
+
+  private boolean is_this_string_a_valid_URL(String in) {
+    try {
+      URL to_throw_away = new URL(in);
+      return true;
+    } catch (MalformedURLException mue) { // expected, so not doing anything "special" with it
+      return false;
+    }
+  }
 
   // every configuration value is currently assumed to be either {an integer compatible with a "long"} or {"string-like"}
   private class config_algebraic_type {
