@@ -44,7 +44,8 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
-    private static int verbosity = 5; // default value
+    private final static int default_verbosity = 5;
+    private static int verbosity = default_verbosity;
 
     private final static String data_directory = "data/"; // DRY
 
@@ -160,11 +161,25 @@ public class Configuration_Master_server {
      * @param args
      */
     public static void main(String[] args) throws Exception {
+        System.err.println("\n\n"); // to separate "our" output from Ant`s when e.g. running this program via "ant run"
 
         for (String arg : args) {
             arg = arg.replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
             if        ("help".equals(arg) || "h".equals(arg)) {
-                System.out.println("Sorry, no help yet.  ¯\\_(ツ)_/¯");
+                System.out.println(
+                  "Supported CLI arg.s\n" +
+                  "-------------------\n" +
+                  "h / help : help, duh.\n" +
+                  "\n"+
+                  "strict_checking : makes the grammar checking of the engine strict.\n" +
+                  "                  It`s probably best to leave this at the default [off] when running the server “for real”.\n" +
+                  "\n"+
+                  "v : increase verbosity by 1; hard-coded default is " + default_verbosity + "\n" +
+                  "\n"+
+                  "verbosity=<integer> : _sets_ the verbosity level, thus overwriting the value that was in effect just prior.\n" +
+                  // "\n"+
+                  "\n"
+                );
                 System.exit(0);
             } else if ("strict_checking".equals(arg)) {
             } else if ("v"              .equals(arg)) {
