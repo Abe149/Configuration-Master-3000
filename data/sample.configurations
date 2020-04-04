@@ -10,12 +10,23 @@
 ≤9␟Namespace 1␟key 3␟42
 ≥9␟Namespace 1␟key 4␟-42
 
-# aliases for maturity levels
-=sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
-=dev    ␟Namespace 1␟key 5␟“string value for... maturity level "dev"                :: Namespace 1 :: key 5”
-=test   ␟Namespace 1␟key 5␟“string value for... maturity level "test"               :: Namespace 1 :: key 5”
-=UAT    ␟Namespace 1␟key 5␟“string value for... maturity level "UAT"                :: Namespace 1 :: key 5”
-≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”
-
 # maturity levels and namespaces can be specified as ‘*’ [without the quotes], meaning “all”;
 #   for a maturity level, this is equivalent to specifying “≥0”
+
+*␟*␟test URL␟<http://www.fsf.org/>
+
+
+
+
+
+
+### below this line: not yet supported ###
+
+
+# aliases for maturity levels
+
+#=sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
+#=dev    ␟Namespace 1␟key 5␟“string value for... maturity level "dev"                :: Namespace 1 :: key 5”
+#=test   ␟Namespace 1␟key 5␟“string value for... maturity level "test"               :: Namespace 1 :: key 5”
+#=UAT    ␟Namespace 1␟key 5␟“string value for... maturity level "UAT"                :: Namespace 1 :: key 5”
+#≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”

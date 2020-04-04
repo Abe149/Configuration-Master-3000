@@ -71,15 +71,15 @@ public class Configuration_Master_engine {
   }
 
 
-  private class semiParsed_line_for_a_config___values_are_all_Strings {
+  private class parsed_line_for_a_config {
     public tuple_for_key_of_a_config key;
-    public String                    value;
-    semiParsed_line_for_a_config___values_are_all_Strings(tuple_for_key_of_a_config key_in, String value_in) {
+    public config_algebraic_type     value;
+    parsed_line_for_a_config(tuple_for_key_of_a_config key_in, config_algebraic_type value_in) {
       key   =   key_in;
       value = value_in;
     }
     public String toString() { // for debugging etc.
-      return " semiParsed_line_for_a_config___values_are_all_Strings<key=" + key + ", value=" + stringize_safely(value) + "> ";
+      return " parsed_line_for_a_config<key=" + key + ", value=" + value + "> ";
     }
   }
 
@@ -109,10 +109,10 @@ public class Configuration_Master_engine {
   }
 
 
-  parsed_line_for_a_schema parse_a_line_for_a_schema(String line) throws IOException {
+  private parsed_line_for_a_schema parse_a_line_for_a_schema(String line) throws IOException {
     String                         the_namespace = null;
     String                         the_key       = null;
-    String                         the_value     = null;
+    String                         the_value_str = null;
 
     line = line.trim();
     if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
@@ -123,21 +123,45 @@ public class Configuration_Master_engine {
 
       the_namespace = the_split[0].trim();
       the_key       = the_split[1].trim();
-      the_value     = the_split[2].trim();
+      the_value_str = the_split[2].trim();
     }
 
-    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value || the_value.length() < 1)  return null;
+    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
 
-    return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
+    return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
   }
 
 
-  semiParsed_line_for_a_config___values_are_all_Strings semiparse_a_line_for_a_config(String line) throws IOException {
+  private value_types get_type_from_schema(tuple_for_key_of_a_config the_key_of_the_config) {
+/*
+    public maturityLevel_comparison_types the_MLC;
+    public int                            the_maturity_level_to_which_to_compare;
+    public String                         the_namespace;
+    public String                         the_key; // confusing, innit?  ;-)
+*/
+
+    if (null == the_key_of_the_config.the_MLC || null == the_key_of_the_config.the_namespace || null == the_key_of_the_config.the_key)  return null;
+
+    for (tuple_for_key_of_a_schema key_to_compare : the_schema.keySet()) {
+      if ( // WIP WIP WIP
+             (the_key_of_the_config.the_namespace.equals(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
+          &&
+             (the_key_of_the_config.the_key.equals(key_to_compare.the_key) || "*".equals(key_to_compare.the_key))
+         )
+      {
+        return the_schema.get(key_to_compare);
+      }
+    }
+    return null; // nothing compatible found  :-(
+  }
+
+
+  private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line) throws IOException {
     maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
     int                            the_maturity_level_to_which_to_compare = -1;
     String                         the_namespace = null;
     String                         the_key       = null;
-    String                         the_value     = null;
+    String                         the_value_str = null;
 
     line = line.trim();
     if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
@@ -145,9 +169,13 @@ public class Configuration_Master_engine {
       final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
 
       // TO DO: make this fail more elegantly when the number of split results is not as expected
-      final String the_MLC_and_integer_as_a_string = the_split[0].trim();
-      final char the_MLC_as_a_char = the_MLC_and_integer_as_a_string.charAt(0);
-      switch (the_MLC_as_a_char) {
+
+      String the_MLC_spec_as_a_string = the_split[0].trim();
+
+      if ("*".equals(the_MLC_spec_as_a_string))  the_MLC_spec_as_a_string = "≥0"; // this was the easiest way to implement this functionality...  "so sue me" if it isn`t very elegant
+
+      final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
+      switch (the_MLC_operator_as_a_char) {
         case '<': the_MLC = maturityLevel_comparison_types.less_than;
           break;
         case '≤': the_MLC = maturityLevel_comparison_types.less_than_or_equal_to;
@@ -161,14 +189,41 @@ public class Configuration_Master_engine {
         default:
           throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
         }
-      the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_and_integer_as_a_string.substring(1).trim());
+      the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_as_a_string.substring(1).trim());
 
       the_namespace = the_split[1].trim();
       the_key       = the_split[2].trim();
-      the_value     = the_split[3].trim();
+      the_value_str = the_split[3].trim();
     }
 
-    return new semiParsed_line_for_a_config___values_are_all_Strings(new tuple_for_key_of_a_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
+// saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
+    if (the_maturity_level_to_which_to_compare < 0 || null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
+
+    config_algebraic_type the_value;
+
+    final tuple_for_key_of_a_config the_key_of_the_config = new tuple_for_key_of_a_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key);
+
+    switch (get_type_from_schema(the_key_of_the_config)) { // first, just parse
+      case             integer:
+      case nonnegative_integer:
+      case    positive_integer:
+        the_value = new config_algebraic_type(Long.parseLong(the_value_str));
+        break;
+
+      case          string:
+      case nonempty_string:
+        the_value = new config_algebraic_type(the_value_str.replaceFirst("^“", "").replaceFirst("”$", ""));
+        break;
+
+      case URL:
+        the_value = new config_algebraic_type(the_value_str.replaceFirst("^<", "").replaceFirst(">$", ""));
+        break;
+
+      default:
+        throw new IOException("Internal implementation error: unrecognized value-type in configuration parser.");
+    }
+
+    return new parsed_line_for_a_config(the_key_of_the_config, the_value);
   }
 
 
@@ -355,8 +410,6 @@ public class Configuration_Master_engine {
 
       // --- done parsing and validating the schema --- //
 
-  // REMINDER: private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
-
       the_configurations = new Hashtable<tuple_for_key_of_a_config, config_algebraic_type>();
       for (BufferedReader config_input : config_inputs) {
         while (config_input.ready()) {
@@ -364,6 +417,11 @@ public class Configuration_Master_engine {
           if (verbosity > 1) {
             System.err.println();
             System.err.println("TESTING 18: config. input line: ''" + line + "''");
+          }
+
+          parsed_line_for_a_config parse_result = parse_and_typecheck_a_line_for_a_config(line);
+          if (verbosity > 1) {
+            System.err.println("TESTING 19: config line parse: " + parse_result);
           }
 
           // ... WIP ... //
