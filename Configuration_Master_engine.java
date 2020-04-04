@@ -174,14 +174,15 @@ public class Configuration_Master_engine {
 
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
 
-    // there should be a more-elegant way to do this...
     typenames_to_types = new Hashtable<String, value_types>();
-    typenames_to_types.put("integer"            , value_types.integer);
-    typenames_to_types.put("nonnegative_integer", value_types.nonnegative_integer);
-    typenames_to_types.put("positive_integer"   , value_types.positive_integer);
-    typenames_to_types.put("nonempty_string"    , value_types.nonempty_string);
-    typenames_to_types.put("string"             , value_types.string);
-    typenames_to_types.put("URL"                , value_types.URL);
+    for (value_types VT : value_types.values()) {
+      typenames_to_types.put(VT.name(), VT);
+    }
+    if (verbosity > 1) {
+      System.err.println();
+      System.err.println("INFO: registered value types: " + typenames_to_types);
+      System.err.println();
+    }
 
     maturityLevel_aliases = new Hashtable<String, Integer>();
 
@@ -256,6 +257,7 @@ public class Configuration_Master_engine {
       } // end while maturityLevel_aliases_input.ready()
 
       if (verbosity > 1) {
+        System.err.println();
         System.err.println("INFO: maturityLevel_aliases: " + maturityLevel_aliases);
         System.err.println();
       }
@@ -265,6 +267,7 @@ public class Configuration_Master_engine {
         while (schema_input.ready()) {
           String line = schema_input.readLine();
           if (verbosity > 1) {
+            System.err.println();
             System.err.println("TESTING 13: schema input line: ''" + line + "''");
           }
 
@@ -316,6 +319,9 @@ public class Configuration_Master_engine {
           }
         }
       }
+
+      // --- done parsing and validating the schema --- //
+
 
 // saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
 

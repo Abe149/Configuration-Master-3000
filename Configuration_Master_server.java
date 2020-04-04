@@ -204,12 +204,14 @@ public class Configuration_Master_server {
             });
 
             if (verbosity > 3) {
+                System.err.println();
                 for (File config_file : config_files) {
                     System.err.println("DEBUG: config. file found at ''" + config_file + "''");
                 }
                 for (File schema_file : schema_files) {
                     System.err.println("DEBUG: schema  file found at ''" + schema_file + "''");
                 }
+                System.err.println();
             }
 
             for (File config_file : config_files) {
@@ -220,8 +222,10 @@ public class Configuration_Master_server {
             }
 
             if (verbosity > 3) {
+                System.err.println();
                 System.err.println("DEBUG: # of BufferedReader objects created for config. files: " + config_inputs.size());
                 System.err.println("DEBUG: # of BufferedReader objects created for schema  files: " + schema_inputs.size());
+                System.err.println();
             }
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
