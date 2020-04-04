@@ -172,6 +172,39 @@ public class Configuration_Master_engine {
   }
 
 
+  // every configuration value is currently assumed to be either {an integer compatible with a "long"} or {"string-like"}
+  private class config_algebraic_type {
+    private boolean use_string;
+    private long  integer_value;
+    private String string_value;
+
+    public config_algebraic_type(long in) {
+      integer_value = in;
+      use_string = false;
+    }
+
+    public config_algebraic_type(String in) {
+      string_value = in;
+      use_string = true;
+    }
+
+    boolean should_get_as_String() {
+      return use_string;
+    }
+
+    long get_as_long() {
+      return integer_value;
+    }
+
+    String get_as_String() {
+      return string_value;
+    }
+  }
+
+
+  private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
+
+
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
 
     typenames_to_types = new Hashtable<String, value_types>();
@@ -321,6 +354,22 @@ public class Configuration_Master_engine {
       }
 
       // --- done parsing and validating the schema --- //
+
+  // REMINDER: private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
+
+      the_configurations = new Hashtable<tuple_for_key_of_a_config, config_algebraic_type>();
+      for (BufferedReader config_input : config_inputs) {
+        while (config_input.ready()) {
+          String line = config_input.readLine();
+          if (verbosity > 1) {
+            System.err.println();
+            System.err.println("TESTING 18: config. input line: ''" + line + "''");
+          }
+
+          // ... WIP ... //
+
+        } // end while
+      } // end for BufferedReader config_input : config_inputs
 
 
 // saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
