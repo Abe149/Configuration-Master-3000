@@ -17,5 +17,14 @@ Namespace 3␟key 2␟string ⍝ redundant WRT "*␟key 2␟string", but should 
 *␟key 3␟nonnegative_integer
 *␟key 4␟integer
 
-*␟test URL␟URL
+*␟test bad URL ␟URL
+*␟test good URL␟URL
 
+*␟test bad  nonempty_string␟nonempty_string
+*␟test good nonempty_string␟nonempty_string
+
+*␟test bad  nonnegative_integer␟nonnegative_integer
+*␟test good nonnegative_integer␟nonnegative_integer
+
+*␟test bad  positive_integer␟positive_integer
+*␟test good positive_integer␟positive_integer

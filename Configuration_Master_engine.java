@@ -228,7 +228,34 @@ public class Configuration_Master_engine {
         throw new IOException("Internal implementation error: unrecognized value-type in configuration parser.");
     }
 
-    // TO DO: validate!
+    // now validate!
+    switch (the_VT) {
+      case nonnegative_integer:
+        if (the_value.get_as_long() < 0) {
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonnegative_integer”.");
+        }
+        break;
+
+      case    positive_integer:
+        if (the_value.get_as_long() < 1) {
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “positive_integer”.");
+        }
+        break;
+
+      case nonempty_string:
+        if (the_value.get_as_String().length() < 1) {
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonempty_string”.");
+        }
+        break;
+
+      case URL:
+        if (the_value.get_as_String().length() < 1) { // TO DO / WIP: add proper URL checking
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
+        }
+        break;
+
+      // _intentionally_ no "default:"
+    }
 
     return new parsed_line_for_a_config(the_key_of_the_config, the_value);
   }

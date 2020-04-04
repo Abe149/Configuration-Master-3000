@@ -13,8 +13,6 @@
 # maturity levels and namespaces can be specified as ‘*’ [without the quotes], meaning “all”;
 #   for a maturity level, this is equivalent to specifying “≥0”
 
-*␟*␟test URL␟<http://www.fsf.org/>
-
 # *␟*␟bad key 1, not in schema␟“string value”
 # *␟*␟bad key 2, not in schema␟“”
 # *␟*␟bad key 3, not in schema␟ 0
@@ -22,6 +20,19 @@
 # *␟*␟bad key 5, not in schema␟ 1
 # *␟*␟bad key 6, not in schema␟ <> ⍝ invalid URL
 
+
+
+# *␟*␟test bad URL ␟<>
+  *␟*␟test good URL␟<http://www.fsf.org/>
+
+# *␟*␟test bad  nonempty_string␟“”
+  *␟*␟test good nonempty_string␟“string value”
+
+# *␟*␟test bad  nonnegative_integer␟-1
+  *␟*␟test good nonnegative_integer␟ 0
+
+# *␟*␟test bad  positive_integer␟0
+  *␟*␟test good positive_integer␟1
 
 
 
