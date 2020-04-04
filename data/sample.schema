@@ -1,6 +1,6 @@
 Namespace 1␟key 1␟string⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
 
-Namespace 1␟key 1␟string ⍝ if you really insist on writing a same-line comment, then start it using the APL lamp
+Namespace 1␟key 1␟string ⍝ duplicate namespace::key pairs are OK as long as the type is the same
 
 # a line that`s all comment
   # a line that`s all comment after trimming

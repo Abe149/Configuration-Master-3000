@@ -240,15 +240,27 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 13: schema input line: ''" + line + "''");
 
             parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line);
-            System.err.println("TESTING 14: schema line partial parse: " + parse_result);
+            System.err.println("TESTING 14: schema line parse: " + parse_result);
 
             if (null == parse_result || null == parse_result.key || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
               if (verbosity > 2) {
-                System.err.println("TESTING 15: schema line partial parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
+                System.err.println("TESTING 15: schema line parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
               }
             } else { // looks like a valid line
               if (verbosity > 2) {
-                System.err.println("TESTING 16: schema line partial parse indicates a line with valid data!  Hooray!!!");
+                System.err.println("TESTING 16: schema line parse indicates a line with valid data!  Hooray!!!");
+              }
+              if (the_schema.containsKey(parse_result.key)) {
+                final value_types old_VT = the_schema.get(parse_result.key);
+                if (old_VT.equals(parse_result.value)) {
+                  if (verbosity > 2) {
+                    System.err.println("TESTING 17: schema line seems to be valid, but redundant.  Ignoring.");
+                  }
+                } else {
+                  throw new IOException("Data inconsistency: conflicting line for schema: ''" + line + "'' conflicts with prior parse result " + parse_result);
+                }
+              } else { // if _not_ (the_schema.containsKey(parse_result.key))
+                the_schema.put(parse_result.key, parse_result.value);
               }
             }
 
@@ -257,7 +269,7 @@ public class Configuration_Master_engine {
       } // end for BufferedReader schema_input : schema_inputs
 
       if (verbosity > 0) {
-        System.err.println("the_schema: " + the_schema);
+        System.err.println("INFO: the_schema: " + the_schema);
       }
 
 // saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
