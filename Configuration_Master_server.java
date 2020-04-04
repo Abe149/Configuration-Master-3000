@@ -224,8 +224,11 @@ public class Configuration_Master_server {
             httpsServer.start();
 
         } catch (Exception exception) {
-            System.out.println("\033[31mAn exception was caught in the Configuration Master server.  Stack trace to follow.\033[0m");
+            System.out.flush();
+            System.out.println("\n\033[31mAn exception was caught in the Configuration Master server.  Stack trace to follow.\033[0m");
+            System.out.flush();
             exception.printStackTrace();
+            System.out.flush();
 
         }
     }
