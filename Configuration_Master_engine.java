@@ -7,7 +7,29 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
-  Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException {
+  private class schema_key_tuple {
+    private maturityLevel_comparison_types the_MLC;
+    private int                            the_maturity_level_to_which_to_compare;
+    private String                         the_namespace;
+    private String                         the_key; // confusing, innit?  ;-)
+
+    schema_key_tuple(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
+      the_MLC                                = MLC_in;
+      the_maturity_level_to_which_to_compare = maturity_level_in;
+      the_namespace                          = namespace_in;
+      the_key                                = key_in;
+    }
+
+    public String toString() { // for debugging etc.
+      return " schema_key_tuple<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=''" + the_namespace + "'', the_key=''" + the_key + "''> ";
+    }
+  }
+
+
+  private Hashtable<String, value_types> the_schema;
+
+
+  Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
 
     maturityLevel_aliases = new Hashtable<String, Integer>();
 
@@ -16,15 +38,15 @@ public class Configuration_Master_engine {
       while (maturityLevel_aliases_input.ready()) {
         String line = maturityLevel_aliases_input.readLine();
         if (verbosity > 5) {
-          System.err.println("TESTING 1: maturity-level input line: ''" + line + "''");
+          System.err.println("TESTING 1: maturity-level aliases input line: ''" + line + "''");
         }
         line = line.split("#")[0]; // discard comments
         if (verbosity > 5) {
-          System.err.println("TESTING 2: maturity level input line after discarding comments: ''" + line + "''");
+          System.err.println("TESTING 2: maturity level aliases input line after discarding comments: ''" + line + "''");
         }
         line = line.replace(" ", "").toLowerCase(); // this algorithm will result in some "unexpected interpretations" for seemingly-invalid inputs, e.g. "d e v =" is equivalent to "dev=" and "1 2 3 4 5" is equivalent to "12345"
         if (verbosity > 5) {
-          System.err.println("TESTING 3: maturity level input line after removing all ASCII spaces and lower-casing: ''" + line + "''");
+          System.err.println("TESTING 3: maturity level aliases input line after removing all ASCII spaces and lower-casing: ''" + line + "''");
         }
         if (line.length() > 0) {
           Matcher m1 = Pattern.compile("(\\p{javaLowerCase}+)=(\\d+).*").matcher(line); // allows trailing "garbage"
@@ -86,16 +108,18 @@ public class Configuration_Master_engine {
         System.err.println();
       }
 
+      the_schema = new Hashtable<String, value_types>();
+
     } catch (IOException ioe) {
 
        final String response = "An I/O exception occurred while trying to initialize the Configuration Master engine: " + ioe;
        System.err.println("\033[31m" + response + "\033[0m");
        throw new IOException(response); // enabling the following snippet didn`t seem to add anything perceptible: , ioe.getCause());
-    }
+    } // end of try-catch
 
-  }
-
-
+  } // end of ctor
 
 
-}
+
+
+} // end of class "Configuration_Master_engine"
