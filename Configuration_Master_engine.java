@@ -51,7 +51,7 @@ public class Configuration_Master_engine {
     return "“" + input + "”";
   }
 
-  semiParsed_line_for_a_schema_or_config___values_are_all_Strings parse_a_line_for_a_schema_or_config(String line) {
+  semiParsed_line_for_a_schema_or_config___values_are_all_Strings parse_a_line_for_a_schema_or_config(String line) throws IOException {
     maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
     int                            the_maturity_level_to_which_to_compare = -1;
     String                         the_namespace = null;
@@ -66,7 +66,20 @@ public class Configuration_Master_engine {
       // TO DO: make this fail more elegantly when the number of split results is not as expected
       final String the_MLC_and_integer_as_a_string = the_split[0].trim();
       final char the_MLC_as_a_char = the_MLC_and_integer_as_a_string.charAt(0);
-      // WIP
+      switch (the_MLC_as_a_char) {
+        case '<': the_MLC = maturityLevel_comparison_types.less_than;
+          break;
+        case '≤': the_MLC = maturityLevel_comparison_types.less_than_or_equal_to;
+          break;
+        case '=': the_MLC = maturityLevel_comparison_types.equal_to;
+          break;
+        case '≥': the_MLC = maturityLevel_comparison_types.greater_than_or_equal_to;
+          break;
+        case '>': the_MLC = maturityLevel_comparison_types.greater_than;
+          break;
+        default:
+          throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
+        }
       the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_and_integer_as_a_string.substring(1).trim());
 
       the_namespace = the_split[1].trim();
