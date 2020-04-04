@@ -11,13 +11,13 @@ public class Configuration_Master_engine {
     return maturityLevel_aliases.get(alias_in);
   }
 
-  private class tuple_for_key_of_a_schema_or_config {
+  private class tuple_for_key_of_a_config {
     public maturityLevel_comparison_types the_MLC;
     public int                            the_maturity_level_to_which_to_compare;
     public String                         the_namespace;
     public String                         the_key; // confusing, innit?  ;-)
 
-    tuple_for_key_of_a_schema_or_config(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
+    tuple_for_key_of_a_config(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
       the_MLC                                = MLC_in;
       the_maturity_level_to_which_to_compare = maturity_level_in;
       the_namespace                          = namespace_in;
@@ -25,33 +25,86 @@ public class Configuration_Master_engine {
     }
 
     public String toString() { // for debugging etc.
-      return " tuple_for_key_of_a_schema_or_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
+      return " tuple_for_key_of_a_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
   }
 
-  private class semiParsed_line_for_a_schema_or_config___values_are_all_Strings {
-    public tuple_for_key_of_a_schema_or_config key;
-    public String                              value;
-    semiParsed_line_for_a_schema_or_config___values_are_all_Strings(tuple_for_key_of_a_schema_or_config key_in, String value_in) {
+
+  private class tuple_for_key_of_a_schema {
+    public String                         the_namespace;
+    public String                         the_key; // confusing, innit?  ;-)
+
+    tuple_for_key_of_a_schema(String namespace_in, String key_in) { // ctor
+      the_namespace                          = namespace_in;
+      the_key                                = key_in;
+    }
+
+    public String toString() { // for debugging etc.
+      return " tuple_for_key_of_a_schema<the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
+    }
+  }
+
+
+  private class semiParsed_line_for_a_config___values_are_all_Strings {
+    public tuple_for_key_of_a_config key;
+    public String                    value;
+    semiParsed_line_for_a_config___values_are_all_Strings(tuple_for_key_of_a_config key_in, String value_in) {
       key   =   key_in;
       value = value_in;
     }
     public String toString() { // for debugging etc.
-      return " semiParsed_line_for_a_schema_or_config___values_are_all_Strings<key=" + key + ", value=" + stringize_safely(value) + "> ";
+      return " semiParsed_line_for_a_config___values_are_all_Strings<key=" + key + ", value=" + stringize_safely(value) + "> ";
     }
   }
 
 
-  private Hashtable<String                             , value_types> typenames_to_types; // unfortunately, initializing a hashtable in Java is a {can of worms / Pandora`s box}, so we`ll do it the old-fashioned way
+  private class parsed_line_for_a_schema {
+    public tuple_for_key_of_a_schema key;
+    public value_types               value;
+    parsed_line_for_a_schema(tuple_for_key_of_a_schema key_in, value_types value_in) {
+      key   =   key_in;
+      value = value_in;
+    }
+    public String toString() { // for debugging etc.
+      return " parsed_line_for_a_schema<key=" + key + ", value=" + value + "> ";
+    }
+  }
 
-  private Hashtable<tuple_for_key_of_a_schema_or_config, value_types> the_schema;
+
+  private Hashtable<String                   , value_types> typenames_to_types; // unfortunately, initializing a hashtable in Java is a {can of worms / Pandora`s box}, so we`ll do it the old-fashioned way
+
+  private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
   private static String stringize_safely(String input) {
     if (null == input)  return "«null»";
     return "“" + input + "”";
   }
 
-  semiParsed_line_for_a_schema_or_config___values_are_all_Strings parse_a_line_for_a_schema_or_config(String line) throws IOException {
+
+  parsed_line_for_a_schema parse_a_line_for_a_schema(String line) throws IOException {
+    String                         the_namespace = null;
+    String                         the_key       = null;
+    String                         the_value     = null;
+
+    line = line.trim();
+    if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
+      line = line.replaceFirst("⍝.*", "").trim(); // HARD-CODED: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
+      final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
+
+      // TO DO: make this fail more elegantly when the number of split results is not as expected
+
+      the_namespace = the_split[0].trim();
+      the_key       = the_split[1].trim();
+      the_value     = the_split[2].trim();
+    }
+
+    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value || the_value.length() < 1)  return null;
+
+    return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
+  }
+
+
+  semiParsed_line_for_a_config___values_are_all_Strings semiparse_a_line_for_a_config(String line) throws IOException {
     maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
     int                            the_maturity_level_to_which_to_compare = -1;
     String                         the_namespace = null;
@@ -87,7 +140,7 @@ public class Configuration_Master_engine {
       the_value     = the_split[3].trim();
     }
 
-    return new semiParsed_line_for_a_schema_or_config___values_are_all_Strings(new tuple_for_key_of_a_schema_or_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
+    return new semiParsed_line_for_a_config___values_are_all_Strings(new tuple_for_key_of_a_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
   }
 
 
@@ -179,17 +232,17 @@ public class Configuration_Master_engine {
         System.err.println();
       }
 
-      the_schema = new Hashtable<tuple_for_key_of_a_schema_or_config, value_types>();
+      the_schema = new Hashtable<tuple_for_key_of_a_schema, value_types>();
       for (BufferedReader schema_input : schema_inputs) {
         while (schema_input.ready()) {
           String line = schema_input.readLine();
           if (verbosity > 1) {
             System.err.println("TESTING 13: schema input line: ''" + line + "''");
 
-            semiParsed_line_for_a_schema_or_config___values_are_all_Strings semiparse_result = parse_a_line_for_a_schema_or_config(line);
-            System.err.println("TESTING 14: schema line partial parse: " + semiparse_result);
+            parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line);
+            System.err.println("TESTING 14: schema line partial parse: " + parse_result);
 
-            if (semiparse_result.key.the_maturity_level_to_which_to_compare < 0 || null == semiparse_result.key.the_namespace || null == semiparse_result.key.the_key || null == semiparse_result.value) {
+            if (null == parse_result || null == parse_result.key || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
               if (verbosity > 2) {
                 System.err.println("TESTING 15: schema line partial parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
               }
@@ -199,9 +252,15 @@ public class Configuration_Master_engine {
               }
             }
 
-          }
-        }
+          } // end if verbosity > 1
+        } // end while
+      } // end for BufferedReader schema_input : schema_inputs
+
+      if (verbosity > 0) {
+        System.err.println("the_schema: " + the_schema);
       }
+
+// saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
 
     } catch (IOException ioe) {
 
