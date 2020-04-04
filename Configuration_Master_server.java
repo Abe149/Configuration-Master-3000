@@ -44,7 +44,7 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
-    private final static int verbosity = 4; // TO DO: fix the fact that this is HARD-CODED
+    private final static int verbosity = 9; // TO DO: fix the fact that this is HARD-CODED
 
     private final static String data_directory = "data/"; // DRY
 
@@ -230,7 +230,7 @@ public class Configuration_Master_server {
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity);
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, false); // the bool at the end: strict mode enabled when true
 
 
 

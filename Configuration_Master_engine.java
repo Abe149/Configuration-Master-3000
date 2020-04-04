@@ -128,8 +128,13 @@ public class Configuration_Master_engine {
       the_value_str = the_split[2].trim();
     }
 
-    if (verbosity > 0 && "*".equals(the_key)) {
-      System.err.println("\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m");
+    if ("*".equals(the_key)) {
+      if (strict_checking_mode_enabled) {
+        throw new IOException("Strict-checking mode violation: schema line parse indicates a line with an invalid key of ‘*’: “" + line + '”');
+      }
+      if (verbosity > 0) {
+        System.err.println("\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m");
+      }
       return null;
     }
 
@@ -313,12 +318,21 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
 
-  private int verbosity; // so non-ctor methods will be able to read this value without me needing to pass it around
+  // the next 2 lines: so non-ctor methods will be able to read these values without me needing to pass it around
+  private int verbosity;
+  private boolean strict_checking_mode_enabled;
 
 
-  Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity_in) throws IOException { // start of ctor
+  // start of ctor
+  Configuration_Master_engine(BufferedReader   maturityLevel_aliases_input,
+                              BufferedReader[] schema_inputs,
+                              BufferedReader[] config_inputs,
+                              int              verbosity_in,
+                              boolean          strict_checking_mode_enabled___in)
+                                                throws IOException {
 
     verbosity = verbosity_in;
+    strict_checking_mode_enabled = strict_checking_mode_enabled___in;
 
     typenames_to_types = new Hashtable<String, value_types>();
     for (value_types VT : value_types.values()) {
@@ -426,8 +440,13 @@ public class Configuration_Master_engine {
             if (verbosity > 5) {
               System.err.println("TESTING 15: schema line parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
             }
-            if (verbosity > 0 && null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
-              System.err.println("\033[33mWARNING: schema line parse indicates a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m");
+            if (null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
+              if (strict_checking_mode_enabled) {
+                throw new IOException("Strict-checking mode violation: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + '”');
+              }
+              if (verbosity > 0) {
+                System.err.println("\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m");
+              }
             }
           } else { // looks like a valid line
             if (verbosity > 5) {
