@@ -7,11 +7,15 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
+  private int get_maturityLevel_integer_from_alias(String alias_in) {
+    return maturityLevel_aliases.get(alias_in);
+  }
+
   private class tuple_for_key_of_a_schema_or_config {
-    private maturityLevel_comparison_types the_MLC;
-    private int                            the_maturity_level_to_which_to_compare;
-    private String                         the_namespace;
-    private String                         the_key; // confusing, innit?  ;-)
+    public maturityLevel_comparison_types the_MLC;
+    public int                            the_maturity_level_to_which_to_compare;
+    public String                         the_namespace;
+    public String                         the_key; // confusing, innit?  ;-)
 
     tuple_for_key_of_a_schema_or_config(maturityLevel_comparison_types MLC_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
       the_MLC                                = MLC_in;
@@ -25,9 +29,31 @@ public class Configuration_Master_engine {
     }
   }
 
+  private class semiParsed_line_for_a_schema_or_config___values_are_all_Strings {
+    public tuple_for_key_of_a_schema_or_config key;
+    public String                              value;
+    semiParsed_line_for_a_schema_or_config___values_are_all_Strings(tuple_for_key_of_a_schema_or_config key_in, String value_in) {
+      key = key_in;
+      value = value_in;
+    }
+  }
+
 
   private Hashtable<String                             , value_types> typenames_to_types;
   private Hashtable<tuple_for_key_of_a_schema_or_config, value_types> the_schema;
+
+
+  semiParsed_line_for_a_schema_or_config___values_are_all_Strings parse_a_line_for_a_schema_or_config(String line) {
+    maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
+    int                            the_maturity_level_to_which_to_compare = -1;
+    String                         the_namespace = null;
+    String                         the_key       = null;
+    String                         the_value     = null;
+
+    // ... WIP ... //
+
+    return new semiParsed_line_for_a_schema_or_config___values_are_all_Strings(new tuple_for_key_of_a_schema_or_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
+  }
 
 
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
