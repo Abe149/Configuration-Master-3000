@@ -1,4 +1,4 @@
-sandbox =    0
+sandbox =    0#comments should be OK in this file even if the '#' is right up against the integer, i.e. without a space between
 dev     = 2250
 test    = 4500
 UAT     = 6750
