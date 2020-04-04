@@ -285,7 +285,7 @@ public class Configuration_Master_engine {
                     System.err.println("TESTING 17: schema line seems to be valid, but redundant.  Ignoring.");
                   }
                 } else {
-                  throw new IOException("Data inconsistency: conflicting line for schema: ''" + line + "'' conflicts with prior parse result " + parse_result);
+                  throw new IOException("Data inconsistency: conflicting line for schema: ''" + line + "'' conflicts with prior parse result value-type «" + old_VT + '»');
                 }
               } else { // if _not_ (the_schema.containsKey(parse_result.key))
                 the_schema.put(parse_result.key, parse_result.value);
