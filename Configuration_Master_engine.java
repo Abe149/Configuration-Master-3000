@@ -24,6 +24,19 @@ public class Configuration_Master_engine {
       the_key                                = key_in;
     }
 
+    @Override
+    public int hashCode() {
+      return (the_MLC==null ? 0 : the_MLC.hashCode()) ^ the_maturity_level_to_which_to_compare ^ (the_namespace==null ? 0 :  the_namespace.hashCode()) ^ (the_key==null ? 0 : the_key.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (! tuple_for_key_of_a_config.class.isInstance(o))  return false;
+      final tuple_for_key_of_a_config other = (tuple_for_key_of_a_config) o;
+      return the_MLC.equals(other.the_MLC) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
+    }
+
+    @Override
     public String toString() { // for debugging etc.
       return " tuple_for_key_of_a_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
@@ -39,6 +52,19 @@ public class Configuration_Master_engine {
       the_key                                = key_in;
     }
 
+    @Override
+    public int hashCode() {
+      return (the_namespace==null ? 0 :  the_namespace.hashCode()) ^ (the_key==null ? 0 : the_key.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (! tuple_for_key_of_a_schema.class.isInstance(o))  return false;
+      final tuple_for_key_of_a_schema other = (tuple_for_key_of_a_schema) o;
+      return the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
+    }
+
+    @Override
     public String toString() { // for debugging etc.
       return " tuple_for_key_of_a_schema<the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
@@ -65,6 +91,8 @@ public class Configuration_Master_engine {
       key   =   key_in;
       value = value_in;
     }
+
+    @Override
     public String toString() { // for debugging etc.
       return " parsed_line_for_a_schema<key=" + key + ", value=" + value + "> ";
     }
