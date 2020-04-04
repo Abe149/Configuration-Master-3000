@@ -133,7 +133,7 @@ public class Configuration_Master_engine {
         throw new IOException("Strict-checking mode violation: schema line parse indicates a line with an invalid key of ‘*’: “" + line + '”');
       }
       if (verbosity > 0) {
-        System.err.println("\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m");
+        System.err.println("\n\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m\n");
       }
       return null;
     }
@@ -445,7 +445,7 @@ public class Configuration_Master_engine {
                 throw new IOException("Strict-checking mode violation: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + '”');
               }
               if (verbosity > 0) {
-                System.err.println("\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m");
+                System.err.println("\n\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m\n");
               }
             }
           } else { // looks like a valid line

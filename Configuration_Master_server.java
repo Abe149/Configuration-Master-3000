@@ -157,6 +157,8 @@ public class Configuration_Master_server {
         }
     }
 
+    private static boolean strict_checking_mode_enabled = false;
+
     /**
      * @param args
      */
@@ -182,6 +184,10 @@ public class Configuration_Master_server {
                 );
                 System.exit(0);
             } else if ("strict_checking".equals(arg)) {
+                strict_checking_mode_enabled = true;
+                if (verbosity > 0) {
+                    System.err.println("INFO: activated strict-checking mode, according to CLI arg.; this is probably not something you really want when running the server “for real”.");
+                }
             } else if ("v"              .equals(arg)) {
                 verbosity += 1;
                 if (verbosity > 0) {
@@ -270,7 +276,7 @@ public class Configuration_Master_server {
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, false); // the bool at the end: strict mode enabled when true
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
 
 
 
