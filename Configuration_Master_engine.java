@@ -8,7 +8,7 @@ public class Configuration_Master_engine {
   private Hashtable<String, Integer> maturityLevel_aliases;
 
   private int get_maturityLevel_integer_from_alias(String alias_in) {
-    return maturityLevel_aliases.get(alias_in);
+    return maturityLevel_aliases.get(alias_in.toLowerCase());
   }
 
   private class tuple_for_key_of_a_config {
@@ -182,7 +182,12 @@ public class Configuration_Master_engine {
         default:
           throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
         }
-      the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_as_a_string.substring(1).trim());
+      final String the_MLC_spec_after_the_initial_char = the_MLC_spec_as_a_string.substring(1).trim();
+      if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) {
+        the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_after_the_initial_char);
+      } else {
+        the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
+      }
 
       the_namespace = the_split[1].trim();
       the_key       = the_split[2].trim();

@@ -16,6 +16,7 @@ Namespace 3␟key 2␟string ⍝ redundant WRT "*␟key 2␟string", but should 
 
 *␟key 3␟nonnegative_integer
 *␟key 4␟integer
+*␟key 5␟nonempty_string
 
 *␟test bad URL ␟URL
 *␟test good URL␟URL

@@ -35,16 +35,12 @@
 # *␟*␟test bad  positive_integer␟0
   *␟*␟test good positive_integer␟1
 
-
+# --- testing aliases for maturity levels --- #
+=sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
+=dev    ␟Namespace 1␟key 5␟“string value for... maturity level "dev"                :: Namespace 1 :: key 5”
+=test   ␟Namespace 1␟key 5␟“string value for... maturity level "test"               :: Namespace 1 :: key 5”
+=UAT    ␟Namespace 1␟key 5␟“string value for... maturity level "UAT"                :: Namespace 1 :: key 5”
+≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”
 
 
 ### below this line: not yet supported ###
-
-
-# aliases for maturity levels
-
-#=sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
-#=dev    ␟Namespace 1␟key 5␟“string value for... maturity level "dev"                :: Namespace 1 :: key 5”
-#=test   ␟Namespace 1␟key 5␟“string value for... maturity level "test"               :: Namespace 1 :: key 5”
-#=UAT    ␟Namespace 1␟key 5␟“string value for... maturity level "UAT"                :: Namespace 1 :: key 5”
-#≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”
