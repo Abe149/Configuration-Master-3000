@@ -478,6 +478,17 @@ public class Configuration_Master_engine {
         } // end while
       } // end for BufferedReader config_input : config_inputs
 
+
+
+      // --- TO DO: "asterisk validation" for the configurations --- //
+      // --- TO DO: "asterisk validation" for the configurations --- //
+      // --- TO DO: "asterisk validation" for the configurations --- //
+      // --- TO DO: "asterisk validation" for the configurations --- //
+      // --- TO DO: "asterisk validation" for the configurations --- //
+      // --- TO DO: "asterisk validation" for the configurations --- //
+
+
+
       if (verbosity > 0) {
         System.err.println();
         System.err.println("INFO: the_configurations: " + the_configurations);
