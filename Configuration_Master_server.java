@@ -44,7 +44,7 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
-    private final static int verbosity = 9; // TO DO: fix the fact that this is HARD-CODED
+    private static int verbosity = 5; // default value
 
     private final static String data_directory = "data/"; // DRY
 
@@ -160,6 +160,31 @@ public class Configuration_Master_server {
      * @param args
      */
     public static void main(String[] args) throws Exception {
+
+        for (String arg : args) {
+            arg = arg.replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
+            if        ("help".equals(arg) || "h".equals(arg)) {
+                System.out.println("Sorry, no help yet.  ¯\\_(ツ)_/¯");
+                System.exit(0);
+            } else if ("strict_checking".equals(arg)) {
+            } else if ("v"              .equals(arg)) {
+                verbosity += 1;
+                if (verbosity > 0) {
+                    System.err.println("INFO: increased verbosity to " + verbosity + " according to CLI arg.");
+                }
+            } else if (arg != null && arg.startsWith("verbosity=")) {
+                try {
+                    verbosity = Integer.parseInt(arg.substring("verbosity=".length()));
+                    if (verbosity > 0) {
+                        System.err.println("INFO: set verbosity to " + verbosity + " according to CLI arg.");
+                    }
+                } catch (NumberFormatException nfe) {
+                    // intentionally doing nothing
+                }
+            }
+        }
+
+
 
         try {
             // set up the socket address

@@ -5,7 +5,7 @@ if [ "$0" = sh -o "$0" = /bin/sh -o "$0" = /usr/bin/sh -o "$0" = bash -o "$0" = 
   return 1
 fi
 
-ant && java -jar ./Build/jars/Configuration_Master.jar
+ant && java -jar ./Build/jars/Configuration_Master.jar "$@"
 result="$?"
 /usr/bin/env echo -e "\nResult code: $result"
 exit $result
