@@ -1,2 +1,6 @@
 =0␟Namespace 1␟key 1␟string⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
+
 >0␟Namespace 1␟key 1␟string ⍝ if you really insist on writing a same-line comment, then start it using the APL lamp
+
+# a line that`s all comment
+  # a line that`s all comment after trimming

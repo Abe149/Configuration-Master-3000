@@ -25,7 +25,7 @@ public class Configuration_Master_engine {
     }
 
     public String toString() { // for debugging etc.
-      return " tuple_for_key_of_a_schema_or_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=''" + the_namespace + "'', the_key=''" + the_key + "''> ";
+      return " tuple_for_key_of_a_schema_or_config<the_MLC=" + the_MLC + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
   }
 
@@ -33,8 +33,11 @@ public class Configuration_Master_engine {
     public tuple_for_key_of_a_schema_or_config key;
     public String                              value;
     semiParsed_line_for_a_schema_or_config___values_are_all_Strings(tuple_for_key_of_a_schema_or_config key_in, String value_in) {
-      key = key_in;
+      key   =   key_in;
       value = value_in;
+    }
+    public String toString() { // for debugging etc.
+      return " semiParsed_line_for_a_schema_or_config___values_are_all_Strings<key=" + key + ", value=" + stringize_safely(value) + "> ";
     }
   }
 
@@ -43,6 +46,10 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_schema_or_config, value_types> the_schema;
 
+  private static String stringize_safely(String input) {
+    if (null == input)  return "«null»";
+    return "“" + input + "”";
+  }
 
   semiParsed_line_for_a_schema_or_config___values_are_all_Strings parse_a_line_for_a_schema_or_config(String line) {
     maturityLevel_comparison_types the_MLC = maturityLevel_comparison_types.equal_to;
@@ -52,7 +59,7 @@ public class Configuration_Master_engine {
     String                         the_value     = null;
 
     line = line.trim();
-    if ('#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
+    if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
       line = line.replaceFirst("⍝.*", "").trim(); // HARD-CODED: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
       final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
 
@@ -64,8 +71,7 @@ public class Configuration_Master_engine {
 
       the_namespace = the_split[1].trim();
       the_key       = the_split[2].trim();
-
-      // ... WIP ... //
+      the_value     = the_split[3].trim();
     }
 
     return new semiParsed_line_for_a_schema_or_config___values_are_all_Strings(new tuple_for_key_of_a_schema_or_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
