@@ -77,7 +77,7 @@ public class Configuration_Master_server {
             if (! assertion) {
                 final String base_response = "Assertion failed: " + desc;
                 final String extended_response = base_response + "; returning HTTP status code " + String.valueOf(status);
-                System.out.println("\033[31m" + extended_response + "\033[0m");
+                System.err.println("\033[31m" + extended_response + "\033[0m");
                 final String extended_response_plus_newline = extended_response + '\n';
                 myLogger.warning(extended_response_plus_newline);
 
@@ -191,7 +191,7 @@ public class Configuration_Master_server {
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), 5); // WIP: 5 is a HARD-CODED verbosity level
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), 4); // WIP: the integer at the end is a HARD-CODED verbosity level
 
 
 
@@ -211,8 +211,8 @@ public class Configuration_Master_server {
                         SSLParameters sslParameters = context.getSupportedSSLParameters();
                         params.setSSLParameters(sslParameters);
 
-                    } catch (Exception ex) {
-                        System.out.println("Failed to create HTTPS port");
+                    } catch (Exception e) {
+                        System.err.println("\033[31mFailed to create HTTPS port... " + e + "\033[0m");
                     }
                 }
             });
@@ -222,15 +222,22 @@ public class Configuration_Master_server {
             httpsServer.createContext(get_prefix, new  GetHandler(get_prefix));
 
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
+            myLogger.info("About to start the Configuration Master server...");
             httpsServer.start();
 
         } catch (Exception exception) {
+            System.err.flush();
             System.out.flush();
-            System.out.println("\n\033[31mAn exception was caught in the Configuration Master server.  Stack trace to follow.\033[0m");
-            System.out.flush();
+            System.err.println("\n\033[31mAn exception was caught in the Configuration Master server.  Exception string and stack trace to follow.\033[0m\n");
+            System.err.println("Exception as a string: ''" + exception + "''\n");
+            System.err.println("Stack trace");
+            System.err.println("-----------");
+            System.err.flush();
             exception.printStackTrace();
-            System.out.flush();
+            System.err.println("-----------");
+            System.err.flush();
 
+            System.exit(-1);
         }
     }
 
