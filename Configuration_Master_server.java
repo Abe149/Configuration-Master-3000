@@ -195,10 +195,11 @@ public class Configuration_Master_server {
                 }
             } else if (arg != null && arg.startsWith("verbosity=")) {
                 try {
-                    verbosity = Integer.parseInt(arg.substring("verbosity=".length()));
-                    if (verbosity > 0) {
-                        System.err.println("INFO: set verbosity to " + verbosity + " according to CLI arg.");
+                    final int new_verbosity = Integer.parseInt(arg.substring("verbosity=".length()));
+                    if (verbosity > 0 || new_verbosity > 0) {
+                        System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
                     }
+                    verbosity = new_verbosity;
                 } catch (NumberFormatException nfe) {
                     // intentionally doing nothing
                 }
