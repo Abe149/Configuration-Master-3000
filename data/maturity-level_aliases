@@ -3,3 +3,4 @@ dev     = 2250
 test    = 4500
 UAT     = 6750
 prod    = 9000
+# a "stress test": bad=-1
