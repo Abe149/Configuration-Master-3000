@@ -26,7 +26,8 @@ public class Configuration_Master_engine {
   }
 
 
-  private Hashtable<String, value_types> the_schema;
+  private Hashtable<String, value_types> typenames_to_types;
+  private Hashtable<schema_key_tuple, value_types> the_schema;
 
 
   Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
@@ -108,7 +109,7 @@ public class Configuration_Master_engine {
         System.err.println();
       }
 
-      the_schema = new Hashtable<String, value_types>();
+      the_schema = new Hashtable<schema_key_tuple, value_types>();
 
     } catch (IOException ioe) {
 
