@@ -249,7 +249,7 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
-        if (the_value.get_as_String().length() < 1) { // TO DO / WIP: add proper URL checking
+        if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
         }
         break;

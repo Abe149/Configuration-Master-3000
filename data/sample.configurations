@@ -23,6 +23,7 @@
 
 
 # *␟*␟test bad URL ␟<>
+# *␟*␟test bad URL ␟<foo>
   *␟*␟test good URL␟<http://www.fsf.org/>
 
 # *␟*␟test bad  nonempty_string␟“”
