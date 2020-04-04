@@ -351,35 +351,35 @@ public class Configuration_Master_engine {
       while (maturityLevel_aliases_input.ready()) {
         String line = maturityLevel_aliases_input.readLine();
         if (verbosity > 5) {
-          System.err.println("TESTING 1: maturity-level aliases input line: ''" + line + "''");
+          System.err.println("TESTING  1: maturity-level aliases input line: ''" + line + "''");
         }
         line = line.split("#")[0]; // discard comments
         if (verbosity > 5) {
-          System.err.println("TESTING 2: maturity level aliases input line after discarding comments: ''" + line + "''");
+          System.err.println("TESTING  2: maturity level aliases input line after discarding comments: ''" + line + "''");
         }
         line = line.replace(" ", "").toLowerCase(); // this algorithm will result in some "unexpected interpretations" for seemingly-invalid inputs, e.g. "d e v =" is equivalent to "dev=" and "1 2 3 4 5" is equivalent to "12345"
         if (verbosity > 5) {
-          System.err.println("TESTING 3: maturity level aliases input line after removing all ASCII spaces and lower-casing: ''" + line + "''");
+          System.err.println("TESTING  3: maturity level aliases input line after removing all ASCII spaces and lower-casing: ''" + line + "''");
         }
         if (line.length() > 0) {
           Matcher m1 = Pattern.compile("(\\p{javaLowerCase}+)=(\\d+).*").matcher(line); // allows trailing "garbage"
           if (verbosity > 5) {
-            System.err.println("TESTING 4: m1: " + m1);
-            System.err.println("TESTING 5: m1.groupCount() -> " + m1.groupCount());
+            System.err.println("TESTING  4: m1: " + m1);
+            System.err.println("TESTING  5: m1.groupCount() -> " + m1.groupCount());
           }
 
           if (verbosity > 5) {
-            System.err.println("TESTING 6: m1: " + m1);
+            System.err.println("TESTING  6: m1: " + m1);
           }
           final boolean line_matched_the_regex = m1.find(); // CRUCIAL
           if (verbosity > 5) {
-            System.err.println("TESTING 7: line_matched_the_regex: " + line_matched_the_regex);
+            System.err.println("TESTING  7: line_matched_the_regex: " + line_matched_the_regex);
           }
 
           if (line_matched_the_regex) {
 
             if (verbosity > 5) {
-              System.err.println("TESTING 8: m1: " + m1);
+              System.err.println("TESTING  8: m1: " + m1);
             }
 
             MatchResult mr1 = m1.toMatchResult();
