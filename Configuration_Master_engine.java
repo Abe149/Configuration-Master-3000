@@ -51,7 +51,22 @@ public class Configuration_Master_engine {
     String                         the_key       = null;
     String                         the_value     = null;
 
-    // ... WIP ... //
+    line = line.trim();
+    if ('#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
+      line = line.replaceFirst("⍝.*", "").trim(); // HARD-CODED: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
+      final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
+
+      // TO DO: make this fail more elegantly when the number of split results is not as expected
+      final String the_MLC_and_integer_as_a_string = the_split[0].trim();
+      final char the_MLC_as_a_char = the_MLC_and_integer_as_a_string.charAt(0);
+      // WIP
+      the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_and_integer_as_a_string.substring(1).trim());
+
+      the_namespace = the_split[1].trim();
+      the_key       = the_split[2].trim();
+
+      // ... WIP ... //
+    }
 
     return new semiParsed_line_for_a_schema_or_config___values_are_all_Strings(new tuple_for_key_of_a_schema_or_config(the_MLC, the_maturity_level_to_which_to_compare, the_namespace, the_key), the_value);
   }

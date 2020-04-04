@@ -44,7 +44,7 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
-    private final static int verbosity = 5; // TO DO: fix the fact that this is HARD-CODED
+    private final static int verbosity = 4; // TO DO: fix the fact that this is HARD-CODED
 
     private final static String data_directory = "data/"; // DRY
 
@@ -203,7 +203,7 @@ public class Configuration_Master_server {
                 }
             });
 
-            if (verbosity > 4) {
+            if (verbosity > 3) {
                 for (File config_file : config_files) {
                     System.err.println("DEBUG: config. file found at ''" + config_file + "''");
                 }
@@ -219,7 +219,7 @@ public class Configuration_Master_server {
               schema_inputs.add(new BufferedReader(new FileReader(schema_file)));
             }
 
-            if (verbosity > 4) {
+            if (verbosity > 3) {
                 System.err.println("DEBUG: # of BufferedReader objects created for config. files: " + config_inputs.size());
                 System.err.println("DEBUG: # of BufferedReader objects created for schema  files: " + schema_inputs.size());
             }

@@ -1,8 +1,8 @@
 =0␟Namespace 1␟key 1␟“string value”
 >0␟Namespace 1␟key 1␟“string value”
 <9␟Namespace 1␟key 2␟“string value”
->0␟Namespace 1␟key 1␟“string value”
-<9␟Namespace 1␟key 2␟“string value”
+>0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
+<9␟Namespace 1␟key 2␟“string value” ⍝ if you really insist on writing a same-line comment, then start it using the APL lamp
 
 # blank lines are allowed, and comment lines are allowed, with a first non-{ASCII space} character of ‘#’
    # leading and trailing ASCII spaces should be ignored
