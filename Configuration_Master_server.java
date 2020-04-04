@@ -165,6 +165,8 @@ public class Configuration_Master_server {
     public static void main(String[] args) throws Exception {
         System.err.println("\n\n"); // to separate "our" output from Ant`s when e.g. running this program via "ant run"
 
+        boolean check_only = false;
+
         for (String arg : args) {
             arg = arg.replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
             if        ("help".equals(arg) || "h".equals(arg)) {
@@ -175,6 +177,8 @@ public class Configuration_Master_server {
                   "\n"+
                   "strict_checking : makes the grammar checking of the engine strict.\n" +
                   "                  It`s probably best to leave this at the default [off] when running the server “for real”.\n" +
+                  "\n"+
+                  "check_only : _only_ start up the engine, i.e. mainly to run syntax+grammar checking of the data.\n" +
                   "\n"+
                   "v : increase verbosity by 1; hard-coded default is " + default_verbosity + "\n" +
                   "\n"+
@@ -193,6 +197,11 @@ public class Configuration_Master_server {
                 if (verbosity > 0) {
                     System.err.println("INFO: increased verbosity to " + verbosity + " according to CLI arg.");
                 }
+            } else if ("check_only"     .equals(arg)) {
+                check_only = true;
+                if (verbosity > 0) {
+                    System.err.println("INFO: check-only mode enabled, in accordance with CLI arg.");
+                }
             } else if (arg != null && arg.startsWith("verbosity=")) {
                 try {
                     final int new_verbosity = Integer.parseInt(arg.substring("verbosity=".length()));
@@ -209,29 +218,6 @@ public class Configuration_Master_server {
 
 
         try {
-            // set up the socket address
-            InetSocketAddress address = new InetSocketAddress(4430); // IMPORTANT hard-coded value: 4430 instead of 443 on purpose, for non-root use
-
-            // initialise the HTTPS server
-            HttpsServer httpsServer = HttpsServer.create(address, 0);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-
-            // initialise the keystore
-            final char[] password = "Configuration_Master_3000".toCharArray();
-            KeyStore ks = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream(data_directory + "/Configuration_Master.keystore"); // HARD-CODED
-            ks.load(fis, password);
-
-            // set up the key manager factory
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(ks, password);
-
-            // set up the trust manager factory
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-            tmf.init(ks);
-
-
-
             // set up the engine
 
             BufferedReader maturityLevel_aliases_input = new BufferedReader(new FileReader(data_directory + "/maturity-level_aliases")); // HARD-CODED
@@ -278,6 +264,38 @@ public class Configuration_Master_server {
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
             Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
+
+
+
+            if (check_only) {
+                if (verbosity > 0) {
+                    System.err.println("INFO: exiting before/instead-of launching the server [since check-only mode is enabled, in accordance with a CLI arg.].");
+                }
+                System.exit(0);
+            }
+
+
+
+            // set up the socket address
+            InetSocketAddress address = new InetSocketAddress(4430); // IMPORTANT hard-coded value: 4430 instead of 443 on purpose, for non-root use
+
+            // initialise the HTTPS server
+            HttpsServer httpsServer = HttpsServer.create(address, 0);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+
+            // initialise the keystore
+            final char[] password = "Configuration_Master_3000".toCharArray();
+            KeyStore ks = KeyStore.getInstance("JKS");
+            FileInputStream fis = new FileInputStream(data_directory + "/Configuration_Master.keystore"); // HARD-CODED
+            ks.load(fis, password);
+
+            // set up the key manager factory
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ks, password);
+
+            // set up the trust manager factory
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+            tmf.init(ks);
 
 
 

@@ -32,4 +32,4 @@ Namespace 3␟key 2␟string ⍝ redundant WRT "*␟key 2␟string", but should 
 
 
 # *␟test of a bad schema line due to an asterisk in the type position␟*
-*␟*␟string ⍝ test of a bad schema line due to an asterisk in the key position
+# *␟*␟string ⍝ test of a bad schema line due to an asterisk in the key position
