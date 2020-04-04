@@ -249,7 +249,7 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
-        // the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
+        // -- the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
         // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking... <https://docs.oracle.com/javase/6/docs/api/java/net/URL.html#URL(java.lang.String)>
         if (the_value.get_as_String().length() < 1 || ! is_this_string_a_valid_URL(the_value.get_as_String())) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
@@ -417,6 +417,9 @@ public class Configuration_Master_engine {
             if (verbosity > 5) {
               System.err.println("TESTING 15: schema line parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
             }
+            if (verbosity > 0 && null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
+              System.err.println("\033[33mWARNING: schema line parse indicates a line with valid key and namespace, but an _invalid_ type value: “" + line + "”\033[0m");
+            }
           } else { // looks like a valid line
             if (verbosity > 5) {
               System.err.println("TESTING 16: schema line parse indicates a line with valid data!  Hooray!!!");
@@ -479,13 +482,20 @@ public class Configuration_Master_engine {
       } // end for BufferedReader config_input : config_inputs
 
 
+      // --- "asterisk validation" for the configurations     --- //
+      // --- performance warning: this is BRUTE FORCE for now --- //
 
-      // --- TO DO: "asterisk validation" for the configurations --- //
-      // --- TO DO: "asterisk validation" for the configurations --- //
-      // --- TO DO: "asterisk validation" for the configurations --- //
-      // --- TO DO: "asterisk validation" for the configurations --- //
-      // --- TO DO: "asterisk validation" for the configurations --- //
-      // --- TO DO: "asterisk validation" for the configurations --- //
+      /*
+      for (tuple_for_key_of_a_config outer_key : the_schema.keySet()) {
+        if ("*".equals(outer_key.the_namespace)) {
+          for (tuple_for_key_of_a_schema inner_key : the_schema.keySet()) {
+            if (outer_key.the_key.equals(inner_key.the_key) && the_schema.get(outer_key) != the_schema.get(inner_key)) {
+              throw new IOException("Data inconsistency: conflicting for-all-namespaces in schema: " + outer_key + " mapping to «" + the_schema.get(outer_key) + "» conflicts with " + inner_key + " mapping to «" + the_schema.get(inner_key) + '»');
+            }
+          }
+        }
+      }
+      */
 
 
 
