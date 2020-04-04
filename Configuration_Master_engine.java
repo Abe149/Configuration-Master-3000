@@ -299,7 +299,22 @@ public class Configuration_Master_engine {
       } // end for BufferedReader schema_input : schema_inputs
 
       if (verbosity > 0) {
+        System.err.println();
         System.err.println("INFO: the_schema: " + the_schema);
+        System.err.println();
+      }
+
+      // --- "asterisk validation" for the schema --- //
+
+      // this algorithm is slow and probably also stupid
+      for (tuple_for_key_of_a_schema outer_key : the_schema.keySet()) {
+        if ("*".equals(outer_key.the_namespace)) {
+          for (tuple_for_key_of_a_schema inner_key : the_schema.keySet()) {
+            if (outer_key.the_key.equals(inner_key.the_key) && the_schema.get(outer_key) != the_schema.get(inner_key)) {
+              throw new IOException("Data inconsistency: conflicting for-all-namespaces in schema: " + outer_key + " mapping to «" + the_schema.get(outer_key) + "» conflicts with " + inner_key + " mapping to «" + the_schema.get(inner_key) + '»');
+            }
+          }
+        }
       }
 
 // saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
