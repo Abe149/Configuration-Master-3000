@@ -128,6 +128,11 @@ public class Configuration_Master_engine {
       the_value_str = the_split[2].trim();
     }
 
+    if (verbosity > 0 && "*".equals(the_key)) {
+      System.err.println("\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m");
+      return null;
+    }
+
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
 
     return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
@@ -308,8 +313,12 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
 
+  private int verbosity; // so non-ctor methods will be able to read this value without me needing to pass it around
 
-  Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity) throws IOException { // start of ctor
+
+  Configuration_Master_engine(BufferedReader maturityLevel_aliases_input, BufferedReader[] schema_inputs, BufferedReader[] config_inputs, int verbosity_in) throws IOException { // start of ctor
+
+    verbosity = verbosity_in;
 
     typenames_to_types = new Hashtable<String, value_types>();
     for (value_types VT : value_types.values()) {
@@ -418,7 +427,7 @@ public class Configuration_Master_engine {
               System.err.println("TESTING 15: schema line parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
             }
             if (verbosity > 0 && null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
-              System.err.println("\033[33mWARNING: schema line parse indicates a line with valid key and namespace, but an _invalid_ type value: “" + line + "”\033[0m");
+              System.err.println("\033[33mWARNING: schema line parse indicates a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m");
             }
           } else { // looks like a valid line
             if (verbosity > 5) {
