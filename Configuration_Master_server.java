@@ -192,10 +192,10 @@ public class Configuration_Master_server {
                 if (verbosity > 0) {
                     System.err.println("INFO: activated strict-checking mode, according to CLI arg.; this is probably not something you really want when running the server “for real”.");
                 }
-            } else if ("v"              .equals(arg)) {
-                verbosity += 1;
+            } else if (arg != null && arg.matches("v+")) { // supports not only e.g. "-v" but also e.g. "-vv" and "vvv"
+                verbosity += arg.length();
                 if (verbosity > 0) {
-                    System.err.println("INFO: increased verbosity to " + verbosity + " according to CLI arg.");
+                    System.err.println("INFO: increased verbosity [by " + arg.length() + "] to " + verbosity + " according to CLI arg.");
                 }
             } else if ("check_only"     .equals(arg)) {
                 check_only = true;
@@ -217,7 +217,7 @@ public class Configuration_Master_server {
 
 
         if (verbosity > 0) {
-            System.err.println("INFO: running with a verbosity level of " + verbosity);
+            System.err.println("\nINFO: running with a verbosity level of " + verbosity);
         }
 
 
