@@ -44,6 +44,8 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
+    private final static int verbosity = 5; // TO DO: fix the fact that this is HARD-CODED
+
     private final static String data_directory = "data/"; // DRY
 
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
@@ -186,12 +188,45 @@ public class Configuration_Master_server {
             // set up the engine
 
             BufferedReader maturityLevel_aliases_input = new BufferedReader(new FileReader(data_directory + "/maturity-level_aliases")); // HARD-CODED
-            ArrayList<BufferedReader> schema_inputs = new ArrayList<BufferedReader>();
             ArrayList<BufferedReader> config_inputs = new ArrayList<BufferedReader>();
+            ArrayList<BufferedReader> schema_inputs = new ArrayList<BufferedReader>();
+
+            // thanks to "jjnguy" at <https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java>
+            final File[] config_files = new File(data_directory).listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".configurations");
+                }
+            });
+            final File[] schema_files = new File(data_directory).listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".schema");
+                }
+            });
+
+            if (verbosity > 4) {
+                for (File config_file : config_files) {
+                    System.err.println("DEBUG: config. file found at ''" + config_file + "''");
+                }
+                for (File schema_file : schema_files) {
+                    System.err.println("DEBUG: schema  file found at ''" + schema_file + "''");
+                }
+            }
+
+            for (File config_file : config_files) {
+              config_inputs.add(new BufferedReader(new FileReader(config_file)));
+            }
+            for (File schema_file : schema_files) {
+              schema_inputs.add(new BufferedReader(new FileReader(schema_file)));
+            }
+
+            if (verbosity > 4) {
+                System.err.println("DEBUG: # of BufferedReader objects created for config. files: " + config_inputs.size());
+                System.err.println("DEBUG: # of BufferedReader objects created for schema  files: " + schema_inputs.size());
+            }
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), 4); // WIP: the integer at the end is a HARD-CODED verbosity level
+            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity);
 
 
 
