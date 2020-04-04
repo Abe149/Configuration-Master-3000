@@ -216,6 +216,10 @@ public class Configuration_Master_server {
         }
 
 
+        if (verbosity > 0) {
+            System.err.println("INFO: running with a verbosity level of " + verbosity);
+        }
+
 
         try {
             // set up the engine
