@@ -254,6 +254,10 @@ public class Configuration_Master_engine {
     String get_as_String() {
       return string_value;
     }
+
+    public String toString() { // for debugging etc.
+      return " config_algebraic_type<use_string=" + use_string + ", integer_value=" + integer_value + ", string_value=" + stringize_safely(string_value) + "> ";
+    }
   }
 
 
