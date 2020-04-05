@@ -9,7 +9,7 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
-  private int get_maturityLevel_integer_from_alias(String alias_in) {
+  public int get_maturityLevel_integer_from_alias(String alias_in) {
     return maturityLevel_aliases.get(alias_in.toLowerCase());
   }
 
@@ -195,7 +195,7 @@ public class Configuration_Master_engine {
           throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
         }
       final String the_MLC_spec_after_the_initial_char = the_MLC_spec_as_a_string.substring(1).trim();
-      if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) {
+      if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) { // negative integers are _intentionally_ unsupported
         the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_after_the_initial_char);
       } else {
         the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
@@ -308,6 +308,15 @@ public class Configuration_Master_engine {
 
     String get_as_String() {
       return string_value;
+    }
+
+    // this is needed for the correct "asterisk validation" of the configurations, if not also for other things
+    public boolean equals(config_algebraic_type other) {
+      if (null == other)                                       return false; // embedded assumption: "this" can never be null
+      if (use_string != other.use_string)                      return false;
+      if (! use_string)                                        return integer_value == other.integer_value;
+      if (null == string_value || null == other.string_value)  return string_value == other.string_value; // _intentionally_ comparing pointers
+      return string_value.equals(other.string_value);
     }
 
     public String toString() { // for debugging etc.
@@ -512,18 +521,17 @@ public class Configuration_Master_engine {
 
       // --- "asterisk validation" for the configurations     --- //
       // --- performance warning: this is BRUTE FORCE for now --- //
+      // INCOMPLETENESS WARNING: this implementation almost-certainly only finds conflicts that have the same maturity-level comparison specifier
 
-      /*
-      for (tuple_for_key_of_a_config outer_key : the_schema.keySet()) {
+      for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
         if ("*".equals(outer_key.the_namespace)) {
-          for (tuple_for_key_of_a_schema inner_key : the_schema.keySet()) {
-            if (outer_key.the_key.equals(inner_key.the_key) && the_schema.get(outer_key) != the_schema.get(inner_key)) {
-              throw new IOException("Data inconsistency: conflicting for-all-namespaces in schema: " + outer_key + " mapping to «" + the_schema.get(outer_key) + "» conflicts with " + inner_key + " mapping to «" + the_schema.get(inner_key) + '»');
+          for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
+            if ( outer_key.the_key.equals(inner_key.the_key) && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) ) ) {
+              throw new IOException("Data inconsistency: conflicting for-all-namespaces in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
             }
           }
         }
       }
-      */
 
 
 
@@ -544,8 +552,6 @@ public class Configuration_Master_engine {
 
 
 
-
-// get_configuration(maturity_level, namespace, key) // WIP
 
   public static String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
 

@@ -35,6 +35,15 @@
 # *␟*␟test bad  positive_integer␟0
   *␟*␟test good positive_integer␟1
 
+  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK, as it is redundant [same value as the resepctive line with an asterisked namespace]
+
+#  *␟foo␟test good positive_integer␟2 ⍝ testing conflict detection: this is _bad_ [conflicts with value of 1 in "*␟*␟test good positive_integer␟1"]
+
+
+
+# *␟Namespace 1␟*␟9 ⍝ attempting to use '*' as the key will always fail; as of this writing, it fails simply b/c there is no matching [valid] entry in the schema, so the value cannot be type-checked
+
+
 # --- testing aliases for maturity levels --- #
 =sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
 =dev    ␟Namespace 1␟key 5␟“string value for... maturity level "dev"                :: Namespace 1 :: key 5”
