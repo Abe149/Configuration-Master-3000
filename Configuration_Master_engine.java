@@ -605,8 +605,8 @@ public class Configuration_Master_engine {
     }
 
     // for strict-checking mode: enable us to collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK"
-    ArrayList<String>                    the_matches                      = new ArrayList<String>();
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
+    ArrayList<String>                    the_matches                      = new ArrayList<String>();
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
       switch (the_key_of_the_config.the_MLC_kind) {
@@ -637,15 +637,17 @@ public class Configuration_Master_engine {
       {
         final String the_match = the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
         if (strict_checking_mode_enabled) {
-          the_matches.add(the_match);
           the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
+          the_matches                     .add(the_match);
         } else {
-          return          the_match;
+          return                               the_match;
         } // end if
       } // end if
     } // end for
 
     // maybe TO DO, but low priority: I _could_ assert here [not using literally "assert", b/c that`s broken/useless in/on Java] that the_matches.size() == the_matching_KeyOfConfig_objects.size()
+
+    // A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code below checks for conflicts using the string representations after a _complete_ "unparse" of the relevant internal datum, not only can it not disambiguate between data with different types but the same values [e.g.: a URL with the value "http://example.com/" vs. a _string_ with the value "http://example.com/", a positive integer with the value 1 vs. a nonnegative integer with the value 1], but it _also_ cannot disambiguate between a positive integer with the value 1 and a string with the value "1" [w/o the quotes], and therefor will consider all those "could be viewed as conflicting" scenarios as "OK, just redundant"; perhaps TO DO about this: enable/implement multiple _levels_ of strictness, and if/when e.g. strictness>1 then check for these conflicts [i.e. type conflicts even when the values are either identical or "look the same" (i.e. 1 vs. "1")]
 
     // there is no need to enclose the following switch block in "if (strict_checking_mode_enabled)": if/when _not_, "the_matches" should be _empty_, therefor "case 0:  return null;" will be used, i.e. the same outcome as if the switch block _had_ been enclosed in "if (strict_checking_mode_enabled)"
     switch (the_matches.size()) {
@@ -655,43 +657,52 @@ public class Configuration_Master_engine {
         // search for conflicting _values_, i.e. different results for the same query when compared against different MLC spec.s 
 
         // AFAIK & IIRC there shouldn`t _be_ any nulls in this, but let`s play it safe all the same and handle the theoretical possibility; a policy decision I made: if _all_ of them are null, this is considered OK _here_, i.e. we are letting "somewhere else" deal with the problem
-        if (null == the_matches.get(0)) {
+        final String first_match = the_matches.get(0);
+        if (null == first_match) {
           boolean bad = false; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
           for (String the_match : the_matches) {
             if (null != the_match) {
-              // throw new IOException("Inconsistency and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.");
               bad = true;
               break;
             }
           } // end for
           if (bad) {
-            final String base_report = "Inconsistency and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
-            String string_for_exception = base_report + "  Matches:  ";
-
-            System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
-            System.err.println();
-            System.err.println("Matches found");
-            System.err.println("-------------");
-            for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
-              final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + stringize_safely(the_matches.get(index));
-              System.err.println("\033[31m" + mapping_string + "\033[0m");
-              string_for_exception = string_for_exception + mapping_string;
-              if (index < the_matches.size() - 1)  string_for_exception = string_for_exception + "; ";
-              else                                 string_for_exception = string_for_exception + '.';
-            }
-            System.err.println("-------------\n");
-
-            throw new IOException(string_for_exception);
+            final String base_report = "Data conflict and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
+            handle_conflicting_matches(base_report, the_matching_KeyOfConfig_objects, the_matches);
+            return null;
           } // end if bad
-        } else { // not null, thank the FSM
-          // final first_match =
+
+        } else { // the first element of "the_matches" is not null, thank the FSM
+
         }
       // "missing" '}' here is OK, b/c we are inside a switch
     } // end switch
 
     // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
     return null;
-
   } // end of "get_configuration"
+
+
+  private void handle_conflicting_matches(String base_report,
+                                          ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
+                                          ArrayList<String> the_matches
+                                         ) throws IOException {
+    String string_for_exception = base_report + "  Matches:  ";
+
+    System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
+    System.err.println();
+    System.err.println("Matches found");
+    System.err.println("-------------");
+    for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
+      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + stringize_safely(the_matches.get(index));
+      System.err.println("\033[31m" + mapping_string + "\033[0m");
+      string_for_exception = string_for_exception + mapping_string;
+      if (index < the_matches.size() - 1)  string_for_exception = string_for_exception + "; ";
+      else                                 string_for_exception = string_for_exception + '.';
+    }
+    System.err.println("-------------\n");
+
+    if (strict_checking_mode_enabled) throw new IOException(string_for_exception);
+  }
 
 } // end of class "Configuration_Master_engine"
