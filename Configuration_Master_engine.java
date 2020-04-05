@@ -422,12 +422,12 @@ public class Configuration_Master_engine {
             }
 
             final String            alias = m1.group(1);
-            if (verbosity > 4) {
+            if (verbosity > 5) {
               System.err.println("TESTING 11: alias=''" + alias + "''");
             }
             final String number_as_string = m1.group(2);
             final int number = Integer.parseInt(number_as_string);
-            if (verbosity > 4) {
+            if (verbosity > 5) {
               System.err.println("TESTING 12: number: " + number);
               System.err.println();
             }
@@ -523,13 +523,13 @@ public class Configuration_Master_engine {
       for (BufferedReader config_input : config_inputs) {
         while (config_input.ready()) {
           String line = config_input.readLine();
-          if (verbosity > 1) {
+          if (verbosity > 5) {
             System.err.println();
             System.err.println("TESTING 18: config. input line: ''" + line + "''");
           }
 
           parsed_line_for_a_config parse_result = parse_and_typecheck_a_line_for_a_config(line);
-          if (verbosity > 1) {
+          if (verbosity > 5) {
             System.err.println("TESTING 19: config line parse: " + parse_result);
           }
 
