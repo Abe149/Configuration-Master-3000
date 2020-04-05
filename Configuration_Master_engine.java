@@ -317,6 +317,11 @@ public class Configuration_Master_engine {
       return string_value;
     }
 
+    String get_as_String_even_if_the_value_is_an_integer() { // for the main getter that provides this engine with its raison dêtre
+      if (use_string)  return string_value;
+      return String.valueOf(integer_value);
+    }
+
     // this is needed for the correct "asterisk validation" of the configurations, if not also for other things
     public boolean equals(config_algebraic_type other) {
       if (null == other)                                       return false; // embedded assumption: "this" can never be null
@@ -583,6 +588,9 @@ public class Configuration_Master_engine {
 
 
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+    if (null == namespace_of_query || null == key_of_query)
+      throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
+
     if (verbosity > 1) {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
@@ -610,9 +618,16 @@ public class Configuration_Master_engine {
 
         // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
 
- //       if 
+        if (   (namespace_of_query.equals(the_key_of_the_config.the_namespace) || "*".equals(the_key_of_the_config.the_namespace))
+            && key_of_query.equals(the_key_of_the_config.the_key)
+           )
+        {
+          return the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
+        }
     }
 
+
+    // WIP: nothing found, so "return" a 404 somehow
 
 
     // WIP WIP WIP //
