@@ -158,6 +158,7 @@ public class Configuration_Master_server {
             final String response = the_engine.get_configuration(maturity_level, namespace, key);
 
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
             he.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = he.getResponseBody();
             os.write(response.getBytes());
