@@ -195,6 +195,7 @@ public class Configuration_Master_engine {
           throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
         }
       final String the_MLC_spec_after_the_initial_char = the_MLC_spec_as_a_string.substring(1).trim();
+      // System.err.println("DEBUG: the_MLC_spec_after_the_initial_char=''" + the_MLC_spec_after_the_initial_char + "''");
       if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) { // negative integers are _intentionally_ unsupported
         the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_after_the_initial_char);
       } else {
@@ -549,24 +550,21 @@ public class Configuration_Master_engine {
       // --- "asterisk validation" for the configurations     --- //
       // --- performance warning: this is BRUTE FORCE for now --- //
 
-
-      /*
-
-
-      WRONG
-
+      // this checker is conservative, but not complete; IOW, it cannot find all the relevant conflicts that could possibly exist
 
       for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
         if ("*".equals(outer_key.the_namespace)) {
           for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
-            if ( outer_key.the_key.equals(inner_key.the_key) && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) ) ) {
+            if (    outer_key.the_MLC_kind == inner_key.the_MLC_kind
+                 && outer_key.the_maturity_level_to_which_to_compare == inner_key.the_maturity_level_to_which_to_compare
+                 && outer_key.the_key.equals(inner_key.the_key)
+                 && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) )
+               ) {
               throw new IOException("Data inconsistency: conflicting for-all-namespaces in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
             }
           }
         }
       }
-*/
-
 
       if (verbosity > 0) {
         System.err.println();

@@ -34,6 +34,7 @@ Namespace 3␟key 2␟string ⍝ redundant WRT "*␟key 2␟string", but should 
 *␟test bad  positive_integer␟positive_integer
 *␟test good positive_integer␟positive_integer
 
+*␟test key name for configuration namespace-asterisk conflict checker␟integer
 
 # *␟test of a bad schema line due to an asterisk in the type position␟*
 # *␟*␟string ⍝ test of a bad schema line due to an asterisk in the key position

@@ -56,4 +56,12 @@
 ≥prod   ␟Namespace 1␟key 5␟“string value for... maturity level "prod" _or_ _higher_ :: Namespace 1 :: key 5”
 
 
+  =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1
+  =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1 ⍝ OK, just redundant
+# =1␟*␟test key name for configuration namespace-asterisk conflict checker␟2 ⍝ bad: conflicting
+
+  =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3
+  =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3 ⍝ OK, just redundant
+# =2␟*␟test key name for configuration namespace-asterisk conflict checker␟4 ⍝ bad: conflicting
+
 ### below this line: not yet supported ###
