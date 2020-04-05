@@ -582,32 +582,43 @@ public class Configuration_Master_engine {
   } // end of ctor
 
 
-  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
+  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
     if (verbosity > 1) {
-      System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=''" + namespace_of_query + "'', key_of_query=''" + key_of_query + "''\n");
+      System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
 
-    // WIP WIP WIP //
-    return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=''" + namespace_of_query + "'', key_of_query=''" + key_of_query + "''"; // place-holder
-    // WIP WIP WIP //
-  }
-
-
-/* for later, for the configuration getter:
-
+    for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
         switch (the_key_of_the_config.the_MLC_kind) {
-          case :
+          case    less_than:
+            if (! (maturity_level_of_query <  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
             break;
-          case :
+          case    less_than_or_equal_to:
+            if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
             break;
-          case :
+          case                 equal_to:
+            if (! (maturity_level_of_query == the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
             break;
-          case :
+          case greater_than_or_equal_to:
+            if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
             break;
-          case :
+          case greater_than:
+            if (! (maturity_level_of_query >  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
             break;
+          default:
+             throw new IOException("Internal program error while trying to match a query to its first matching maturity level.");
         }
 
-*/
+        // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
+
+ //       if 
+    }
+
+
+
+    // WIP WIP WIP //
+    return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query); // place-holder
+    // WIP WIP WIP //
+
+  } // end of "get_configuration"
 
 } // end of class "Configuration_Master_engine"
