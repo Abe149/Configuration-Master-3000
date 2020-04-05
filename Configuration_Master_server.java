@@ -151,6 +151,8 @@ public class Configuration_Master_server {
             // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
             final String response = the_engine.get_configuration(maturity_level, namespace, key);
 
+            http_assert(he, maturity_level >= 0, 400, "maturity levels must not be negative");
+
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = he.getResponseBody();
