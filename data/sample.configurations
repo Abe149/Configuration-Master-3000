@@ -24,6 +24,7 @@
 
 # *␟*␟test bad URL ␟<>
 # *␟*␟test bad URL ␟<foo>
+# *␟*␟test bad URL ␟http://www.fsf.org/ ⍝ bad b/c it`s missing the surrounding < and > characters
   *␟*␟test good URL␟<http://www.fsf.org/>
 
 # *␟*␟test bad  nonempty_string␟“”

@@ -234,6 +234,9 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
+        if ('<' != the_value_str.charAt(0) || '>' != the_value_str.charAt(the_value_str.length()-1)) {
+          throw new IOException("Error while type checking; SYNTAX ERROR for a URL.  Key: " + the_key_of_the_config);
+        }
         the_value = new config_algebraic_type(the_value_str.replaceFirst("^<", "").replaceFirst(">$", ""));
         break;
 
