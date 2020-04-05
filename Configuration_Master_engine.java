@@ -35,7 +35,7 @@ public class Configuration_Master_engine {
     public boolean equals(Object o) {
       if (! tuple_for_key_of_a_config.class.isInstance(o))  return false;
       final tuple_for_key_of_a_config other = (tuple_for_key_of_a_config) o;
-      return the_MLC_kind.equals(other.the_MLC_kind) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
+      return the_MLC_kind.equals(other.the_MLC_kind) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equalsIgnoreCase(other.the_namespace) && the_key.equalsIgnoreCase(other.the_key);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class Configuration_Master_engine {
     public boolean equals(Object o) {
       if (! tuple_for_key_of_a_schema.class.isInstance(o))  return false;
       final tuple_for_key_of_a_schema other = (tuple_for_key_of_a_schema) o;
-      return the_namespace.equals(other.the_namespace) && the_key.equals(other.the_key);
+      return the_namespace.equalsIgnoreCase(other.the_namespace) && the_key.equalsIgnoreCase(other.the_key);
     }
 
     @Override
@@ -103,6 +103,14 @@ public class Configuration_Master_engine {
 
   private Hashtable<String                   , value_types> typenames_to_types; // unfortunately, initializing a hashtable in Java is a {can of worms / Pandora`s box}, so we`ll do it the old-fashioned way
 
+  private value_types get_type_by_name_ignoring_case(String name_in) { // it would be nice if Java supported comparator objects/classes
+    if (null == name_in)  return null;
+    for (String name : typenames_to_types.keySet()) {
+      if (name_in.equalsIgnoreCase(name))  return typenames_to_types.get(name);
+    }
+    return null;
+  }
+
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
   private static String stringize_safely(String input) {
@@ -123,8 +131,8 @@ public class Configuration_Master_engine {
 
       // TO DO: make this fail more elegantly when the number of split results is not as expected
 
-      the_namespace = the_split[0].trim();
-      the_key       = the_split[1].trim();
+      the_namespace = the_split[0].trim().toLowerCase();
+      the_key       = the_split[1].trim().toLowerCase();
       the_value_str = the_split[2].trim();
     }
 
@@ -140,7 +148,8 @@ public class Configuration_Master_engine {
 
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
 
-    return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
+    // return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
+    return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), get_type_by_name_ignoring_case(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
   }
 
 
@@ -149,9 +158,9 @@ public class Configuration_Master_engine {
 
     for (tuple_for_key_of_a_schema key_to_compare : the_schema.keySet()) {
       if (
-             (the_key_of_the_config.the_namespace.equals(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
+             (the_key_of_the_config.the_namespace.equalsIgnoreCase(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
           &&
-             (the_key_of_the_config.the_key.equals(key_to_compare.the_key) || "*".equals(key_to_compare.the_key))
+             (the_key_of_the_config.the_key.equalsIgnoreCase(key_to_compare.the_key) || "*".equals(key_to_compare.the_key))
          )
       {
         return the_schema.get(key_to_compare);
@@ -202,8 +211,8 @@ public class Configuration_Master_engine {
         the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
       }
 
-      the_namespace = the_split[1].trim();
-      the_key       = the_split[2].trim();
+      the_namespace = the_split[1].trim().toLowerCase();
+      the_key       = the_split[2].trim().toLowerCase();
       the_value_str = the_split[3].trim();
     }
 
@@ -562,7 +571,7 @@ public class Configuration_Master_engine {
           for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
             if (    outer_key.the_MLC_kind == inner_key.the_MLC_kind
                  && outer_key.the_maturity_level_to_which_to_compare == inner_key.the_maturity_level_to_which_to_compare
-                 && outer_key.the_key.equals(inner_key.the_key)
+                 && outer_key.the_key.equalsIgnoreCase(inner_key.the_key)
                  && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) )
                ) {
               throw new IOException("Data inconsistency: conflicting for-all-namespaces in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
@@ -618,8 +627,8 @@ public class Configuration_Master_engine {
 
         // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
 
-        if (   (namespace_of_query.equals(the_key_of_the_config.the_namespace) || "*".equals(the_key_of_the_config.the_namespace))
-            && key_of_query.equals(the_key_of_the_config.the_key)
+        if (   (namespace_of_query.equalsIgnoreCase(the_key_of_the_config.the_namespace) || "*".equals(the_key_of_the_config.the_namespace))
+            && key_of_query.equalsIgnoreCase(the_key_of_the_config.the_key)
            )
         {
           return the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
