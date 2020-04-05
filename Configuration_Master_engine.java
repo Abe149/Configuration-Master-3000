@@ -227,6 +227,9 @@ public class Configuration_Master_engine {
 
       case          string:
       case nonempty_string:
+        if ('“' != the_value_str.charAt(0) || '”' != the_value_str.charAt(the_value_str.length()-1)) {
+          throw new IOException("Error while type checking; SYNTAX ERROR for a string.  Key: " + the_key_of_the_config);
+        }
         the_value = new config_algebraic_type(the_value_str.replaceFirst("^“", "").replaceFirst("”$", ""));
         break;
 
@@ -519,10 +522,10 @@ public class Configuration_Master_engine {
       } // end for BufferedReader config_input : config_inputs
 
 
-      // --- "asterisk validation" for the configurations     --- //
-      // --- performance warning: this is BRUTE FORCE for now --- //
       // INCOMPLETENESS WARNING: this implementation almost-certainly only finds conflicts that have the same maturity-level comparison specifier
 
+      // --- "asterisk validation" for the configurations     --- //
+      // --- performance warning: this is BRUTE FORCE for now --- //
       for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
         if ("*".equals(outer_key.the_namespace)) {
           for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
@@ -533,6 +536,22 @@ public class Configuration_Master_engine {
         }
       }
 
+
+
+
+/*
+      // --- conflicting-pseduoduplicate detection for the configurations --- //
+      // --- performance warning: this is BRUTE FORCE for now             --- //
+      for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
+        if ("*".equals(outer_key.the_namespace)) {
+          for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
+            if ( outer_key.the_key.equals(inner_key.the_key) && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) ) ) {
+              throw new IOException("Data inconsistency: conflicting for-all-namespaces in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
+            }
+          }
+        }
+      }
+*/
 
 
       if (verbosity > 0) {

@@ -40,6 +40,7 @@
 #  *␟foo␟test good positive_integer␟2 ⍝ testing conflict detection: this is _bad_ [conflicts with value of 1 in "*␟*␟test good positive_integer␟1"]
 
 
+# *␟Namespace 1␟key 1␟9 ⍝ BAD: won`t type-check, b/c this value is supposed to be a _string_
 
 # *␟Namespace 1␟*␟9 ⍝ attempting to use '*' as the key will always fail; as of this writing, it fails simply b/c there is no matching [valid] entry in the schema, so the value cannot be type-checked
 
