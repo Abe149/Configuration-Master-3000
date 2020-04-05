@@ -545,6 +545,17 @@ public class Configuration_Master_engine {
 
 
 
+// get_configuration(maturity_level, namespace, key) // WIP
+
+  public static String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
+
+    // WIP WIP WIP //
+    return "<place-holder response>"; // place-holder
+    // WIP WIP WIP //
+
+  }
+
+
 /* for later, for the configuration getter:
 
         switch (the_key_of_the_config.the_MLC_kind) {

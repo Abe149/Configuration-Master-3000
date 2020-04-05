@@ -69,6 +69,9 @@ public class Configuration_Master_server {
     }
 
 
+    static Configuration_Master_engine the_engine;
+
+
     public static class GetHandler implements HttpHandler {
         private static String my_prefix;
 
@@ -142,13 +145,11 @@ public class Configuration_Master_server {
             http_assert(he, ! "".equals(namespace            ), 400, "each request must include a namespace");
             http_assert(he, ! "".equals(key                  ), 400, "each request must include a key");
 
+            final int maturity_level = Integer.parseInt(maturity_level_string); // this might crash if the input is invalid
 
+            // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // WIP
+            final String response = the_engine.get_configuration(maturity_level, namespace, key);
 
-            String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n";
-
-
-
-            // HttpsExchange httpsExchange = (HttpsExchange) he;
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
             OutputStream os = he.getResponseBody();
@@ -156,6 +157,7 @@ public class Configuration_Master_server {
             os.close();
         }
     }
+
 
     private static boolean strict_checking_mode_enabled = false;
 
@@ -267,7 +269,7 @@ public class Configuration_Master_server {
 
             BufferedReader[] dummy_for_conversion = new BufferedReader[0];
 
-            Configuration_Master_engine my_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
+            the_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
 
 
 
