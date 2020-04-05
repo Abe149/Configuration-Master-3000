@@ -113,7 +113,7 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
-  private static String stringize_safely(String input) {
+  public static String stringize_safely(String input) { // TO DO [but low-priority]: pull this out into a separate "library class"
     if (null == input)  return "«null»";
     return "“" + input + "”";
   }
@@ -148,7 +148,6 @@ public class Configuration_Master_engine {
 
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
 
-    // return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), typenames_to_types.get(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
     return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), get_type_by_name_ignoring_case(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
   }
 
@@ -636,12 +635,11 @@ public class Configuration_Master_engine {
     }
 
 
-    // WIP: nothing found, so "return" a 404 somehow
+    // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
 
+    return null;
 
-    // WIP WIP WIP //
-    return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query); // place-holder
-    // WIP WIP WIP //
+    // return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query); // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
 
   } // end of "get_configuration"
 

@@ -88,6 +88,7 @@ public class Configuration_Master_server {
                 myLogger.warning(extended_response_plus_newline);
 
                 final byte[] extended_response_plus_newline_arrayOfBytes = extended_response_plus_newline.getBytes();
+                he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
                 he.sendResponseHeaders(status, extended_response_plus_newline_arrayOfBytes.length);
                 OutputStream os = he.getResponseBody();
                 os.write(extended_response_plus_newline_arrayOfBytes);
@@ -164,6 +165,8 @@ public class Configuration_Master_server {
 
             // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
             final String response = the_engine.get_configuration(maturity_level, namespace, key);
+
+            http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + Configuration_Master_engine.stringize_safely(namespace) + ", key=" + Configuration_Master_engine.stringize_safely(key));
 
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
