@@ -117,7 +117,15 @@ public class Configuration_Master_server {
 
             for (String rc : request_components) {
                 myLogger.info("Request component: ''" + rc + "''");
-                final String lowered_and_despaced = rc.toLowerCase().replaceAll(" ", "");
+
+                // final String lowered_and_despaced = rc.toLowerCase().replaceAll(" ", ""); // imperfect: we need to be more careful with _which_ spaces we remove
+
+                final String lowered = rc.toLowerCase();
+                final String[] split_for_careful_despacing = lowered.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
+
+                // in principle, I could assert here if the array length of the split isn`t exactly 2 [TO DO?]
+
+                final String lowered_and_despaced = split_for_careful_despacing[0].trim() + '=' + split_for_careful_despacing[1].trim();
                 myLogger.info("Request component, lowered and despaced: ''" + lowered_and_despaced + "''");
 
                 // TO DO: clean this up, DRY-wise...  maybe with a[n] [inner?] class-level method, maybe with a lambda
