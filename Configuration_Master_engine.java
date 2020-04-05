@@ -380,6 +380,7 @@ public class Configuration_Master_engine {
       while (maturityLevel_aliases_input.ready()) {
         String line = maturityLevel_aliases_input.readLine();
         if (verbosity > 5) {
+          System.err.println();
           System.err.println("TESTING  1: maturity-level aliases input line: ''" + line + "''");
         }
         line = line.split("#")[0]; // discard comments
