@@ -1,3 +1,20 @@
-https://localhost:4430/get:maturity_LeveL%20%20%20%20=%20%20%20DEV,namespace%20=Qwer,key=%20Asdf
+https://localhost:4430/get:%E2%81%8B
+https://localhost:4430/get:fucked,%20eh?%20%20%E2%81%8B
 https://localhost:4430/get:key=%20Asdf,maturity_LeveL%20%20%20%20=%20%20%20DEV,namespace%20=Qwer,key=%20Asdf
+https://localhost:4430/get:key=%20Asdf,maturity_LeveL%20%20%20%20=%20%20%20DEV,namespace%20=Qwer,key=%20Asdf,key=%20AsdfZXX,key=%20AsdfZXXX2
+https://localhost:4430/get:maturity_level=0,namespace=Namespace%201,key=key%201
+https://localhost:4430/get:maturity_level=0,namespace=Namespace%201,key=test%20good%20URL
+https://localhost:4430/get:maturity_level=0,namespace=Namespace%20any%20old%20fucking%20namespace,key=test%20good%20URL
+https://localhost:4430/get:maturity_level=0,namespace=qwer,key=asdf
+https://localhost:4430/get:maturity_level=12345,namespace=Namespace%20any%20old%20fucking%20namespace,key=test%20good%20URL
+https://localhost:4430/get:maturity_LeveL%20%20%20%20=%20%20%20DEV,namespace%20=Qwer,key=%20Asdf
+https://localhost:4430/get:maturity_level=Dev,namespace=Namespace any old fucking namespace,key=test good URL
+https://localhost:4430/get:maturity_level=DeV,namespace=qwer,key=asdf
+https://localhost:4430/get:maturity_level=DEV,namespace=qwer,key=asdf
+https://localhost:4430/get:maturity_level=%E9%96%8B%E7%99%BA,namespace=Namespace%20any%20old%20fucking%20namespace,key=test%20good%20URL
+
+https://localhost:4430/test
+https://localhost:4430/test%20of%20the%20emergency%20broadcast%20system!&foo=bar
+https://localhost:4430/test:maturity_level=DEV,namespace=qwer,key=asdf
+https://localhost:4430/test/z%20y
 
