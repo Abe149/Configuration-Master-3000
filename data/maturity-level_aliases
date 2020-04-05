@@ -7,3 +7,7 @@ prod    = 9000
 
 
 開発    = 2250 # Japanese for "development"
+
+# for fun...
+ドラゴンボールZゼット = 9001 # Dragon Ball Z
+悟空のパワーレベル    = 9001 # Goku`s power level

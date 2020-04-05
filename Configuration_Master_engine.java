@@ -430,7 +430,6 @@ public class Configuration_Master_engine {
             final int number = Integer.parseInt(number_as_string);
             if (verbosity > 5) {
               System.err.println("TESTING 12: number: " + number);
-              System.err.println();
             }
             if (number < 0) {
               throw new IOException("Negative number in maturity-level aliases: for alias ''" + alias + "'', got " + String.valueOf(number));
