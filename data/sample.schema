@@ -13,6 +13,10 @@ Namespace 1␟key 1␟string⍝  if you really insist on writing a same-line com
 # Namespace 2␟key 2␟integer ⍝ this is BAD, since it conflicts with "*␟key 2␟string"
 
 Namespace 3␟key 2␟string ⍝ redundant WRT "*␟key 2␟string", but should be considered OK
+# Namespace 3␟key 2␟integer ⍝ BAD: conflicting
+
+  Namespace 4␟key 6␟nonnegative_integer
+# Namespace 4␟key 6␟            integer ⍝ BAD: conflicting
 
 *␟key 3␟nonnegative_integer
 *␟key 4␟integer

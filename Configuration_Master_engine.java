@@ -519,7 +519,30 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 19: config line parse: " + parse_result);
           }
 
-          if (null != parse_result)  the_configurations.put(parse_result.key, parse_result.value); // save it if it`s good
+// WRONG          if (null != parse_result)  the_configurations.put(parse_result.key, parse_result.value); // save it if it`s good
+
+
+
+          if (null != parse_result) {
+            if (verbosity > 5) {
+              System.err.println("TESTING 20: config. line parse indicates a line with valid data!  Hooray!!!");
+            }
+            if (the_configurations.containsKey(parse_result.key)) {
+              final config_algebraic_type old_value = the_configurations.get(parse_result.key);
+              if (old_value.equals(parse_result.value)) {
+                if (verbosity > 5) {
+                  System.err.println("TESTING 21: config. line seems to be valid, but redundant.  Ignoring.");
+                }
+              } else {
+                throw new IOException("Data inconsistency: conflicting line for configuration: ''" + line + "'' conflicts with prior parse result value " + old_value);
+              }
+            } else { // if _not_ (the_schema.containsKey(parse_result.key))
+              the_configurations.put(parse_result.key, parse_result.value);
+            }
+
+
+          }
+
 
         } // end while
       } // end for BufferedReader config_input : config_inputs
@@ -529,22 +552,14 @@ public class Configuration_Master_engine {
 
       // --- "asterisk validation" for the configurations     --- //
       // --- performance warning: this is BRUTE FORCE for now --- //
-      for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
-        if ("*".equals(outer_key.the_namespace)) {
-          for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
-            if ( outer_key.the_key.equals(inner_key.the_key) && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) ) ) {
-              throw new IOException("Data inconsistency: conflicting for-all-namespaces in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
-            }
-          }
-        }
-      }
 
 
+      /*
 
 
-/*
-      // --- conflicting-pseduoduplicate detection for the configurations --- //
-      // --- performance warning: this is BRUTE FORCE for now             --- //
+      WRONG
+
+
       for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
         if ("*".equals(outer_key.the_namespace)) {
           for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
@@ -555,6 +570,19 @@ public class Configuration_Master_engine {
         }
       }
 */
+
+      // --- conflicting-pseduoduplicate detection for the configurations --- //
+      // --- performance warning: this is BRUTE FORCE for now             --- //
+      for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
+        for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
+          if (null == outer_key || null == inner_key) {
+            throw new IOException("Sanity checking failed in the {conflicting-pseduoduplicate detection for the configurations} phase.");
+          }
+          if ( outer_key.equals(inner_key) && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) ) ) {
+            throw new IOException("Data inconsistency: conflicting values in configurations: " + outer_key + " mapping to " + the_configurations.get(outer_key) + " conflicts with " + inner_key + " mapping to " + the_configurations.get(inner_key));
+          }
+        }
+      }
 
 
       if (verbosity > 0) {

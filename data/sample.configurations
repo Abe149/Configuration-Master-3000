@@ -26,6 +26,8 @@
 # *␟*␟test bad URL ␟<foo>
 # *␟*␟test bad URL ␟http://www.fsf.org/ ⍝ bad b/c it`s missing the surrounding < and > characters
   *␟*␟test good URL␟<http://www.fsf.org/>
+  *␟*␟test good URL␟<http://www.fsf.org/> ⍝  OK b/c it`s redundant
+#  *␟*␟test good URL␟<http://www.gnu.org/> ⍝ bad b/c it`s conflicting
 
 # *␟*␟test bad  nonempty_string␟“”
   *␟*␟test good nonempty_string␟“string value”
