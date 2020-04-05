@@ -550,7 +550,7 @@ public class Configuration_Master_engine {
   public static String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
 
     // WIP WIP WIP //
-    return "<place-holder response>"; // place-holder
+    return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=''" + namespace_of_query + "'', key_of_query=''" + key_of_query + "''"; // place-holder
     // WIP WIP WIP //
 
   }
