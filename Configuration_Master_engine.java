@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.*;
 import java.net.URL;
@@ -603,43 +604,93 @@ public class Configuration_Master_engine {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
 
+    // for strict-checking mode: enable us to collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK"
+    ArrayList<String>                    the_matches                      = new ArrayList<String>();
+    ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
+
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
-        switch (the_key_of_the_config.the_MLC_kind) {
-          case    less_than:
-            if (! (maturity_level_of_query <  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-            break;
-          case    less_than_or_equal_to:
-            if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-            break;
-          case                 equal_to:
-            if (! (maturity_level_of_query == the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-            break;
-          case greater_than_or_equal_to:
-            if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-            break;
-          case greater_than:
-            if (! (maturity_level_of_query >  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-            break;
-          default:
-             throw new IOException("Internal program error while trying to match a query to its first matching maturity level.");
+      switch (the_key_of_the_config.the_MLC_kind) {
+        case    less_than:
+          if (! (maturity_level_of_query <  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case    less_than_or_equal_to:
+          if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case                 equal_to:
+          if (! (maturity_level_of_query == the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case greater_than_or_equal_to:
+          if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case greater_than:
+          if (! (maturity_level_of_query >  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        default:
+           throw new IOException("Internal program error while trying to match a query to its first matching maturity level.");
+      }
+
+      // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
+
+      if (   (namespace_of_query.equalsIgnoreCase(the_key_of_the_config.the_namespace) || "*".equals(the_key_of_the_config.the_namespace))
+          && key_of_query.equalsIgnoreCase(the_key_of_the_config.the_key)
+         )
+      {
+        final String the_match = the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
+        if (strict_checking_mode_enabled) {
+          the_matches.add(the_match);
+          the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
+        } else {
+          return          the_match;
+        } // end if
+      } // end if
+    } // end for
+
+    // maybe TO DO, but low priority: I _could_ assert here [not using literally "assert", b/c that`s broken/useless in/on Java] that the_matches.size() == the_matching_KeyOfConfig_objects.size()
+
+    // there is no need to enclose the following switch block in "if (strict_checking_mode_enabled)": if/when _not_, "the_matches" should be _empty_, therefor "case 0:  return null;" will be used, i.e. the same outcome as if the switch block _had_ been enclosed in "if (strict_checking_mode_enabled)"
+    switch (the_matches.size()) {
+      case 0:  return null; // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
+      case 1:  return the_matches.get(0); // only 1 match, so no chance that there is a conflict
+      default: // the "fun" case
+        // search for conflicting _values_, i.e. different results for the same query when compared against different MLC spec.s 
+
+        // AFAIK & IIRC there shouldn`t _be_ any nulls in this, but let`s play it safe all the same and handle the theoretical possibility; a policy decision I made: if _all_ of them are null, this is considered OK _here_, i.e. we are letting "somewhere else" deal with the problem
+        if (null == the_matches.get(0)) {
+          boolean bad = false; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
+          for (String the_match : the_matches) {
+            if (null != the_match) {
+              // throw new IOException("Inconsistency and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.");
+              bad = true;
+              break;
+            }
+          } // end for
+          if (bad) {
+            final String base_report = "Inconsistency and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
+            String string_for_exception = base_report + "  Matches:  ";
+
+            System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
+            System.err.println();
+            System.err.println("Matches found");
+            System.err.println("-------------");
+            for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
+              final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + stringize_safely(the_matches.get(index));
+              System.err.println("\033[31m" + mapping_string + "\033[0m");
+              string_for_exception = string_for_exception + mapping_string;
+              if (index < the_matches.size() - 1)  string_for_exception = string_for_exception + "; ";
+              else                                 string_for_exception = string_for_exception + '.';
+            }
+            System.err.println("-------------\n");
+
+            throw new IOException(string_for_exception);
+          } // end if bad
+        } else { // not null, thank the FSM
+          // final first_match =
         }
-
-        // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
-
-        if (   (namespace_of_query.equalsIgnoreCase(the_key_of_the_config.the_namespace) || "*".equals(the_key_of_the_config.the_namespace))
-            && key_of_query.equalsIgnoreCase(the_key_of_the_config.the_key)
-           )
-        {
-          return the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
-        }
-    }
-
+      // "missing" '}' here is OK, b/c we are inside a switch
+    } // end switch
 
     // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
-
     return null;
-
-    // return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query); // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
 
   } // end of "get_configuration"
 
