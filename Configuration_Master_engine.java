@@ -582,14 +582,14 @@ public class Configuration_Master_engine {
   } // end of ctor
 
 
-
-
-  public static String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
+  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) {
+    if (verbosity > 1) {
+      System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=''" + namespace_of_query + "'', key_of_query=''" + key_of_query + "''\n");
+    }
 
     // WIP WIP WIP //
     return "<place-holder response> maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=''" + namespace_of_query + "'', key_of_query=''" + key_of_query + "''"; // place-holder
     // WIP WIP WIP //
-
   }
 
 
