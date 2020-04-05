@@ -267,7 +267,7 @@ public class Configuration_Master_engine {
 
       case URL:
         // -- the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
-        // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) { // TO DO / WIP: add better URL checking... <https://docs.oracle.com/javase/6/docs/api/java/net/URL.html#URL(java.lang.String)>
+        // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) {
         if (the_value.get_as_String().length() < 1 || ! is_this_string_a_valid_URL(the_value.get_as_String())) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
         }

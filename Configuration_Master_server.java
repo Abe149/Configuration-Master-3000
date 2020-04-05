@@ -145,13 +145,17 @@ public class Configuration_Master_server {
             http_assert(he, ! "".equals(namespace            ), 400, "each request must include a namespace");
             http_assert(he, ! "".equals(key                  ), 400, "each request must include a key");
 
-            // WIP / TO DO: maturity-level aliases not supported here yet
-            final int maturity_level = Integer.parseInt(maturity_level_string); // this might crash if the input is invalid; maybe TO DO: make this fail more elegantly when it fails
+            int maturity_level = -1;
+            try {
+                maturity_level = Integer.parseInt(maturity_level_string);
+                http_assert(he, maturity_level >= 0, 400, "maturity levels must not be negative");
+            } catch (NumberFormatException nfe) {
+                maturity_level = the_engine.get_maturityLevel_integer_from_alias(maturity_level_string);
+            }
+            http_assert(he, maturity_level >= 0, 400, "internal error while trying to parse maturity level from HTTP input");
 
             // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
             final String response = the_engine.get_configuration(maturity_level, namespace, key);
-
-            http_assert(he, maturity_level >= 0, 400, "maturity levels must not be negative");
 
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
