@@ -183,7 +183,7 @@ public class Configuration_Master_engine {
       return null; // this makes the following code in this function _much_ simpler and more reliable when an empty line or effectively-all-comment line comes in
     }
 
-    final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
+    final String[] the_split = line.split("␟", -1); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR; the -1 prevents problems with the default "split" [i.e. the single-operand one] removing/{not including} the empty string at the end of the array when the last char. of the string being split is the delimiter, which screws up our ability to detect a missing value field [since the program just crashes when trying to access "the_split[3]"]
 
     // TO DO: make this fail more elegantly when the number of split results is not as expected
 
@@ -230,14 +230,24 @@ public class Configuration_Master_engine {
 
     if (the_maturity_level_to_which_to_compare == -1) { // this can [_only_, I hope] happen if/when the syntactic MLC is "<0", thus desugaring to "≤-1"
       if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: “" + line + '”');
+        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: «" + line + '»');
       else {
-        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line “" + line + "”; ignoring it.\033[0m\n");
+        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line «" + line + "»; ignoring it.\033[0m\n");
         return null; // ignore the invalid input in non-strict mode
       }
     }
 
-    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // _maybe_ TO DO _carefully_: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input; why great care is needed in doing so: otherwise, lines that are empty or effectively all-comment will cause an exception to be thrown! ... as of fixing the structural bug in the above code, this _should_ now be safe to do.
+    if (null == the_namespace || null == the_key || null == the_value_str)
+      throw new IOException("Internal error: in the config. parser, at least one of the 3 String references was null in a place where this should be impossible.");
+
+    if (the_namespace.length() < 1 || the_key.length() < 1 || the_value_str.length() < 1) {
+      if (strict_checking_mode_enabled)
+        throw new IOException("Grammatical error: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "».");
+      else {
+        System.err.println("\n\033[33mWARNING: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "»; ignoring it.\033[0m\n");
+        return null; // ignore the invalid input in non-strict mode
+      }
+    }
 
     if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown."); // this must come _after_ the line of code that returns null when the line of input was either empty or effectively all-comment
 
@@ -404,15 +414,15 @@ public class Configuration_Master_engine {
         String line = maturityLevel_aliases_input.readLine();
         if (verbosity > 5) {
           System.err.println();
-          System.err.println("TESTING  1: maturity-level aliases input line: ''" + line + "''");
+          System.err.println("TESTING  1: maturity-level aliases input line: «" + line + '»');
         }
         line = line.split("#")[0]; // discard comments
         if (verbosity > 5) {
-          System.err.println("TESTING  2: maturity level aliases input line after discarding comments: ''" + line + "''");
+          System.err.println("TESTING  2: maturity level aliases input line after discarding comments: «" + line + '»');
         }
         line = line.replace(" ", "").toLowerCase(); // this algorithm will result in some "unexpected interpretations" for seemingly-invalid inputs, e.g. "d e v =" is equivalent to "dev=" and "1 2 3 4 5" is equivalent to "12345"
         if (verbosity > 5) {
-          System.err.println("TESTING  3: maturity level aliases input line after removing all ASCII spaces and lower-casing: ''" + line + "''");
+          System.err.println("TESTING  3: maturity level aliases input line after removing all ASCII spaces and lower-casing: «" + line + '»');
         }
         if (line.length() > 0) {
           Matcher m1 = Pattern.compile("(\\p{IsL}+)=(\\d+).*").matcher(line); // allows trailing "garbage"; "{IsL}" is Java regex for "Is a Letter according to Unicode [includes ideographics and uncased alphabets/abugidas]
@@ -548,7 +558,7 @@ public class Configuration_Master_engine {
           String line = config_input.readLine();
           if (verbosity > 5) {
             System.err.println();
-            System.err.println("TESTING 18: config. input line: ''" + line + "''");
+            System.err.println("TESTING 18: config. input line: «" + line + '»');
           }
 
           parsed_line_for_a_config parse_result = parse_and_typecheck_a_line_for_a_config(line);
@@ -569,7 +579,7 @@ public class Configuration_Master_engine {
                   System.err.println("TESTING 21: config. line seems to be valid, but redundant.  Ignoring.");
                 }
               } else {
-                throw new IOException("Data inconsistency: conflicting line for configuration: ''" + line + "'' conflicts with prior parse result value " + old_value);
+                throw new IOException("Data inconsistency: conflicting line for configuration: «" + line + "» conflicts with prior parse result value " + old_value);
               }
             } else { // if _not_ (the_schema.containsKey(parse_result.key))
               the_configurations.put(parse_result.key, parse_result.value);
