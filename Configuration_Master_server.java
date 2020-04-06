@@ -168,6 +168,10 @@ public class Configuration_Master_server {
 
             http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + Configuration_Master_engine.stringize_safely(namespace) + ", key=" + Configuration_Master_engine.stringize_safely(key));
 
+            if (verbosity > 1) {
+              System.err.println("INFO: result of query: " + Configuration_Master_engine.stringize_safely(response) + '\n');
+            }
+
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
             he.sendResponseHeaders(200, response.getBytes().length);

@@ -59,9 +59,14 @@
   =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1
   =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1 ⍝ OK, just redundant
 # =1␟*␟test key name for configuration namespace-asterisk conflict checker␟2 ⍝ bad: conflicting
+  =3␟*␟test key name for configuration namespace-asterisk conflict checker␟2
 
   =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3
   =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3 ⍝ OK, just redundant
 # =2␟*␟test key name for configuration namespace-asterisk conflict checker␟4 ⍝ bad: conflicting
+
+# this block: _intentionally_-overlapping maturity levels, and intentionally [completely, i.e. including type] redundant-therefor-OK
+>0␟*␟test key name for a positive integer with redundancy␟1
+<9␟*␟test key name for a positive integer with redundancy␟1
 
 ### below this line: not yet supported ###

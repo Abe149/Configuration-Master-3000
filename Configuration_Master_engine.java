@@ -626,7 +626,7 @@ public class Configuration_Master_engine {
           if (! (maturity_level_of_query >  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
           break;
         default:
-           throw new IOException("Internal program error while trying to match a query to its first matching maturity level.");
+           throw new IOException("Internal program error while trying to compare a query to the maturity level of a config.");
       }
 
       // OK; at this point, we are supposed to be confident that the maturity level of the query is compatible with the MLC of the current config.
@@ -636,6 +636,11 @@ public class Configuration_Master_engine {
          )
       {
         final String the_match = the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer();
+
+        if (verbosity > 3) {
+          System.err.println("TESTING 22: match if not null: " + stringize_safely(the_match));
+        }
+
         if (strict_checking_mode_enabled) {
           the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
           the_matches                     .add(the_match);
@@ -645,6 +650,9 @@ public class Configuration_Master_engine {
       } // end if
     } // end for
 
+    if (verbosity > 3) {
+      System.err.println("TESTING 23: the_matching_KeyOfConfig_objects.size() -> " + the_matching_KeyOfConfig_objects.size() + ", the_matches.size() -> " + the_matches.size());
+    }
     // maybe TO DO, but low priority: I _could_ assert here [not using literally "assert", b/c that`s broken/useless in/on Java] that the_matches.size() == the_matching_KeyOfConfig_objects.size()
 
     // A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code below checks for conflicts using the string representations after a _complete_ "unparse" of the relevant internal datum, not only can it not disambiguate between data with different types but the same values [e.g.: a URL with the value "http://example.com/" vs. a _string_ with the value "http://example.com/", a positive integer with the value 1 vs. a nonnegative integer with the value 1], but it _also_ cannot disambiguate between a positive integer with the value 1 and a string with the value "1" [w/o the quotes], and therefor will consider all those "could be viewed as conflicting" scenarios as "OK, just redundant"; perhaps TO DO about this: enable/implement multiple _levels_ of strictness, and if/when e.g. strictness>1 then check for these conflicts [i.e. type conflicts even when the values are either identical or "look the same" (i.e. 1 vs. "1")]
@@ -654,12 +662,16 @@ public class Configuration_Master_engine {
       case 0:  return null; // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
       case 1:  return the_matches.get(0); // only 1 match, so no chance that there is a conflict
       default: // the "fun" case
+        if (verbosity > 3) {
+          System.err.println("TESTING 24: _did_ get to the fun case [in the run-time (AKA query-processing-time)] conflict/redundancy checker/catcher.");
+        }
         // search for conflicting _values_, i.e. different results for the same query when compared against different MLC spec.s 
 
         // AFAIK & IIRC there shouldn`t _be_ any nulls in this, but let`s play it safe all the same and handle the theoretical possibility; a policy decision I made: if _all_ of them are null, this is considered OK _here_, i.e. we are letting "somewhere else" deal with the problem
         final String first_match = the_matches.get(0);
+        boolean bad = false; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
         if (null == first_match) {
-          boolean bad = false; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
+
           for (String the_match : the_matches) {
             if (null != the_match) {
               bad = true;
@@ -674,8 +686,22 @@ public class Configuration_Master_engine {
 
         } else { // the first element of "the_matches" is not null, thank the FSM
 
-        }
-      // "missing" '}' here is OK, b/c we are inside a switch
+          for (String the_match : the_matches) {
+            if (! first_match.equals(the_match)) {
+              bad = true;
+              break;
+            }
+          } // end for
+          if (bad) {
+            final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring types and after converting integers to strings.";
+            handle_conflicting_matches(base_report, the_matching_KeyOfConfig_objects, the_matches);
+            return null;
+          } else { // not bad, therefor good  ;-)
+            return first_match;
+          }
+
+        } // end of else that connects to "if (null == first_match)"
+      // end of "default:"...  "missing" '}' here is OK, b/c we are inside a switch
     } // end switch
 
     // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
