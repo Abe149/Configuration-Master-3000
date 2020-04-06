@@ -188,21 +188,6 @@ public class Configuration_Master_engine {
 
       if ("*".equals(the_MLC_spec_as_a_string))  the_MLC_spec_as_a_string = "≥0"; // this was the easiest way to implement this functionality...  "so sue me" if it isn`t very elegant
 
-      final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
-      switch (the_MLC_operator_as_a_char) {
-        case '<': the_MLC_kind = maturityLevel_comparison_types.less_than;
-          break;
-        case '≤': the_MLC_kind = maturityLevel_comparison_types.less_than_or_equal_to;
-          break;
-        case '=': the_MLC_kind = maturityLevel_comparison_types.equal_to;
-          break;
-        case '≥': the_MLC_kind = maturityLevel_comparison_types.greater_than_or_equal_to;
-          break;
-        case '>': the_MLC_kind = maturityLevel_comparison_types.greater_than;
-          break;
-        default:
-          throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
-        }
       final String the_MLC_spec_after_the_initial_char = the_MLC_spec_as_a_string.substring(1).trim();
       // System.err.println("DEBUG: the_MLC_spec_after_the_initial_char=''" + the_MLC_spec_after_the_initial_char + "''");
       if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) { // negative integers are _intentionally_ unsupported
@@ -211,13 +196,33 @@ public class Configuration_Master_engine {
         the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
       }
 
+      final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
+      switch (the_MLC_operator_as_a_char) {
+        case '<': // example: "<5" is really just syntactic sugar for "≤4"
+                  the_MLC_kind = maturityLevel_comparison_types.less_than_or_equal_to;
+                  --the_maturity_level_to_which_to_compare;
+          break;
+        case '≤': the_MLC_kind = maturityLevel_comparison_types.less_than_or_equal_to;
+          break;
+        case '=': the_MLC_kind = maturityLevel_comparison_types.equal_to;
+          break;
+        case '≥': the_MLC_kind = maturityLevel_comparison_types.greater_than_or_equal_to;
+          break;
+        case '>': // example: ">5" is really just syntactic sugar for "≥6"
+                  the_MLC_kind = maturityLevel_comparison_types.greater_than_or_equal_to;
+                  ++the_maturity_level_to_which_to_compare;
+          break;
+        default:
+          throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
+        // no closing brace here due to my way of indenting inside switch blocks
+      }
+
       the_namespace = the_split[1].trim().toLowerCase();
       the_key       = the_split[2].trim().toLowerCase();
       the_value_str = the_split[3].trim();
     }
 
-// saved for later: if (parse_result.key.the_maturity_level_to_which_to_compare < 0 || null == parse_result.key.the_namespace || null == parse_result.key.the_key || null == parse_result.value) {
-    if (the_maturity_level_to_which_to_compare < 0 || null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
+    if (the_maturity_level_to_which_to_compare < 0 || null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // TO DO: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input
 
     config_algebraic_type the_value;
 

@@ -7,7 +7,7 @@ A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code belo
 
 TO DOs
 ------
-* write code to rewrite ['>' / "<']-based MLCs using '≤' & '≥'
+* write code to rewrite ['>' / '<']-based MLCs using '≤' & '≥'
   * when that is done and tested working, remove internal support for '<' and '>'
 
 * write a better test script or rewrite "Q_and_D_tester.bash" so it`s not so Q&D any more
