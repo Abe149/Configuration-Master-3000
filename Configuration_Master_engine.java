@@ -642,9 +642,6 @@ public class Configuration_Master_engine {
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
       switch (the_key_of_the_config.the_MLC_kind) {
-        case    less_than:
-          if (! (maturity_level_of_query <  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-          break;
         case    less_than_or_equal_to:
           if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
           break;
@@ -653,9 +650,6 @@ public class Configuration_Master_engine {
           break;
         case greater_than_or_equal_to:
           if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-          break;
-        case greater_than:
-          if (! (maturity_level_of_query >  the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
           break;
         default:
            throw new IOException("Internal program error while trying to compare a query to the maturity level of a config.");

@@ -8,7 +8,7 @@ A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code belo
 TO DOs
 ------
 * [DONE] write code to rewrite ['>' / '<']-based MLCs using '≤' & '≥' -- DONE as of 83e70dc789af5fdd27ed422fbea073d231aa36b5 [Mon Apr 6 03:49:12 2020 -0400]
-  * make strict mode throw and exception upon compiling the MLC "<0" since it`s nonsensical [allow it to pass, ignored, in non-strict mode]
+  * [DONE] make strict mode throw and exception upon compiling the MLC "<0" since it`s nonsensical [allow it to pass, ignored, in non-strict mode] -- DONE as of 507fe0e60c7abc50cf154245dd3412abf9c26cf4 [Mon Apr 6 04:39:11 2020 -0400]
   * when that is done and tested working, remove internal support for '<' and '>'
 
 * make strictness multi-level, with a default level of 0 [zero]
