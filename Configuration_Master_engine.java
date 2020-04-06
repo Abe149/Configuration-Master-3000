@@ -172,13 +172,19 @@ public class Configuration_Master_engine {
 
   private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line) throws IOException {
     maturityLevel_comparison_types the_MLC_kind                           = maturityLevel_comparison_types.equal_to;
-    int                            the_maturity_level_to_which_to_compare = -1;
+    int                            the_maturity_level_to_which_to_compare = -2; // _do_ use a negative value as a sentinel, but do _not_ use -1, since that value is "reserved" for the desugared integer value of the nonsensical MLC "<0"
     String                         the_namespace                          = null;
     String                         the_key                                = null;
     String                         the_value_str                          = null;
 
     line = line.trim();
     if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
+
+
+
+
+
+
       line = line.replaceFirst("⍝.*", "").trim(); // HARD-CODED: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
       final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
 
@@ -224,18 +230,31 @@ public class Configuration_Master_engine {
       the_namespace = the_split[1].trim().toLowerCase();
       the_key       = the_split[2].trim().toLowerCase();
       the_value_str = the_split[3].trim();
+
+
+
+
+
+
     }
+
+
+
+
+
 
     if (the_maturity_level_to_which_to_compare == -1) { // this can [_only_, I hope] happen if/when the syntactic MLC is "<0", thus desugaring to "≤-1"
       if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases");
-      else
+        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: “" + line + '”');
+      else {
+        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line “" + line + "”; ignoring it.\033[0m\n");
         return null; // ignore the invalid input in non-strict mode
+      }
     }
 
-    if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown.");
+    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // _maybe_ TO DO _carefully_: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input; why great care is needed in doing so: otherwise, lines that are empty or effectively all-comment will cause an exception to be thrown!
 
-    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // TO DO: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input
+    if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown."); // this must come _after_ the line of code that returns null when the line of input was either empty or effectively all-comment
 
     config_algebraic_type the_value;
 
