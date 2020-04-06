@@ -192,8 +192,12 @@ public class Configuration_Master_engine {
       // System.err.println("DEBUG: the_MLC_spec_after_the_initial_char=''" + the_MLC_spec_after_the_initial_char + "''");
       if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) { // negative integers are _intentionally_ unsupported
         the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_after_the_initial_char);
+        if (the_maturity_level_to_which_to_compare < 0)
+          throw new IOException("SYNTAX ERROR: negative integer in a maturity-level specification.");
       } else {
         the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
+        if (the_maturity_level_to_which_to_compare < 0)
+          throw new IOException("FLAGRANT SYSTEM ERROR: negative integer found in a maturity-level specification _after_ converting from an alias; not only is a negative mapping from an alias _bad_, but it should not even be _possible_ to have at this point in the program.");
       }
 
       final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
@@ -213,7 +217,7 @@ public class Configuration_Master_engine {
                   ++the_maturity_level_to_which_to_compare;
           break;
         default:
-          throw new IOException("Syntax error: unrecognized leading character in a maturity-level specification.");
+          throw new IOException("SYNTAX ERROR: unrecognized leading character in a maturity-level specification.");
         // no closing brace here due to my way of indenting inside switch blocks
       }
 
@@ -222,7 +226,16 @@ public class Configuration_Master_engine {
       the_value_str = the_split[3].trim();
     }
 
-    if (the_maturity_level_to_which_to_compare < 0 || null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // TO DO: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input
+    if (the_maturity_level_to_which_to_compare == -1) { // this can [_only_, I hope] happen if/when the syntactic MLC is "<0", thus desugaring to "≤-1"
+      if (strict_checking_mode_enabled)
+        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases");
+      else
+        return null; // ignore the invalid input in non-strict mode
+    }
+
+    if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown.");
+
+    if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null; // TO DO: make this throw instead, since returning null from here causes the caller to just ignore the situation, i.e. it`s treated the same as an empty line of input or an all-comment line of input
 
     config_algebraic_type the_value;
 
