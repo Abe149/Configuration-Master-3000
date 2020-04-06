@@ -69,4 +69,10 @@
 >0␟*␟test key name for a positive integer with redundancy␟1
 <9␟*␟test key name for a positive integer with redundancy␟1
 
+# this block: _intentionally_-overlapping maturity levels, and intentionally [completely, i.e. including type] redundant-therefor-OK
+>0␟*␟test key name for a positive integer with at least one conflict␟2
+<9␟*␟test key name for a positive integer with at least one conflict␟3
+
+
+
 ### below this line: not yet supported ###

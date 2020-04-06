@@ -21,9 +21,6 @@ echo
 echo
 echo
 
-exit # WIP
-
-
 
 
 # tests that are expected to fail if/when the server is in strict mode
