@@ -75,13 +75,13 @@
 <9␟*␟test key name for a positive integer with at least one conflict␟3
 
 ### this block: _intentionally_-missing field values; the first one should "crash" the engine in strict mode, and they should all cause warnings [and _not_ any crashes] in non-strict mode
-=10000␟␟key 5␟“hi” ⍝ missing namespace
-=10001␟Namespace 1␟␟“hi” ⍝ missing key
-=10002␟Namespace 1␟key 5␟ ⍝ missing value
-=10003␟␟␟“hi” ⍝ missing namespace _and_ key
-=10004␟␟key 5␟ ⍝ missing namespace _and_ value
-=10005␟Namespace 1␟␟ ⍝ missing key _and_ value
-=10006␟␟␟ ⍝ missing "everything"!  What a woild, what a woild!  ;-)
+# =10000␟␟key 5␟“hi” ⍝ missing namespace
+# =10001␟Namespace 1␟␟“hi” ⍝ missing key
+# =10002␟Namespace 1␟key 5␟ ⍝ missing value
+# =10003␟␟␟“hi” ⍝ missing namespace _and_ key
+# =10004␟␟key 5␟ ⍝ missing namespace _and_ value
+# =10005␟Namespace 1␟␟ ⍝ missing key _and_ value
+⍝ =10006␟␟␟ ⍝ missing "everything"!  What a woild, what a woild!  ;-)
 
 
 ### below this line: not yet supported ###
