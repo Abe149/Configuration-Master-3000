@@ -164,20 +164,27 @@ public class Configuration_Master_server {
             http_assert(he, maturity_level >= 0, 400, "internal error while trying to parse maturity level from HTTP input");
 
             // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
-            final String response = the_engine.get_configuration(maturity_level, namespace, key);
 
-            http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + Configuration_Master_engine.stringize_safely(namespace) + ", key=" + Configuration_Master_engine.stringize_safely(key));
+   // WIP:         boolean get_configuration_completed = false; // true here doesn`t mean _succeeded_, just _completed_ [i.e. did not throw/propagate an exception]
+            try {
+              final String response = the_engine.get_configuration(maturity_level, namespace, key);
+          // WIP:    get_configuration_completed = true;
+              http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + Configuration_Master_engine.stringize_safely(namespace) + ", key=" + Configuration_Master_engine.stringize_safely(key));
 
-            if (verbosity > 1) {
-              System.err.println("INFO: result of query: " + Configuration_Master_engine.stringize_safely(response) + '\n');
+              if (verbosity > 1) {
+                System.err.println("INFO: result of query: " + Configuration_Master_engine.stringize_safely(response) + '\n');
+              }
+
+              he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+              he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
+              he.sendResponseHeaders(200, response.getBytes().length);
+              OutputStream os = he.getResponseBody();
+              os.write(response.getBytes());
+              os.close();
+            } catch (IOException ioe) {
+              http_assert(he, false, 500, "The Configuration Master engine threw/propagated the following exception: " + ioe);
             }
 
-            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
-            he.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
         }
     }
 

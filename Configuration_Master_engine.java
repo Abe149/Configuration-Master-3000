@@ -723,8 +723,8 @@ public class Configuration_Master_engine {
       final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + stringize_safely(the_matches.get(index));
       System.err.println("\033[31m" + mapping_string + "\033[0m");
       string_for_exception = string_for_exception + mapping_string;
-      if (index < the_matches.size() - 1)  string_for_exception = string_for_exception + "; ";
-      else                                 string_for_exception = string_for_exception + '.';
+      if (index < the_matches.size() - 1) { string_for_exception = string_for_exception + "; "; System.err.println(); }
+      else                                  string_for_exception = string_for_exception + '.';
     }
     System.err.println("-------------\n");
 
