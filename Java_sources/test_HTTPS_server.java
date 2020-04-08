@@ -72,7 +72,7 @@ public class test_HTTPS_server {
             // initialise the keystore
             char[] password = "Configuration_Master_3000".toCharArray();
             KeyStore ks = KeyStore.getInstance("JKS");
-            FileInputStream fis = new FileInputStream("Configuration_Master.keystore");
+            FileInputStream fis = new FileInputStream("data/Configuration_Master.keystore");
             ks.load(fis, password);
 
             // set up the key manager factory
