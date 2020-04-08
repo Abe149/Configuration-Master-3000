@@ -582,6 +582,8 @@ public class Configuration_Master_engine {
       for (debugFriendly_buffered_input config_input : config_inputs) {
         while (config_input.ready()) {
           String line = config_input.readLine();
+          final String source = config_input.get_description_of_input_and_current_position();
+
           if (verbosity > 5) {
             System.err.println();
             System.err.println("TESTING 18: config. input line: «" + line + '»');
@@ -605,7 +607,7 @@ public class Configuration_Master_engine {
                   System.err.println("TESTING 21: config. line seems to be valid, but redundant.  Ignoring.");
                 }
               } else {
-                throw new IOException("Data inconsistency: conflicting line for configuration: «" + line + "» conflicts with prior parse result value " + old_value);
+                throw new IOException("Data inconsistency: conflicting line for configuration: «" + line + "» at " + source + " conflicts with prior parse result value " + old_value);
               }
             } else { // if _not_ (the_schema.containsKey(parse_result.key))
               the_configurations.put(parse_result.key, parse_result.value);
