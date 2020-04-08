@@ -51,8 +51,6 @@ public class Configuration_Master_server {
     private final static int default_verbosity = 5;
     private static int verbosity = default_verbosity;
 
-    private final static String data_directory = "data/"; // DRY
-
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
     public static class TestHandler implements HttpHandler {
@@ -194,6 +192,7 @@ public class Configuration_Master_server {
         System.err.println("\n\n"); // to separate "our" output from Ant`s when e.g. running this program via "ant run"
 
         boolean check_only = false;
+        String data_directory = "data/";
 
         for (String arg : args) {
             arg = arg.replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
@@ -211,10 +210,14 @@ public class Configuration_Master_server {
                   "v : increase verbosity by 1; hard-coded default is " + default_verbosity + "\n" +
                   "\n"+
                   "verbosity=<integer> : _sets_ the verbosity level, thus overwriting the value that was in effect just prior.\n" +
+                  "\n"+
+                  "directory_from_which_to_load_data=<directory_pathname> : the directory from which to load ''Configuration_Master.keystore'' and ''maturity-level_aliases'' and in which to scan for ''*.configurations'' and ''*.schema'' files and load them accordingly." +
                   // "\n"+
                   "\n"
                 );
                 System.exit(0);
+            } else if (arg != null && arg.startsWith("directory_from_which_to_load_data=")) {
+              data_directory = arg.substring(        "directory_from_which_to_load_data=".length());
             } else if ("strict_checking".equals(arg)) {
                 strict_checking_mode_enabled = true;
                 if (verbosity > 0) {
@@ -246,6 +249,7 @@ public class Configuration_Master_server {
 
         if (verbosity > 0) {
             System.err.println("\nINFO: running with a verbosity level of " + verbosity);
+            System.err.println(  "INFO: planning to try to load data from directory at ''" + data_directory + "''.");
         }
 
 

@@ -400,7 +400,7 @@ public class Configuration_Master_engine {
     for (value_types VT : value_types.values()) {
       typenames_to_types.put(VT.name(), VT);
     }
-    if (verbosity > 1) {
+    if (verbosity > 0) {
       System.err.println();
       System.err.println("INFO: registered value types: " + typenames_to_types);
       System.err.println();
@@ -503,7 +503,7 @@ public class Configuration_Master_engine {
 
       } // end while maturityLevel_aliases_input.ready()
 
-      if (verbosity > 1) {
+      if (verbosity > 0) {
         System.err.println();
         System.err.println("INFO: maturityLevel_aliases: " + maturityLevel_aliases);
         System.err.println();
@@ -640,7 +640,7 @@ public class Configuration_Master_engine {
         }
       }
 
-      if (verbosity > 0) {
+      if (verbosity > 1) {
         System.err.println();
         System.err.println("INFO: the_configurations: " + the_configurations);
         System.err.println();
