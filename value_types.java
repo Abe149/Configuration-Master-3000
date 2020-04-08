@@ -1,3 +1,5 @@
+package Configuration_Master;
+
 public enum value_types {
               integer,
   nonnegative_integer,

@@ -1,3 +1,5 @@
+package Configuration_Master;
+
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.lang.*;
@@ -36,6 +38,8 @@ import java.util.logging.Logger;
 import java.util.ArrayList;
 
 import java.net.URLDecoder;
+
+import static Configuration_Master.utility_class.*;
 
 // "Configuration_Master.keystore", "self-signed"
 
@@ -169,10 +173,10 @@ public class Configuration_Master_server {
             try {
               final String response = the_engine.get_configuration(maturity_level, namespace, key);
           // WIP:    get_configuration_completed = true;
-              http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + Configuration_Master_engine.stringize_safely(namespace) + ", key=" + Configuration_Master_engine.stringize_safely(key));
+              http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + stringize_safely(namespace) + ", key=" + stringize_safely(key));
 
               if (verbosity > 1) {
-                System.err.println("INFO: result of query: " + Configuration_Master_engine.stringize_safely(response) + '\n');
+                System.err.println("INFO: result of query: " + stringize_safely(response) + '\n');
               }
 
               he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");

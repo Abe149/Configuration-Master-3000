@@ -1,3 +1,5 @@
+package Configuration_Master;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -5,6 +7,8 @@ import java.util.regex.*;
 import java.net.URL;
 import java.net.MalformedURLException;
   
+import static Configuration_Master.utility_class.*;
+// import static utility_class.*;
 
 public class Configuration_Master_engine {
 
@@ -113,12 +117,6 @@ public class Configuration_Master_engine {
   }
 
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
-
-  public static String stringize_safely(String input) { // TO DO [but low-priority]: pull this out into a separate "library class"
-    if (null == input)  return "«null»";
-    return "“" + input + "”";
-  }
-
 
   private parsed_line_for_a_schema parse_a_line_for_a_schema(String line) throws IOException {
     String                         the_namespace = null;
