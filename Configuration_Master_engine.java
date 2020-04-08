@@ -691,12 +691,8 @@ public class Configuration_Master_engine {
           System.err.println("TESTING 22: match if not null: " + stringize_safely(the_match));
         }
 
-        if (strict_checking_mode_enabled) {
-          the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
-          the_matches                     .add(the_match);
-        } else {
-          return                               the_match;
-        } // end if
+        the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
+        the_matches                     .add(the_match);
       } // end if
     } // end for
 
@@ -706,6 +702,8 @@ public class Configuration_Master_engine {
     // maybe TO DO, but low priority: I _could_ assert here [not using literally "assert", b/c that`s broken/useless in/on Java] that the_matches.size() == the_matching_KeyOfConfig_objects.size()
 
     // A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code below checks for conflicts using the string representations after a _complete_ "unparse" of the relevant internal datum, not only can it not disambiguate between data with different types but the same values [e.g.: a URL with the value "http://example.com/" vs. a _string_ with the value "http://example.com/", a positive integer with the value 1 vs. a nonnegative integer with the value 1], but it _also_ cannot disambiguate between a positive integer with the value 1 and a string with the value "1" [w/o the quotes], and therefor will consider all those "could be viewed as conflicting" scenarios as "OK, just redundant"; perhaps TO DO about this: enable/implement multiple _levels_ of strictness, and if/when e.g. strictness>1 then check for these conflicts [i.e. type conflicts even when the values are either identical or "look the same" (i.e. 1 vs. "1")]
+
+    // System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
 
     // there is no need to enclose the following switch block in "if (strict_checking_mode_enabled)": if/when _not_, "the_matches" should be _empty_, therefor "case 0:  return null;" will be used, i.e. the same outcome as if the switch block _had_ been enclosed in "if (strict_checking_mode_enabled)"
     switch (the_matches.size()) {
@@ -729,9 +727,15 @@ public class Configuration_Master_engine {
             }
           } // end for
           if (bad) {
-            final String base_report = "Data conflict and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
-            handle_conflicting_matches(base_report, the_matching_KeyOfConfig_objects, the_matches);
-            return null;
+            if (strict_checking_mode_enabled) {
+              final String base_report = "Data conflict and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
+              report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
+              // the preceding line should always throw, so no more execution here
+            } else { // non-strict
+              // being _super_-nonstrict here: actually going to search for the first non-null, return _that_
+              dump_multiple_matches("WARNING: multiple matches, with the first being null and some being non-null; since engine is in non-strict mode, going to return the first non-null match...", the_matching_KeyOfConfig_objects, the_matches, "31");
+              for (String the_match : the_matches)  if (null != the_match)  return the_match;
+            }
           } // end if bad
 
         } else { // the first element of "the_matches" is not null, thank the FSM
@@ -743,10 +747,16 @@ public class Configuration_Master_engine {
             }
           } // end for
           if (bad) {
-            final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring types and after converting integers to strings.";
-            handle_conflicting_matches(base_report, the_matching_KeyOfConfig_objects, the_matches);
-            return null;
+            if (strict_checking_mode_enabled) {
+              final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring types and after converting integers to strings.";
+              report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
+              // the preceding line should always throw, so no more execution here
+            } else { // non-strict
+              dump_multiple_matches("WARNING: multiple matches, with the first being non-null; since engine is in non-strict mode, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
+              return first_match;
+            }
           } else { // not bad, therefor good  ;-)
+            dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure and stringification of integers]", the_matching_KeyOfConfig_objects, the_matches, "93");
             return first_match;
           }
 
@@ -754,15 +764,14 @@ public class Configuration_Master_engine {
       // end of "default:"...  "missing" '}' here is OK, b/c we are inside a switch
     } // end switch
 
-    // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
-    return null;
+    return null; // this is here just to shut up the stupid Java compiler about "missing return statement": this line should never be reached
   } // end of "get_configuration"
 
 
-  private void handle_conflicting_matches(String base_report,
-                                          ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
-                                          ArrayList<String> the_matches
-                                         ) throws IOException {
+  private void report_conflicting_match_set_and_throw(String                               base_report,
+                                                      ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
+                                                      ArrayList<String>                    the_matches
+                                                     ) throws IOException {
     String string_for_exception = base_report + "  Matches:  ";
 
     System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
@@ -778,7 +787,27 @@ public class Configuration_Master_engine {
     }
     System.err.println("-------------\n");
 
-    if (strict_checking_mode_enabled) throw new IOException(string_for_exception);
+    // if (strict_checking_mode_enabled)  // why did I originally make the next line conditional???
+    throw new IOException(string_for_exception);
+  }
+
+
+  private void dump_multiple_matches(String                               report_title,
+                                     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
+                                     ArrayList<String>                    the_matches,
+                                     String                               ANSI_color_string
+                                    ) throws IOException {
+
+    System.err.println("\n\033[" + ANSI_color_string + 'm' + report_title + "\033[0m");
+    System.err.println();
+    System.err.println("Matches found");
+    System.err.println("-------------");
+    for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
+      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + stringize_safely(the_matches.get(index));
+      System.err.println("\033[" + ANSI_color_string + 'm' + mapping_string + "\033[0m");
+      if (index < the_matches.size() - 1)  System.err.println();
+    }
+    System.err.println("-------------\n");
   }
 
 } // end of class "Configuration_Master_engine"
