@@ -220,7 +220,7 @@ public class Configuration_Master_server {
                   "\n"
                 );
                 System.exit(0);
-            } else if ("directory_from_which_to_load_data=".equals(LHS)) {
+            } else if ("directory_from_which_to_load_data".equals(LHS)) {
               data_directory = RHS;
             } else if ("strict_checking".equals(LHS)) {
                 strict_checking_mode_enabled = true;

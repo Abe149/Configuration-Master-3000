@@ -16,7 +16,7 @@ declare -i num_passed=0
 declare -i num_failed=0
 
 for dir in $dirs_to_try; do
-  echo "testing ''$dir'', which has the description ''`head -n 1 $dir/one-line_test_description`'':"
+  echo "testing ''$dir'', which has the description ''`head -n 1 $dir/one-line_test_description 2>/dev/null`'':"
   echo -n '  '
 
   failed= # empty means false here
