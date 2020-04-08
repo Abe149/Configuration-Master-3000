@@ -424,7 +424,7 @@ public class Configuration_Master_engine {
           System.err.println("TESTING  3: maturity level aliases input line after removing all ASCII spaces and lower-casing: «" + line + '»');
         }
         if (line.length() > 0) {
-          Matcher m1 = Pattern.compile("(\\p{IsL}+)=(\\d+).*").matcher(line); // allows trailing "garbage"; "{IsL}" is Java regex for "Is a Letter according to Unicode [includes ideographics and uncased alphabets/abugidas]
+          Matcher m1 = Pattern.compile("(\\p{IsL}+)(,\\p{IsL}+)*=(\\d+).*").matcher(line); // allows trailing "garbage"; "{IsL}" is Java regex for "Is a Letter according to Unicode [includes ideographics and uncased alphabets/abugidas]
           if (verbosity > 5) {
             System.err.println("TESTING  4: m1: " + m1);
             System.err.println("TESTING  5: m1.groupCount() -> " + m1.groupCount());
@@ -450,24 +450,25 @@ public class Configuration_Master_engine {
               System.err.println("TESTING 10: mr1.groupCount() -> " + mr1.groupCount());
             }
 
-            if (mr1.groupCount() != 2) {
+            if (mr1.groupCount() != 3) {
               throw new IOException("Wrong number of groups in results for maturity-level aliases input line micro-parser: expected 2, got " + String.valueOf(mr1.groupCount()) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the line is a syntax error [i.e. a failure to match the required regex]
             }
 
-            final String            alias = m1.group(1);
+            final String         first_alias = m1.group(1);
+            final String more_aliases_if_any = m1.group(2);
             if (verbosity > 5) {
-              System.err.println("TESTING 11: alias=''" + alias + "''");
+              System.err.println("TESTING 11: first_alias=" + stringize_safely(first_alias) + ", more_aliases_if_any = " + stringize_safely(more_aliases_if_any));
             }
-            final String number_as_string = m1.group(2);
+            final String number_as_string = m1.group(3);
             final int number = Integer.parseInt(number_as_string);
             if (verbosity > 5) {
               System.err.println("TESTING 12: number: " + number);
             }
             if (number < 0) {
-              throw new IOException("Negative number in maturity-level aliases: for alias ''" + alias + "'', got " + String.valueOf(number) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the '-' in e.g. "-1" is a syntax error [i.e. a failure to match the required regex]
+              throw new IOException("Negative number in maturity-level aliases: for aliases ''" + first_alias + more_aliases_if_any + "'', got " + String.valueOf(number) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the '-' in e.g. "-1" is a syntax error [i.e. a failure to match the required regex]
             }
 
-            maturityLevel_aliases.put(alias, number);
+            maturityLevel_aliases.put(first_alias, number);
 
           } /* if line_matched_the_regex */ else {
             throw new IOException("Syntax error in maturity-level aliases: ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
