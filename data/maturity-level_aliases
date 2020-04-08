@@ -1,7 +1,7 @@
 sandbox = 0#comments should be OK in this file even if the '#' is right up against the integer, i.e. without a space between
 dev, development, 開発       = 2250
 test                         = 4500
-UAT, user-acceptance_testing = 6750 # spaces are thrown away, so don`t try to make an alias like "user-acceptance testing"
+UAT, user-acceptance_testing = 6750 ⍝ spaces are thrown away, so don`t try to make an alias like "user-acceptance testing"
 prod, production             = 9000
 
 UserAcceptanceTesting = 16750 # _this_ [as opposed to using ASCII spaces] is OK, but bear in mind that:
@@ -25,3 +25,6 @@ UserAcceptanceTesting = 16750 # _this_ [as opposed to using ASCII spaces] is OK,
 # for fun...
 ドラゴンボールZゼット = 9001 # Dragon Ball Z
 悟空のパワーレベル    = 9001 # Goku`s power level
+
+
+⍝ now that ‘⍝’ is a valid start of a comment in a/the ML aliases file, this line should be OK, i.e. should not crash the parser

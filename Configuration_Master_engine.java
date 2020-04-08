@@ -415,7 +415,7 @@ public class Configuration_Master_engine {
           System.err.println();
           System.err.println("TESTING  1: maturity-level aliases input line: «" + line + "» read from " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
         }
-        line = line.split("#")[0]; // discard comments
+        line = line.replaceFirst("[#⍝].*", ""); // discard comments
         if (verbosity > 5) {
           System.err.println("TESTING  2: maturity level aliases input line after discarding comments: «" + line + '»');
         }
