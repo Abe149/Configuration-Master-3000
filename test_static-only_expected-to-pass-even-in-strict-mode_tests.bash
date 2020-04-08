@@ -16,7 +16,8 @@ declare -i num_passed=0
 declare -i num_failed=0
 
 for dir in $dirs_to_try; do
-  echo -n "  $dir : "
+  echo "testing ''$dir'', which has the description ''`head -n 1 $dir/one-line_test_description`'':"
+  echo -n '  '
 
   failed= # empty means false here
   if ! ./check_non-strictly.sh directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
@@ -39,5 +40,5 @@ done
 echo
 
 echo "Num. passed: $num_passed"
-echo "Num. failed: $num_passed"
+echo "Num. failed: $num_failed"
 
