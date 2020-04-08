@@ -518,7 +518,8 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 13: schema input line: ''" + line + "''");
           }
 
-          parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line, schema_input.get_description_of_input_and_current_position());
+          final String source = schema_input.get_description_of_input_and_current_position();
+          parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line, source);
           if (verbosity > 5) {
             System.err.println("TESTING 14: schema line parse: " + parse_result);
           }
@@ -529,10 +530,10 @@ public class Configuration_Master_engine {
             }
             if (null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
               if (strict_checking_mode_enabled) {
-                throw new IOException("Strict-checking mode violation: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + '”');
+                throw new IOException("Strict-checking mode violation: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "” at " + source);
               }
               if (verbosity > 0) {
-                System.err.println("\n\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "”; ignoring it.\033[0m\n");
+                System.err.println("\n\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "” at " + source + "; ignoring it.\033[0m\n");
               }
             }
           } else { // looks like a valid line
@@ -546,7 +547,7 @@ public class Configuration_Master_engine {
                   System.err.println("TESTING 17: schema line seems to be valid, but redundant.  Ignoring.");
                 }
               } else {
-                throw new IOException("Data inconsistency: conflicting line for schema: ''" + line + "'' conflicts with prior parse result value-type «" + old_VT + '»');
+                throw new IOException("Data inconsistency: conflicting line for schema: ''" + line + "'' at " + source + " conflicts with prior parse result value-type «" + old_VT + '»');
               }
             } else { // if _not_ (the_schema.containsKey(parse_result.key))
               the_schema.put(parse_result.key, parse_result.value);
@@ -554,7 +555,7 @@ public class Configuration_Master_engine {
           }
 
         } // end while
-      } // end for BufferedReader schema_input : schema_inputs
+      } // end for schema_input : schema_inputs
 
       if (verbosity > 0) {
         System.err.println();
@@ -613,7 +614,7 @@ public class Configuration_Master_engine {
           } // end if null != parse_result
 
         } // end while
-      } // end for BufferedReader config_input : config_inputs
+      } // end for config_input : config_inputs
 
 
       // INCOMPLETENESS WARNING: this implementation almost-certainly only finds conflicts that have the same maturity-level comparison specifier
