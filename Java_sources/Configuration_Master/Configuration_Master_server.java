@@ -195,8 +195,12 @@ public class Configuration_Master_server {
         String data_directory = "data/";
 
         for (String arg : args) {
-            arg = arg.replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
-            if        ("help".equals(arg) || "h".equals(arg)) {
+            final String[] split_arg = arg.split("=");
+            final String LHS = split_arg[0].replaceFirst("^-*", "").toLowerCase(); // allow e.g. "-help" & "-help" to work just as well as "help" [as a side effect: so do e.g. "---help" & "----------help" ;-)]
+            String RHS = null;
+            if (split_arg.length > 1)  RHS = split_arg[1];
+
+            if        ("help".equals(LHS) || "h".equals(LHS)) {
                 System.out.println(
                   "Supported CLI arg.s\n" +
                   "-------------------\n" +
@@ -216,26 +220,26 @@ public class Configuration_Master_server {
                   "\n"
                 );
                 System.exit(0);
-            } else if (arg != null && arg.startsWith("directory_from_which_to_load_data=")) {
-              data_directory = arg.substring(        "directory_from_which_to_load_data=".length());
-            } else if ("strict_checking".equals(arg)) {
+            } else if ("directory_from_which_to_load_data=".equals(LHS)) {
+              data_directory = RHS;
+            } else if ("strict_checking".equals(LHS)) {
                 strict_checking_mode_enabled = true;
                 if (verbosity > 0) {
                     System.err.println("INFO: activated strict-checking mode, according to CLI arg.; this is probably not something you really want when running the server “for real”.");
                 }
-            } else if (arg != null && arg.matches("v+")) { // supports not only e.g. "-v" but also e.g. "-vv" and "vvv"
-                verbosity += arg.length();
+            } else if (LHS != null && LHS.matches("v+")) { // supports not only e.g. "-v" but also e.g. "-vv" and "vvv"
+                verbosity += LHS.length();
                 if (verbosity > 0) {
-                    System.err.println("INFO: increased verbosity [by " + arg.length() + "] to " + verbosity + " according to CLI arg.");
+                    System.err.println("INFO: increased verbosity [by " + LHS.length() + "] to " + verbosity + " according to CLI arg.");
                 }
-            } else if ("check_only"     .equals(arg)) {
+            } else if ("check_only".equals(LHS)) {
                 check_only = true;
                 if (verbosity > 0) {
                     System.err.println("INFO: check-only mode enabled, in accordance with CLI arg.");
                 }
-            } else if (arg != null && arg.startsWith("verbosity=")) {
+            } else if ("verbosity".equals(LHS)) {
                 try {
-                    final int new_verbosity = Integer.parseInt(arg.substring("verbosity=".length()));
+                    final int new_verbosity = Integer.parseInt(RHS);
                     if (verbosity > 0 || new_verbosity > 0) {
                         System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
                     }
