@@ -31,6 +31,8 @@ if [ -z "$CONFIG_MATURITY_LEVEL" ]; then # should I default this to something "l
   exit 3
 fi
 
+# thorough URL encoding [_too_ thorough?  encodes normal ASCII letters and digits] thanks to the replies at <https://askubuntu.com/questions/53770/how-can-i-encode-and-decode-percent-encoded-strings-on-the-command-line>
+
 namespace="$1"
 if [ -z "$namespace" ]; then
   if [ -w /dev/stderr ]; then
@@ -38,7 +40,7 @@ if [ -z "$namespace" ]; then
   fi
   exit 4
 fi
-namespace=`echo $namespace | sed 's/ /%20/g'` # Q-and-D URL encoding
+namespace=`echo -n $namespace | xxd -p | tr -d '\n' | sed 's/../%&/g'`
 
 key="$2"
 if [ -z "$key" ]; then

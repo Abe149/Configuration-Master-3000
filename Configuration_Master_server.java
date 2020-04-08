@@ -108,14 +108,19 @@ public class Configuration_Master_server {
             myLogger.info("HTTP request method: " + he.getRequestMethod());
             myLogger.info("Request URI [toASCIIString()]: ''" + he.getRequestURI().toASCIIString() + "''");
             myLogger.info("Request URI [toString()]: ''" + he.getRequestURI().toString() + "''");
-            final String decoded_URI = URLDecoder.decode(he.getRequestURI().toString());
-            myLogger.info("Request URI [toString()], decoded: ''" + decoded_URI + "''");
+      //    final String decoded_URI = URLDecoder.decode(he.getRequestURI().toString());
+      //    myLogger.info("Request URI [toString()], decoded: ''" + decoded_URI + "''");
 
-            assert decoded_URI.startsWith(my_prefix);
-            final String decoded_and_stripped_URI = decoded_URI.substring(my_prefix.length());
-            myLogger.info("Request URI [toString()], decoded and prefix-stripped: ''" + decoded_and_stripped_URI + "''");
 
-            final String[] request_components = decoded_and_stripped_URI.split(","); // IMPORTANT string constant
+            final String raw_URI = he.getRequestURI().toString();
+     //     assert decoded_URI.startsWith(my_prefix);
+            assert raw_URI.startsWith(my_prefix);
+       //   final String decoded_and_stripped_URI = decoded_URI.substring(my_prefix.length());
+            final String prefixStripped_URI = raw_URI.substring(my_prefix.length());
+      //    myLogger.info("Request URI [toString()], decoded and prefix-stripped: ''" + decoded_and_stripped_URI + "''");
+            myLogger.info("Request URI [toString()], prefix-stripped: ''" + prefixStripped_URI + "''");
+
+            final String[] request_components = prefixStripped_URI.split(","); // IMPORTANT string constant
             // myLogger.info("Request components: " + request_components); // useless output...  thanks, Java  :-(
 
             String maturity_level_string = "", namespace = "", key = "";
@@ -125,31 +130,39 @@ public class Configuration_Master_server {
 
                 // final String lowered_and_despaced = rc.toLowerCase().replaceAll(" ", ""); // imperfect: we need to be more careful with _which_ spaces we remove
 
-                final String lowered = rc.toLowerCase();
-                final String[] split_for_careful_despacing = lowered.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
+            //  final String lowered = rc.toLowerCase();
+            //    final String[] split_for_careful_despacing = lowered.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
+                final String[] split_for_careful_despacing = rc.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
 
                 // in principle, I could assert here if the array length of the split isn`t exactly 2 [TO DO?]
 
-                final String lowered_and_despaced = split_for_careful_despacing[0].trim() + '=' + split_for_careful_despacing[1].trim();
-                myLogger.info("Request component, lowered and despaced: ''" + lowered_and_despaced + "''");
+                final String LHS = URLDecoder.decode(split_for_careful_despacing[0]).toLowerCase().trim();
+                final String RHS = URLDecoder.decode(split_for_careful_despacing[1]).toLowerCase().trim();
+                myLogger.info("Request component after per-subcomponent decoding and trimming: LHS=''" + LHS + "'', RHS=''" + RHS + "''");
+
+         //     final String lowered_and_despaced = split_for_careful_despacing[0].trim() + '=' + split_for_careful_despacing[1].trim();
+          //    myLogger.info("Request component, lowered and despaced: ''" + lowered_and_despaced + "''");
 
                 // TO DO: clean this up, DRY-wise...  maybe with a[n] [inner?] class-level method, maybe with a lambda
 
-                if (lowered_and_despaced.startsWith("maturity_level=")) {
+                // if (lowered_and_despaced.startsWith("maturity_level=")) {
+                if (LHS.equals("maturity_level")) {
                     http_assert(he, "".equals(maturity_level_string), 400, "each request must include exactly one maturity level");
-                    maturity_level_string = lowered_and_despaced.substring("maturity_level=".length());
+                    maturity_level_string = RHS;
                     myLogger.info("Maturity level of request, as a string: ''" + maturity_level_string + "''");
                 }
 
-                if (lowered_and_despaced.startsWith("namespace=")) {
+                // if (lowered_and_despaced.startsWith("namespace=")) {
+                if (LHS.equals("namespace")) {
                     http_assert(he, "".equals(namespace), 400, "each request must include exactly one namespace");
-                    namespace = lowered_and_despaced.substring("namespace=".length());
+                    namespace = RHS;
                     myLogger.info("Namespace of request: ''" + namespace + "''");
                 }
 
-                if (lowered_and_despaced.startsWith("key=")) {
+                // if (lowered_and_despaced.startsWith("key=")) {
+                if (LHS.equals("key")) {
                     http_assert(he, "".equals(key), 400, "each request must include exactly one key");
-                    key = lowered_and_despaced.substring("key=".length());
+                    key = RHS;
                     myLogger.info("Key of request: ''" + key + "''");
                 }
             }
@@ -167,12 +180,8 @@ public class Configuration_Master_server {
             }
             http_assert(he, maturity_level >= 0, 400, "internal error while trying to parse maturity level from HTTP input");
 
-            // String response = "Configuration Master 3000 got a seemingly-valid ''get:'' request.\n"; // early-ＷＩＰ code; keeping it here for now "just for the heck of it"
-
-   // WIP:         boolean get_configuration_completed = false; // true here doesn`t mean _succeeded_, just _completed_ [i.e. did not throw/propagate an exception]
             try {
               final String response = the_engine.get_configuration(maturity_level, namespace, key);
-          // WIP:    get_configuration_completed = true;
               http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + stringize_safely(namespace) + ", key=" + stringize_safely(key));
 
               if (verbosity > 1) {
