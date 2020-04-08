@@ -262,6 +262,7 @@ public class Configuration_Master_engine {
       case             integer:
       case nonnegative_integer:
       case    positive_integer:
+      case      IP_port_number:
         the_value = new config_algebraic_type(Long.parseLong(the_value_str));
         break;
 
@@ -295,6 +296,12 @@ public class Configuration_Master_engine {
       case    positive_integer:
         if (the_value.get_as_long() < 1) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “positive_integer”.  Source: " + source);
+        }
+        break;
+
+      case IP_port_number:
+        if (the_value.get_as_long() < 0 || the_value.get_as_long() > 65535) {
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “IP_port_number”.  Source: " + source);
         }
         break;
 

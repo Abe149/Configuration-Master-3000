@@ -5,6 +5,8 @@ public enum value_types {
   nonnegative_integer,
      positive_integer,
 
+  IP_port_number,
+
   nonempty_string,
            string,
 
