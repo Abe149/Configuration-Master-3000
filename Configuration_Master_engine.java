@@ -117,7 +117,7 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
-  private parsed_line_for_a_schema parse_a_line_for_a_schema(String line) throws IOException {
+  private parsed_line_for_a_schema parse_a_line_for_a_schema(String line, String source) throws IOException {
     String                         the_namespace = null;
     String                         the_key       = null;
     String                         the_value_str = null;
@@ -136,10 +136,10 @@ public class Configuration_Master_engine {
 
     if ("*".equals(the_key)) {
       if (strict_checking_mode_enabled) {
-        throw new IOException("Strict-checking mode violation: schema line parse indicates a line with an invalid key of ‘*’: “" + line + '”');
+        throw new IOException("Strict-checking mode violation: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "” at " + source);
       }
       if (verbosity > 0) {
-        System.err.println("\n\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "”; ignoring it.\033[0m\n");
+        System.err.println("\n\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "” at " + source + "; ignoring it.\033[0m\n");
       }
       return null;
     }
@@ -167,7 +167,7 @@ public class Configuration_Master_engine {
   }
 
 
-  private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line) throws IOException {
+  private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line, String source) throws IOException {
     maturityLevel_comparison_types the_MLC_kind                           = maturityLevel_comparison_types.equal_to;
     int                            the_maturity_level_to_which_to_compare = -2; // _do_ use a negative value as a sentinel, but do _not_ use -1, since that value is "reserved" for the desugared integer value of the nonsensical MLC "<0"
     String                         the_namespace                          = null;
@@ -193,11 +193,11 @@ public class Configuration_Master_engine {
     if (Pattern.matches("\\d+", the_MLC_spec_after_the_initial_char)) { // negative integers are _intentionally_ unsupported
       the_maturity_level_to_which_to_compare = Integer.parseInt(the_MLC_spec_after_the_initial_char);
       if (the_maturity_level_to_which_to_compare < 0)
-        throw new IOException("SYNTAX ERROR: negative integer in a maturity-level specification.");
+        throw new IOException("SYNTAX ERROR: negative integer in a maturity-level specification at " + source);
     } else {
       the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
       if (the_maturity_level_to_which_to_compare < 0)
-        throw new IOException("FLAGRANT SYSTEM ERROR: negative integer found in a maturity-level specification _after_ converting from an alias; not only is a negative mapping from an alias _bad_, but it should not even be _possible_ to have at this point in the program.");
+        throw new IOException("FLAGRANT SYSTEM ERROR: negative integer found in a maturity-level specification _after_ converting from an alias; not only is a negative mapping from an alias _bad_, but it should not even be _possible_ to have at this point in the program.  Source: " + source);
     }
 
     final char the_MLC_operator_as_a_char = the_MLC_spec_as_a_string.charAt(0);
@@ -217,7 +217,7 @@ public class Configuration_Master_engine {
                 ++the_maturity_level_to_which_to_compare;
         break;
       default:
-        throw new IOException("SYNTAX ERROR: unrecognized leading character in a maturity-level specification.");
+        throw new IOException("SYNTAX ERROR: unrecognized leading character in a maturity-level specification, at " + source);
       // no closing brace here due to my way of indenting inside switch blocks
     }
 
@@ -227,35 +227,36 @@ public class Configuration_Master_engine {
 
     if (the_maturity_level_to_which_to_compare == -1) { // this can [_only_, I hope] happen if/when the syntactic MLC is "<0", thus desugaring to "≤-1"
       if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: «" + line + '»');
+        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: «" + line + "»; source: " + source);
       else {
-        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line «" + line + "»; ignoring it.\033[0m\n");
+        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line «" + line + "» at " + source + "; ignoring it.\033[0m\n");
         return null; // ignore the invalid input in non-strict mode
       }
     }
 
     if (null == the_namespace || null == the_key || null == the_value_str)
-      throw new IOException("Internal error: in the config. parser, at least one of the 3 String references was null in a place where this should be impossible.");
+      throw new IOException("Internal error: in the config. parser, at least one of the 3 String references was null in a place where this should be impossible.  Source: " + source);
 
     if (the_namespace.length() < 1 || the_key.length() < 1 || the_value_str.length() < 1) {
       if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "».");
+        throw new IOException("Grammatical error: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "» at " + source);
       else {
-        System.err.println("\n\033[33mWARNING: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "»; ignoring it.\033[0m\n");
+        System.err.println("\n\033[33mWARNING: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "» at " + source + "; ignoring it.\033[0m\n");
         return null; // ignore the invalid input in non-strict mode
       }
     }
 
-    if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown."); // this must come _after_ the line of code that returns null when the line of input was either empty or effectively all-comment
+    if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown.  Source: " + source); // this must come _after_ the line of code that returns null when the line of input was either empty or effectively all-comment
 
     config_algebraic_type the_value;
 
-    final tuple_for_key_of_a_config the_key_of_the_config = new tuple_for_key_of_a_config(the_MLC_kind, the_maturity_level_to_which_to_compare, the_namespace, the_key);
+    final tuple_for_key_of_a_config the_key_of_the_config = // ...
+      new tuple_for_key_of_a_config(the_MLC_kind, the_maturity_level_to_which_to_compare, the_namespace, the_key);
 
     // first, just parse; we will validate later
     value_types the_VT = get_type_from_schema(the_key_of_the_config);
     if (null == the_VT) {
-      throw new IOException("Error while type checking; do you have a configuration that is not represented in the schema?  Key: " + the_key_of_the_config);
+      throw new IOException("Error while type checking; do you have a configuration that is not represented in the schema?  Key: " + the_key_of_the_config + "; source: " + source);
     }
     switch (the_VT) {
       case             integer:
@@ -267,39 +268,39 @@ public class Configuration_Master_engine {
       case          string:
       case nonempty_string:
         if ('“' != the_value_str.charAt(0) || '”' != the_value_str.charAt(the_value_str.length()-1)) {
-          throw new IOException("Error while type checking; SYNTAX ERROR for a string.  Key: " + the_key_of_the_config);
+          throw new IOException("Error while type checking; SYNTAX ERROR for a string.  Key: " + the_key_of_the_config + "; source: " + source);
         }
         the_value = new config_algebraic_type(the_value_str.replaceFirst("^“", "").replaceFirst("”$", ""));
         break;
 
       case URL:
         if ('<' != the_value_str.charAt(0) || '>' != the_value_str.charAt(the_value_str.length()-1)) {
-          throw new IOException("Error while type checking; SYNTAX ERROR for a URL.  Key: " + the_key_of_the_config);
+          throw new IOException("Error while type checking; SYNTAX ERROR for a URL.  Key: " + the_key_of_the_config + "; source: " + source);
         }
         the_value = new config_algebraic_type(the_value_str.replaceFirst("^<", "").replaceFirst(">$", ""));
         break;
 
       default:
-        throw new IOException("Internal implementation error: unrecognized value-type in configuration parser.");
+        throw new IOException("Internal implementation error: unrecognized value-type in configuration parser.  Source: " + source);
     }
 
     // now validate!
     switch (the_VT) {
       case nonnegative_integer:
         if (the_value.get_as_long() < 0) {
-          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonnegative_integer”.");
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonnegative_integer”.  Source: " + source);
         }
         break;
 
       case    positive_integer:
         if (the_value.get_as_long() < 1) {
-          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “positive_integer”.");
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “positive_integer”.  Source: " + source);
         }
         break;
 
       case nonempty_string:
         if (the_value.get_as_String().length() < 1) {
-          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonempty_string”.");
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonempty_string”.  Source: " + source);
         }
         break;
 
@@ -307,7 +308,7 @@ public class Configuration_Master_engine {
         // -- the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
         // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) {
         if (the_value.get_as_String().length() < 1 || ! is_this_string_a_valid_URL(the_value.get_as_String())) {
-          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.");
+          throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.  Source: " + source);
         }
         break;
 
@@ -517,7 +518,7 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 13: schema input line: ''" + line + "''");
           }
 
-          parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line);
+          parsed_line_for_a_schema parse_result = parse_a_line_for_a_schema(line, schema_input.get_description_of_input_and_current_position());
           if (verbosity > 5) {
             System.err.println("TESTING 14: schema line parse: " + parse_result);
           }
@@ -585,7 +586,7 @@ public class Configuration_Master_engine {
             System.err.println("TESTING 18: config. input line: «" + line + '»');
           }
 
-          parsed_line_for_a_config parse_result = parse_and_typecheck_a_line_for_a_config(line);
+          parsed_line_for_a_config parse_result = parse_and_typecheck_a_line_for_a_config(line, config_input.get_description_of_input_and_current_position());
           if (verbosity > 5) {
             System.err.println("TESTING 19: config line parse: " + parse_result);
           }
