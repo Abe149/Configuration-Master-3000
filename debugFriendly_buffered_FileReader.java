@@ -9,6 +9,7 @@ public class debugFriendly_buffered_FileReader implements debugFriendly_buffered
     line_number = 0;
     my_BR = new BufferedReader(new FileReader(pathname));
   }
+
   public boolean ready()   throws IOException { return my_BR.ready(); }
 
   public String readLine() throws IOException {
@@ -17,10 +18,10 @@ public class debugFriendly_buffered_FileReader implements debugFriendly_buffered
   }
 
   public String get_description_of_input_and_current_position() {
-    return " <File at pathname “" + pathname + "”, line " + line_number + "> ";
+    return " <file at pathname “" + pathname + "”, line " + line_number + "> ";
   }
 
-  private String pathname;
+  private String         pathname;
   private BufferedReader my_BR;
-  private long line_number = -9000; // so it will probably result in nonsense if Java does the wrong thing
+  private long           line_number = -9000; // so it will probably result in nonsense if Java does the wrong thing
 }

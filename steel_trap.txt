@@ -7,9 +7,6 @@ A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code belo
 
 TO DOs
 ------
-* make the engine report errors more usefully, e.g. with pathname and line of the place in the "source code" where things went wrong
-  * this might require changing {the handoff from server to engine} from BufferedReader references to plain pathnames [i.e. String references]
-
 * make strictness multi-level, with a default level of 0 [zero]
   * then make the current "strict mode" the new "strictness level 1"
     * new "strictness level 2": compare matches/results for conflicting values _including_ Java type, i.e. do _not_ consider 1 and "1" to be equivalent and therefor redundant-is-OK
@@ -36,4 +33,7 @@ DONE to-dos
   * [DONE] when that is done and tested working, remove internal support for '<' and '>' -- DONE as of commit a585c58b3d09762d38a7566e2248cca00280dd6a [Mon Apr 6 05:35:07 2020 -0400]
 
 * [DONE] create a new "library class", move "stringize_safely" into it -- DONE as of 5e33c9536ab5abaa720a0bf3cc79f734f50a9fe0 [Wed Apr 8 02:36:07 2020 -0400]
+
+* [DONE] make the engine report errors more usefully, e.g. with pathname and line of the place in the "source code" where things went wrong -- DONE as of dc1fe372e964ff989d4f5bb3413fd097ad151f47 [at Wed Apr 8 07:54:38 2020 -0400]
+  * IGNORE: this might require changing {the handoff from server to engine} from BufferedReader references to plain pathnames [i.e. String references] -- BETTER SOLUTION THOUGHT OF AND IMPLEMENTED: "debugFriendly_buffered_input.java" & "debugFriendly_buffered_FileReader.java"
 
