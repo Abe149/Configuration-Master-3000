@@ -413,7 +413,7 @@ public class Configuration_Master_engine {
         String line = maturityLevel_aliases_input.readLine();
         if (verbosity > 5) {
           System.err.println();
-          System.err.println("TESTING  1: maturity-level aliases input line: «" + line + '»');
+          System.err.println("TESTING  1: maturity-level aliases input line: «" + line + "» read from " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
         }
         line = line.split("#")[0]; // discard comments
         if (verbosity > 5) {
@@ -451,7 +451,7 @@ public class Configuration_Master_engine {
             }
 
             if (mr1.groupCount() != 2) {
-              throw new IOException("Wrong number of groups in results for maturity-level aliases input line micro-parser: expected 2, got " + String.valueOf(mr1.groupCount()));
+              throw new IOException("Wrong number of groups in results for maturity-level aliases input line micro-parser: expected 2, got " + String.valueOf(mr1.groupCount()) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the line is a syntax error [i.e. a failure to match the required regex]
             }
 
             final String            alias = m1.group(1);
@@ -464,13 +464,13 @@ public class Configuration_Master_engine {
               System.err.println("TESTING 12: number: " + number);
             }
             if (number < 0) {
-              throw new IOException("Negative number in maturity-level aliases: for alias ''" + alias + "'', got " + String.valueOf(number));
+              throw new IOException("Negative number in maturity-level aliases: for alias ''" + alias + "'', got " + String.valueOf(number) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the '-' in e.g. "-1" is a syntax error [i.e. a failure to match the required regex]
             }
 
             maturityLevel_aliases.put(alias, number);
 
           } /* if line_matched_the_regex */ else {
-            throw new IOException("Syntax error in maturity-level aliases: ''" + line + "''");
+            throw new IOException("Syntax error in maturity-level aliases: ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
           }
 
         } // if line.length() > 0
