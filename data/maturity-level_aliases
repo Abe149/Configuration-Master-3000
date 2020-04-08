@@ -1,19 +1,26 @@
-sandbox =    0#comments should be OK in this file even if the '#' is right up against the integer, i.e. without a space between
-dev     = 2250
-test    = 4500
-UAT     = 6750
-prod    = 9000
+sandbox = 0#comments should be OK in this file even if the '#' is right up against the integer, i.e. without a space between
+dev, development, 開発       = 2250
+test                         = 4500
+UAT, user-acceptance_testing = 6750 # spaces are thrown away, so don`t try to make an alias like "user-acceptance testing"
+prod, production             = 9000
+
+UserAcceptanceTesting = 16750 # _this_ [as opposed to using ASCII spaces] is OK, but bear in mind that:
+             #  * the aliases are all matched case-insensitively, so a query with e.g. "useracceptancetesting" will also match
+             #  * since -- in this sample file -- "UserAcceptanceTesting" is defined on a separate line from "UAT" & "user-acceptance_testing", it is fundamentally unrelated to them and varies from them independently.  The program does _not_ have any artificial intelligence to: try and "understand" what the aliases "mean", if anything, and then figure out if you`ve made a mistake that a simple syntax-and-grammar parser cannot catch.
+
+# further explanation of the warning <<spaces are thrown away, so don`t try to make an alias like "user-acceptance testing">>: it won`t work as expected, since it _will_ "work" but will create a/the alias "user-acceptancetesting", which will not match the queries you will probably make if you try to actually use the alias-with-an-ASCII-space you _thought_ you created
+
 # bad=-1 # a "stress test"
 
 # test =  666 # error: redefinition
 # test = 4500 # redundant definition: OK in non-strict mode, an error in strict mode
 
-foo , bar       = 12345 # just testing the multiple-aliases-per-line code
-fooz, barz, baz = 12345 # just testing the multiple-aliases-per-line code # not "foo2" & "bar2" b/c digits are unsupported in aliases
+# foo , bar       = 12345 # just testing the multiple-aliases-per-line code
+# fooz, barz, baz = 12345 # just testing the multiple-aliases-per-line code # not "foo2" & "bar2" b/c digits are unsupported in aliases
 
 # test,tester,testing = 9 # should "die" in any strictness mode, due to a true [i.e. conflicting] redef. of "test"
 
-開発    = 2250 # Japanese for "development"
+# 開発    = 2250 # Japanese for "development" # no longer needed "down here" in this file: now part of a multi-alias line, above
 
 # for fun...
 ドラゴンボールZゼット = 9001 # Dragon Ball Z

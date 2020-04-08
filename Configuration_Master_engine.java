@@ -424,7 +424,8 @@ public class Configuration_Master_engine {
           System.err.println("TESTING  3: maturity level aliases input line after removing all ASCII spaces and lower-casing: «" + line + '»');
         }
         if (line.length() > 0) {
-          Matcher m1 = Pattern.compile("(\\p{IsL}+)((?:,\\p{IsL}+)*)=(\\d+).*").matcher(line); // allows trailing "garbage"; "{IsL}" is Java regex for "Is a Letter according to Unicode [includes ideographics and uncased alphabets/abugidas]
+          // identifier language: [a letter][letters, ASCII dashes, and ASCII underscores]*
+          Matcher m1 = Pattern.compile("(\\p{IsL}[\\p{IsL}-_]*)((?:,\\p{IsL}[\\p{IsL}-_]*)*)=(\\d+).*").matcher(line); // allows trailing "garbage"; "{IsL}" is Java regex for "Is a Letter according to Unicode [includes ideographics and uncased alphabets/abugidas]
           if (verbosity > 5) {
             System.err.println("TESTING  4: m1: " + m1);
             System.err.println("TESTING  5: m1.groupCount() -> " + m1.groupCount());
