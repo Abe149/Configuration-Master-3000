@@ -7,8 +7,6 @@ A POSSIBLE LACK OF STRICTNESS, EVEN IN STRICT-CHECKING MODE: since the code belo
 
 TO DOs
 ------
-* create a new "library class", move "stringize_safely" into it
-
 * make the engine report errors more usefully, e.g. with pathname and line of the place in the "source code" where things went wrong
   * this might require changing {the handoff from server to engine} from BufferedReader references to plain pathnames [i.e. String references]
 
@@ -24,6 +22,9 @@ TO DOs
 * make the engine in non-strict mode report ignored invalid inputs in more [all the remaining?] places where it ignores invalid inputs
   * this will probably involve replacing a bunch of "naked" "return null;" statements with e.g. "if (strict<...>) System.err.println("WARNING: <...>"<...> return null;"
 
+* make the engine in non-strict mode report ignored redundant inputs
+
+* make the engine in super-strict mode _reject_ redundant inputs
 
 
 
@@ -33,4 +34,6 @@ DONE to-dos
 * [DONE] write code to rewrite ['>' / '<']-based MLCs using '≤' & '≥' -- DONE as of 83e70dc789af5fdd27ed422fbea073d231aa36b5 [Mon Apr 6 03:49:12 2020 -0400]
   * [DONE] make strict mode throw an exception upon compiling the MLC "<0" since it`s nonsensical [allow it to pass, ignored, in non-strict mode] -- DONE as of 507fe0e60c7abc50cf154245dd3412abf9c26cf4 [Mon Apr 6 04:39:11 2020 -0400]
   * [DONE] when that is done and tested working, remove internal support for '<' and '>' -- DONE as of commit a585c58b3d09762d38a7566e2248cca00280dd6a [Mon Apr 6 05:35:07 2020 -0400]
+
+* [DONE] create a new "library class", move "stringize_safely" into it -- DONE as of 5e33c9536ab5abaa720a0bf3cc79f734f50a9fe0 [Wed Apr 8 02:36:07 2020 -0400]
 
