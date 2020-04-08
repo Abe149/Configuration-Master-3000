@@ -34,7 +34,7 @@ for dir in $dirs_to_try; do
     echo -en '  \033[31mUNEXPECTED PASS in strict mode\033[0m'
     failed=true # it could be any non-empty string
   else
-    echo  -n '  (failed as expected in strict mode)'
+    echo  -n '  (failed as expected in strict mode)  '
   fi
   if [ -z "$failed" ]; then
     echo -e '\033[32mPASSED\033[0m'
