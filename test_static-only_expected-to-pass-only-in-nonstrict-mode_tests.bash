@@ -33,6 +33,8 @@ for dir in $dirs_to_try; do
   if   ./check.sh              directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
     echo -en '  \033[31mUNEXPECTED PASS in strict mode\033[0m'
     failed=true # it could be any non-empty string
+  else
+    echo  -n '  (failed as expected in strict mode)'
   fi
   if [ -z "$failed" ]; then
     echo -e '\033[32mPASSED\033[0m'
@@ -51,7 +53,7 @@ echo "Num. failed: $num_failed"
 
 
 if [ $num_failed -lt 0 ]; then
-  echo -e'\033[31mBUG IN TEST SCRIPT\033[0m'
+  echo -e '\033[31mBUG IN TEST SCRIPT\033[0m'
   exit 1
 fi
 

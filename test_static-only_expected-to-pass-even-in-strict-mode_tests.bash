@@ -51,7 +51,7 @@ echo "Num. failed: $num_failed"
 
 
 if [ $num_failed -lt 0 ]; then
-  echo -e'\033[31mBUG IN TEST SCRIPT\033[0m'
+  echo -e '\033[31mBUG IN TEST SCRIPT\033[0m'
   exit 1
 fi
 
