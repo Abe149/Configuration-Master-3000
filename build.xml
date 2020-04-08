@@ -8,8 +8,8 @@
     <property name=                "CM_jar" value="${jars_dir}/Configuration_Master.jar"/>
 
     <target name="compile">
-        <mkdir                dir="${classes_dir}"/>
-        <javac srcdir="." destdir="${classes_dir}" includeantruntime="false" debug="true" debuglevel="lines,vars,source" listfiles="true"/>  <!-- the “includeantruntime="false"” part is to work around an Ant misfeature: <https://stackoverflow.com/questions/5103384/ant-warning-includeantruntime-was-not-set> -->  <!-- NOTE: “verbose="true"” here causes a _huge_ mess to be dumped to the console upon compilation :-( -->
+        <mkdir                           dir="${classes_dir}"/>
+        <javac srcdir="Java_sources" destdir="${classes_dir}" includeantruntime="false" debug="true" debuglevel="lines,vars,source" listfiles="true"/>  <!-- the “includeantruntime="false"” part is to work around an Ant misfeature: <https://stackoverflow.com/questions/5103384/ant-warning-includeantruntime-was-not-set> -->  <!-- NOTE: “verbose="true"” here causes a _huge_ mess to be dumped to the console upon compilation :-( -->
     </target>
 
     <target name="jar" depends="jars"/>  <!-- alias "jar" -> "jars" -->
