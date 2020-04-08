@@ -468,6 +468,10 @@ public class Configuration_Master_engine {
               throw new IOException("Negative number in maturity-level aliases: for aliases ''" + first_alias + more_aliases_if_any + "'', got " + String.valueOf(number) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the '-' in e.g. "-1" is a syntax error [i.e. a failure to match the required regex]
             }
 
+            if (maturityLevel_aliases.containsKey(first_alias)) {
+              throw new IOException("Error in maturity-level aliases: redefinition of an alias in the line ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
+            }
+
             maturityLevel_aliases.put(first_alias, number);
 
           } /* if line_matched_the_regex */ else {
