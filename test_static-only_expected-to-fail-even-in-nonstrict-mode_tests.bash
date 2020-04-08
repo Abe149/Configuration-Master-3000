@@ -5,6 +5,8 @@ if [ "$0" = sh -o "$0" = /bin/sh -o "$0" = /usr/bin/sh -o "$0" = bash -o "$0" = 
   return 1
 fi
 
+echo -e "\n\n=== running $0 ===\n"
+
 dirs_to_try=`find Tests/static-only/expected_to_fail_even_in_non-strict_mode/* -maxdepth 0 -type d`
 echo 'Subdir.s to try as tests:'
 for dir in $dirs_to_try; do
