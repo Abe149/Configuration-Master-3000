@@ -468,15 +468,30 @@ public class Configuration_Master_engine {
               throw new IOException("Negative number in maturity-level aliases: for aliases ''" + first_alias + more_aliases_if_any + "'', got " + String.valueOf(number) + " ... at " + maturityLevel_aliases_input.get_description_of_input_and_current_position()); // this one may never trigger, since the '-' in e.g. "-1" is a syntax error [i.e. a failure to match the required regex]
             }
 
-            if (maturityLevel_aliases.containsKey(first_alias)) {
-              final int old_def = maturityLevel_aliases.get(first_alias);
-              if (number != old_def || strict_checking_mode_enabled) {
-                throw new IOException("Error in maturity-level aliases: " + (number == old_def ? "redundant" : "conflicting") + " redefinition of an alias in the line ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
+            ArrayList<String> aliases_for_this_number = new ArrayList<String>();
+            aliases_for_this_number.add(first_alias);
+            for (String alias : more_aliases_if_any.split(",")) {
+              if (alias != null && alias.length() > 0) { // being careful, in case of wierdness in "split"
+                aliases_for_this_number.add(alias);
               }
-              System.err.println("\n\033[33mWARNING: redundant redefinition of a maturity level to the same value it had before: “" + line + "” at " + maturityLevel_aliases_input.get_description_of_input_and_current_position() + "; ignoring it.\033[0m\n");
             }
 
-            maturityLevel_aliases.put(first_alias, number);
+            for (String alias : aliases_for_this_number) {
+
+              if (maturityLevel_aliases.containsKey(alias)) {
+                final int old_def = maturityLevel_aliases.get(alias);
+                if (number != old_def || strict_checking_mode_enabled) {
+                  throw new IOException("Error in maturity-level aliases: " + (number == old_def ? "redundant" : "conflicting") + " redefinition of the alias ''" + alias + "'' in the line ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
+                }
+                System.err.println("\n\033[33mWARNING: redundant redefinition of the maturity level alias ''" + alias + "'' to the same value it had before: “" + line + "” at " + maturityLevel_aliases_input.get_description_of_input_and_current_position() + "; ignoring it.\033[0m\n");
+              } else {
+                if (verbosity > 5) {
+                  System.err.println("TESTING 12.5: set mapping from alias ''" + alias + "'' to " + number);
+                }
+                maturityLevel_aliases.put(alias, number);
+              }
+
+            }
 
           } /* if line_matched_the_regex */ else {
             throw new IOException("Syntax error in maturity-level aliases: ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
