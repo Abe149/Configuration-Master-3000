@@ -42,3 +42,16 @@ echo
 echo "Num. passed: $num_passed"
 echo "Num. failed: $num_failed"
 
+
+
+if [ $num_failed -lt 0 ]; then
+  echo -e'\033[31mBUG IN TEST SCRIPT\033[0m'
+  exit 1
+fi
+
+if [ $num_failed -gt 255 ]; then
+  exit 255
+fi
+
+# if [ $num_failed -gt 0 ]; then
+exit $num_failed
