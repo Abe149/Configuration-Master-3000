@@ -8,7 +8,6 @@ import java.net.URL;
 import java.net.MalformedURLException;
   
 import static Configuration_Master.utility_class.*;
-// import static utility_class.*;
 
 public class Configuration_Master_engine {
 
@@ -384,12 +383,14 @@ public class Configuration_Master_engine {
 
 
   // start of ctor
-  Configuration_Master_engine(BufferedReader   maturityLevel_aliases_input,
-                              BufferedReader[] schema_inputs,
-                              BufferedReader[] config_inputs,
-                              int              verbosity_in,
-                              boolean          strict_checking_mode_enabled___in)
-                                                throws IOException {
+  Configuration_Master_engine(
+                               debugFriendly_buffered_input   maturityLevel_aliases_input,
+                               debugFriendly_buffered_input[] schema_inputs,
+                               debugFriendly_buffered_input[] config_inputs,
+                               int                            verbosity_in,
+                               boolean                        strict_checking_mode_enabled___in
+                             )
+                             throws IOException {
 
     verbosity = verbosity_in;
     strict_checking_mode_enabled = strict_checking_mode_enabled___in;
@@ -483,7 +484,7 @@ public class Configuration_Master_engine {
       }
 
       the_schema = new Hashtable<tuple_for_key_of_a_schema, value_types>();
-      for (BufferedReader schema_input : schema_inputs) {
+      for (debugFriendly_buffered_input schema_input : schema_inputs) {
         while (schema_input.ready()) {
           String line = schema_input.readLine();
           if (verbosity > 5) {
@@ -551,7 +552,7 @@ public class Configuration_Master_engine {
       // --- done parsing and validating the schema --- //
 
       the_configurations = new Hashtable<tuple_for_key_of_a_config, config_algebraic_type>();
-      for (BufferedReader config_input : config_inputs) {
+      for (debugFriendly_buffered_input config_input : config_inputs) {
         while (config_input.ready()) {
           String line = config_input.readLine();
           if (verbosity > 5) {

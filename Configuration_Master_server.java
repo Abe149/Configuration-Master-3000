@@ -260,17 +260,18 @@ public class Configuration_Master_server {
         try {
             // set up the engine
 
-            BufferedReader maturityLevel_aliases_input = new BufferedReader(new FileReader(data_directory + "/maturity-level_aliases")); // HARD-CODED
-            ArrayList<BufferedReader> config_inputs = new ArrayList<BufferedReader>();
-            ArrayList<BufferedReader> schema_inputs = new ArrayList<BufferedReader>();
+            debugFriendly_buffered_FileReader maturityLevel_aliases_input = new debugFriendly_buffered_FileReader(data_directory + "/maturity-level_aliases"); // HARD-CODED
+            ArrayList<debugFriendly_buffered_FileReader> config_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
+            ArrayList<debugFriendly_buffered_FileReader> schema_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
 
             // thanks to "jjnguy" at <https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java>
-            final File[] config_files = new File(data_directory).listFiles(new FilenameFilter() {
+            final File data_directory_as_a_Java_File_object = new File(data_directory);
+            final File[] config_files = data_directory_as_a_Java_File_object.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".configurations");
                 }
             });
-            final File[] schema_files = new File(data_directory).listFiles(new FilenameFilter() {
+            final File[] schema_files = data_directory_as_a_Java_File_object.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.endsWith(".schema");
                 }
@@ -288,20 +289,20 @@ public class Configuration_Master_server {
             }
 
             for (File config_file : config_files) {
-              config_inputs.add(new BufferedReader(new FileReader(config_file)));
+              config_inputs.add(new debugFriendly_buffered_FileReader(config_file.getPath()));
             }
             for (File schema_file : schema_files) {
-              schema_inputs.add(new BufferedReader(new FileReader(schema_file)));
+              schema_inputs.add(new debugFriendly_buffered_FileReader(schema_file.getPath()));
             }
 
             if (verbosity > 3) {
                 System.err.println();
-                System.err.println("DEBUG: # of BufferedReader objects created for config. files: " + config_inputs.size());
-                System.err.println("DEBUG: # of BufferedReader objects created for schema  files: " + schema_inputs.size());
+                System.err.println("DEBUG: # of debugFriendly_buffered_FileReader objects created for config. files: " + config_inputs.size());
+                System.err.println("DEBUG: # of debugFriendly_buffered_FileReader objects created for schema  files: " + schema_inputs.size());
                 System.err.println();
             }
 
-            BufferedReader[] dummy_for_conversion = new BufferedReader[0];
+            debugFriendly_buffered_FileReader[] dummy_for_conversion = new debugFriendly_buffered_FileReader[0];
 
             the_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
 
@@ -363,7 +364,7 @@ public class Configuration_Master_server {
             httpsServer.createContext("/test", new TestHandler());
 
             final String get_prefix = "/get:"; // DRY
-            httpsServer.createContext(get_prefix, new  GetHandler(get_prefix));
+            httpsServer.createContext(get_prefix, new GetHandler(get_prefix));
 
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             myLogger.info("About to start the Configuration Master server...");

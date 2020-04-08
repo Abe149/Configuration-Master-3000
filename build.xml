@@ -21,9 +21,9 @@
                 <attribute name="Main-Class" value="test_HTTPS_server"/>
             </manifest>
         </jar>
-        <jar destfile="${CM_jar}" basedir="${classes_dir}" includes="*.class" excludes="test*.class">
+        <jar destfile="${CM_jar}" basedir="${classes_dir}" includes="Configuration_Master/*.class">
             <manifest>
-                <attribute name="Main-Class" value="Configuration_Master_server"/>
+                <attribute name="Main-Class" value="Configuration_Master/Configuration_Master_server"/>
             </manifest>
         </jar>
     </target>
