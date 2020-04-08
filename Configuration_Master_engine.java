@@ -469,7 +469,11 @@ public class Configuration_Master_engine {
             }
 
             if (maturityLevel_aliases.containsKey(first_alias)) {
-              throw new IOException("Error in maturity-level aliases: redefinition of an alias in the line ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
+              final int old_def = maturityLevel_aliases.get(first_alias);
+              if (number != old_def || strict_checking_mode_enabled) {
+                throw new IOException("Error in maturity-level aliases: " + (number == old_def ? "redundant" : "conflicting") + " redefinition of an alias in the line ''" + line + "'' at " + maturityLevel_aliases_input.get_description_of_input_and_current_position());
+              }
+              System.err.println("\n\033[33mWARNING: redundant redefinition of a maturity level to the same value it had before: “" + line + "” at " + maturityLevel_aliases_input.get_description_of_input_and_current_position() + "; ignoring it.\033[0m\n");
             }
 
             maturityLevel_aliases.put(first_alias, number);
