@@ -108,16 +108,11 @@ public class Configuration_Master_server {
             myLogger.info("HTTP request method: " + he.getRequestMethod());
             myLogger.info("Request URI [toASCIIString()]: ''" + he.getRequestURI().toASCIIString() + "''");
             myLogger.info("Request URI [toString()]: ''" + he.getRequestURI().toString() + "''");
-      //    final String decoded_URI = URLDecoder.decode(he.getRequestURI().toString());
-      //    myLogger.info("Request URI [toString()], decoded: ''" + decoded_URI + "''");
 
 
             final String raw_URI = he.getRequestURI().toString();
-     //     assert decoded_URI.startsWith(my_prefix);
-            assert raw_URI.startsWith(my_prefix);
-       //   final String decoded_and_stripped_URI = decoded_URI.substring(my_prefix.length());
+            assert raw_URI.startsWith(my_prefix); // reminder to self: this is mostly-useless, since Java ignores assertions by default :-(
             final String prefixStripped_URI = raw_URI.substring(my_prefix.length());
-      //    myLogger.info("Request URI [toString()], decoded and prefix-stripped: ''" + decoded_and_stripped_URI + "''");
             myLogger.info("Request URI [toString()], prefix-stripped: ''" + prefixStripped_URI + "''");
 
             final String[] request_components = prefixStripped_URI.split(","); // IMPORTANT string constant
@@ -128,38 +123,26 @@ public class Configuration_Master_server {
             for (String rc : request_components) {
                 myLogger.info("Request component: ''" + rc + "''");
 
-                // final String lowered_and_despaced = rc.toLowerCase().replaceAll(" ", ""); // imperfect: we need to be more careful with _which_ spaces we remove
-
-            //  final String lowered = rc.toLowerCase();
-            //    final String[] split_for_careful_despacing = lowered.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
                 final String[] split_for_careful_despacing = rc.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
 
                 // in principle, I could assert here if the array length of the split isn`t exactly 2 [TO DO?]
 
-                final String LHS = URLDecoder.decode(split_for_careful_despacing[0]).toLowerCase().trim();
-                final String RHS = URLDecoder.decode(split_for_careful_despacing[1]).toLowerCase().trim();
+                final String LHS = URLDecoder.decode(split_for_careful_despacing[0]).trim().toLowerCase();
+                final String RHS = URLDecoder.decode(split_for_careful_despacing[1]).trim().toLowerCase();
                 myLogger.info("Request component after per-subcomponent decoding and trimming: LHS=''" + LHS + "'', RHS=''" + RHS + "''");
 
-         //     final String lowered_and_despaced = split_for_careful_despacing[0].trim() + '=' + split_for_careful_despacing[1].trim();
-          //    myLogger.info("Request component, lowered and despaced: ''" + lowered_and_despaced + "''");
-
-                // TO DO: clean this up, DRY-wise...  maybe with a[n] [inner?] class-level method, maybe with a lambda
-
-                // if (lowered_and_despaced.startsWith("maturity_level=")) {
                 if (LHS.equals("maturity_level")) {
                     http_assert(he, "".equals(maturity_level_string), 400, "each request must include exactly one maturity level");
                     maturity_level_string = RHS;
                     myLogger.info("Maturity level of request, as a string: ''" + maturity_level_string + "''");
                 }
 
-                // if (lowered_and_despaced.startsWith("namespace=")) {
                 if (LHS.equals("namespace")) {
                     http_assert(he, "".equals(namespace), 400, "each request must include exactly one namespace");
                     namespace = RHS;
                     myLogger.info("Namespace of request: ''" + namespace + "''");
                 }
 
-                // if (lowered_and_despaced.startsWith("key=")) {
                 if (LHS.equals("key")) {
                     http_assert(he, "".equals(key), 400, "each request must include exactly one key");
                     key = RHS;
