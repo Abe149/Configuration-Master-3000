@@ -615,8 +615,10 @@ public class Configuration_Master_engine {
               final config_algebraic_type old_value = the_configurations.get(parse_result.key);
               if (old_value.equals(parse_result.value)) {
                 if (verbosity > 5) {
-                  System.err.println("TESTING 21: config. line seems to be valid, but redundant.  Ignoring.");
+                  System.err.println("TESTING 21: config. line seems to be valid, but redundant.  " + (strict_checking_mode_enabled ? "The engine should ''crash'' immediately, since it is in strict mode." : "Ignoring, since the engine is in non-strict mode."));
                 }
+                if (strict_checking_mode_enabled)
+                  throw new IOException("Redundant definition found in strict mode in the configuration line «" + line + "»; source: " + source);
               } else {
                 throw new IOException("Data inconsistency: conflicting line for configuration: «" + line + "» at " + source + " conflicts with prior parse result value " + old_value);
               }
@@ -640,7 +642,8 @@ public class Configuration_Master_engine {
       for (tuple_for_key_of_a_config outer_key : the_configurations.keySet()) {
         if ("*".equals(outer_key.the_namespace)) {
           for (tuple_for_key_of_a_config inner_key : the_configurations.keySet()) {
-            if (    outer_key.the_MLC_kind == inner_key.the_MLC_kind
+            if (
+                    outer_key.the_MLC_kind == inner_key.the_MLC_kind
                  && outer_key.the_maturity_level_to_which_to_compare == inner_key.the_maturity_level_to_which_to_compare
                  && outer_key.the_key.equalsIgnoreCase(inner_key.the_key)
                  && ! the_configurations.get(outer_key).equals( the_configurations.get(inner_key) )
