@@ -48,8 +48,8 @@ import static Configuration_Master.utility_class.*;
 
 public class Configuration_Master_server {
 
-    private final static int default_verbosity = 5;
-    private static int verbosity = default_verbosity;
+    private final static short default_verbosity = 5;
+    private static short verbosity = default_verbosity;
 
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
@@ -183,8 +183,6 @@ public class Configuration_Master_server {
     }
 
 
-    private static boolean strict_checking_mode_enabled = false;
-
     /**
      * @param args
      */
@@ -194,6 +192,8 @@ public class Configuration_Master_server {
         boolean check_only              = false;
         boolean allow_empty_schema      = false;
         boolean allow_no_configurations = false;
+        short   strictness_level        =     0;
+
 
         String data_directory = "data/";
 
@@ -209,7 +209,7 @@ public class Configuration_Master_server {
                   "-------------------\n" +
                   "h / help : help, duh.\n" +
                   "\n"+
-                  "strict_checking : makes the grammar checking of the engine strict.\n" +
+                  "strict_checking : makes the static checking of the engine strict; this sets the strictness level to 1 if [and only if] it was previously zero.\n" +
                   "                  It`s probably best to leave this at the default [off] when running the server “for real”.\n" +
                   "\n"+
                   "check_only : _only_ start up the engine, i.e. mainly to run syntax+grammar checking of the data.\n" +
@@ -232,9 +232,11 @@ public class Configuration_Master_server {
             } else if ("directory_from_which_to_load_data".equals(LHS)) {
               data_directory = RHS;
             } else if ("strict_checking".equals(LHS)) {
-                strict_checking_mode_enabled = true;
-                if (verbosity > 0) {
-                    System.err.println("INFO: activated strict-checking mode, according to CLI arg.; this is probably not something you really want when running the server “for real”.");
+                if (0 == strictness_level) {
+                  strictness_level = 1;
+                  if (verbosity > 0) {
+                      System.err.println("\nINFO: activated strict static checking mode, i.e. strictness_level = 1, according to CLI arg.; this is probably not something you really want when running the server “for real”, i.e. not just checking.\n");
+                  }
                 }
             } else if (LHS != null && LHS.matches("v+")) { // supports not only e.g. "-v" but also e.g. "-vv" and "vvv"
                 verbosity += LHS.length();
@@ -258,7 +260,7 @@ public class Configuration_Master_server {
                 }
             } else if ("verbosity".equals(LHS)) {
                 try {
-                    final int new_verbosity = Integer.parseInt(RHS);
+                    final short new_verbosity = Short.parseShort(RHS);
                     if (verbosity > 0 || new_verbosity > 0) {
                         System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
                     }
@@ -329,7 +331,7 @@ public class Configuration_Master_server {
                                                          schema_inputs.toArray(dummy_for_conversion),
                                                          config_inputs.toArray(dummy_for_conversion),
                                                          verbosity,
-                                                         strict_checking_mode_enabled,
+                                                         strictness_level,
                                                          allow_empty_schema,
                                                          allow_no_configurations
                                                         );

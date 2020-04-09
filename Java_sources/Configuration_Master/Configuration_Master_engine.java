@@ -378,9 +378,10 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
 
-  // the next 2 lines: so non-ctor methods will be able to read these values without me needing to pass it around
-  private int verbosity;
+  // the next 3 lines: so non-ctor methods will be able to read these values without me needing to pass them around
   private boolean strict_checking_mode_enabled;
+  private short   strictness_level;
+  private short   verbosity;
 
 
   // start of ctor
@@ -388,15 +389,16 @@ public class Configuration_Master_engine {
                                debugFriendly_buffered_input   maturityLevel_aliases_input,
                                debugFriendly_buffered_input[] schema_inputs,
                                debugFriendly_buffered_input[] config_inputs,
-                               int                            verbosity_in,
-                               boolean                        strict_checking_mode_enabled___in,
+                               short                          verbosity_in,
+                               short                          strictness_level___in,
                                boolean                        allow_empty_schema,
                                boolean                        allow_no_configurations
                              )
                              throws IOException {
 
     verbosity = verbosity_in;
-    strict_checking_mode_enabled = strict_checking_mode_enabled___in;
+    strictness_level = strictness_level___in;
+    strict_checking_mode_enabled = strictness_level > 0; // for "backwards compatibility" with CM3000`s "old" code, i.e. so I don`t need to replace e.g. "if (strict_checking_mode_enabled)" with "if (strictness_level > 0)" all over the place, and similarly in at least one spot where I used "strict_checking_mode_enabled" as the predicate in a ternary-operator expression
 
     typenames_to_types = new Hashtable<String, value_types>();
     for (value_types VT : value_types.values()) {
