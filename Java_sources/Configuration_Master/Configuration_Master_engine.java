@@ -276,6 +276,7 @@ public class Configuration_Master_engine {
         break;
 
       case URL:
+        the_value_str = the_value_str.replaceFirst(">.*", ">"); // allow trailing "garbage", e.g. a '#'-started comment
         if ('<' != the_value_str.charAt(0) || '>' != the_value_str.charAt(the_value_str.length()-1)) {
           throw new IOException("Error while type checking; SYNTAX ERROR for a URL.  Key: " + the_key_of_the_config + "; source: " + source);
         }
