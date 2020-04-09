@@ -15,8 +15,8 @@ UserAcceptanceTesting = 16750 # _this_ [as opposed to using ASCII spaces] is OK,
 # test =  666 # error: redefinition
 # test = 4500 # redundant definition: OK in non-strict mode, an error in strict mode
 
-# foo , bar       = 12345 # just testing the multiple-aliases-per-line code
-# fooz, barz, baz = 12345 # just testing the multiple-aliases-per-line code # not "foo2" & "bar2" b/c digits are unsupported in aliases
+foo , bar       = 12345 # just testing the multiple-aliases-per-line code
+fooz, barz, baz = 12345 # just testing the multiple-aliases-per-line code # not "foo2" & "bar2" b/c digits are unsupported in aliases
 
 # test,tester,testing = 9 # should "die" in any strictness mode, due to a true [i.e. conflicting] redef. of "test"
 
