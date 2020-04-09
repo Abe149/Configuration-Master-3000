@@ -1,0 +1,3 @@
+# this schema added so as to make this test valid again after I added the requirement to both strict & non-strict mode that by default they do not allow/accept empty schemas or empty configuration sets
+
+Namespace 1␟key 1␟string
