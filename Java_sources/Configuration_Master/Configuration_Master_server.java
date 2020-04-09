@@ -249,6 +249,8 @@ public class Configuration_Master_server {
                             System.err.println("INFO: setting strictness level to " + new_strictness_level + " according to CLI arg.");
                         }
                         strictness_level = new_strictness_level;
+                    } else {
+                        System.err.println("WARNING: ignoring negative input in re the CLI arg. ''strictness_level=<integer>''.");
                     }
                 } catch (NumberFormatException nfe) {
                     System.err.println("WARNING: unable to parse an integer in re the CLI arg. ''strictness_level=<integer>''.");
@@ -281,6 +283,8 @@ public class Configuration_Master_server {
                             System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
                         }
                         verbosity = new_verbosity;
+                    } else {
+                        System.err.println("WARNING: ignoring negative input in re the CLI arg. ''verbosity=<integer>''.");
                     }
                 } catch (NumberFormatException nfe) {
                     System.err.println("WARNING: unable to parse an integer in re the CLI arg. ''verbosity=<integer>''.");
