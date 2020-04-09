@@ -396,7 +396,9 @@ public class Configuration_Master_engine {
                                debugFriendly_buffered_input[] schema_inputs,
                                debugFriendly_buffered_input[] config_inputs,
                                int                            verbosity_in,
-                               boolean                        strict_checking_mode_enabled___in
+                               boolean                        strict_checking_mode_enabled___in,
+                               boolean                        allow_empty_schema,
+                               boolean                        allow_no_configurations
                              )
                              throws IOException {
 
@@ -583,7 +585,7 @@ public class Configuration_Master_engine {
         }
       }
 
-      if (the_schema.size() < 1) {
+      if (the_schema.size() < 1 && ! allow_empty_schema) {
         System.err.println("\033[31mCowardly refusing to run with an empty schema: without _any_ schema entries, no configurations could possibly pass type checking, so what would be the point?\033[0m");
         System.exit(-1);
       }

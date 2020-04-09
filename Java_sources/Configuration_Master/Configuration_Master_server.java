@@ -191,7 +191,10 @@ public class Configuration_Master_server {
     public static void main(String[] args) throws Exception {
         System.err.println("\n\n"); // to separate "our" output from Ant`s when e.g. running this program via "ant run"
 
-        boolean check_only = false;
+        boolean check_only              = false;
+        boolean allow_empty_schema      = false;
+        boolean allow_no_configurations = false;
+
         String data_directory = "data/";
 
         for (String arg : args) {
@@ -215,7 +218,11 @@ public class Configuration_Master_server {
                   "\n"+
                   "verbosity=<integer> : _sets_ the verbosity level, thus overwriting the value that was in effect just prior.\n" +
                   "\n"+
-                  "directory_from_which_to_load_data=<directory_pathname> : the directory from which to load ''Configuration_Master.keystore'' and ''maturity-level_aliases'' and in which to scan for ''*.configurations'' and ''*.schema'' files and load them accordingly." +
+                  "directory_from_which_to_load_data=<directory_pathname> : the directory from which to load ''Configuration_Master.keystore'' and ''maturity-level_aliases'' and in which to scan for ''*.configurations'' and ''*.schema'' files and load them accordingly.\n" +
+                  "\n"+
+                  "allow_empty_schema : allow the schema to be empty [ignoring stripping comments and empty lines], i.e. containing zero valid statements.  Off by default because it`s almost-certainly not intentional.  When the schema is empty, there must be no [zero] configurations, since any such configurations would fail to pass type checking.\n" +
+                  "\n"+
+                  "check_only : _only_ start up the engine, i.e. mainly to run syntax+grammar checking of the data.\n" +
                   // "\n"+
                   "\n"
                 );
@@ -236,6 +243,11 @@ public class Configuration_Master_server {
                 check_only = true;
                 if (verbosity > 0) {
                     System.err.println("INFO: check-only mode enabled, in accordance with CLI arg.");
+                }
+            } else if ("allow_empty_schema".equals(LHS)) {
+                allow_empty_schema = true;
+                if (verbosity > 0) {
+                    System.err.println("INFO: allow_empty_schema enabled, in accordance with CLI arg.");
                 }
             } else if ("verbosity".equals(LHS)) {
                 try {
@@ -304,7 +316,15 @@ public class Configuration_Master_server {
 
             debugFriendly_buffered_FileReader[] dummy_for_conversion = new debugFriendly_buffered_FileReader[0];
 
-            the_engine = new Configuration_Master_engine(maturityLevel_aliases_input, schema_inputs.toArray(dummy_for_conversion), config_inputs.toArray(dummy_for_conversion), verbosity, strict_checking_mode_enabled);
+            // instantiate the engine
+            the_engine = new Configuration_Master_engine(maturityLevel_aliases_input,
+                                                         schema_inputs.toArray(dummy_for_conversion),
+                                                         config_inputs.toArray(dummy_for_conversion),
+                                                         verbosity,
+                                                         strict_checking_mode_enabled,
+                                                         allow_empty_schema,
+                                                         allow_no_configurations
+                                                        );
 
 
 
