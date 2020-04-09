@@ -210,13 +210,16 @@ public class Configuration_Master_server {
                   "h / help : help, duh.\n" +
                   "\n"+
                   "strict_checking : makes the static checking of the engine strict; this sets the strictness level to 1 if [and only if] it was previously zero.\n" +
-                  "                  It`s probably best to leave this at the default [off] when running the server “for real”.\n" +
+                  "                  It`s probably best to leave this at the default [off] when running the server in production.\n" +
+                  "\n"+
+                  "strictness_level : sets the strictness level, ignoring/overwriting whatever it was before.  Must be a nonnegative integer in order to work.\n" +
+                  "                   It`s probably best to leave this at the default [zero] when running the server in production.\n" +
                   "\n"+
                   "check_only : _only_ start up the engine, i.e. mainly to run syntax+grammar checking of the data.\n" +
                   "\n"+
                   "v : increase verbosity by 1; hard-coded default is " + default_verbosity + "\n" +
                   "\n"+
-                  "verbosity=<integer> : _sets_ the verbosity level, thus overwriting the value that was in effect just prior.\n" +
+                  "verbosity=<integer> : _sets_ the verbosity level, thus overwriting the value that was in effect just prior.  Must be a nonnegative integer in order to work.\n" +
                   "\n"+
                   "directory_from_which_to_load_data=<directory_pathname> : the directory from which to load ''Configuration_Master.keystore'' and ''maturity-level_aliases'' and in which to scan for ''*.configurations'' and ''*.schema'' files and load them accordingly.\n" +
                   "\n"+
@@ -235,8 +238,20 @@ public class Configuration_Master_server {
                 if (0 == strictness_level) {
                   strictness_level = 1;
                   if (verbosity > 0) {
-                      System.err.println("\nINFO: activated strict static checking mode, i.e. strictness_level = 1, according to CLI arg.; this is probably not something you really want when running the server “for real”, i.e. not just checking.\n");
+                      System.err.println("\nINFO: activated strict static checking mode, i.e. strictness_level = 1, according to CLI arg.; this is probably not something you really want when running the server in production.\n");
                   }
+                }
+            } else if ("strictness_level".equals(LHS)) {
+                try {
+                    final short new_strictness_level = Short.parseShort(RHS);
+                    if (new_strictness_level >= 0) {
+                        if (verbosity > 0) {
+                            System.err.println("INFO: setting strictness level to " + new_strictness_level + " according to CLI arg.");
+                        }
+                        strictness_level = new_strictness_level;
+                    }
+                } catch (NumberFormatException nfe) {
+                    System.err.println("WARNING: unable to parse an integer in re the CLI arg. ''strictness_level=<integer>''.");
                 }
             } else if (LHS != null && LHS.matches("v+")) { // supports not only e.g. "-v" but also e.g. "-vv" and "vvv"
                 verbosity += LHS.length();
@@ -261,12 +276,14 @@ public class Configuration_Master_server {
             } else if ("verbosity".equals(LHS)) {
                 try {
                     final short new_verbosity = Short.parseShort(RHS);
-                    if (verbosity > 0 || new_verbosity > 0) {
-                        System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
+                    if (new_verbosity >= 0) {
+                        if (verbosity > 0 || new_verbosity > 0) {
+                            System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
+                        }
+                        verbosity = new_verbosity;
                     }
-                    verbosity = new_verbosity;
                 } catch (NumberFormatException nfe) {
-                    // intentionally doing nothing
+                    System.err.println("WARNING: unable to parse an integer in re the CLI arg. ''verbosity=<integer>''.");
                 }
             }
         }
