@@ -138,13 +138,7 @@ public class Configuration_Master_engine {
     the_value_str = the_split[2].trim();
 
     if ("*".equals(the_key)) {
-      if (strict_checking_mode_enabled) {
-        throw new IOException("Strict-checking mode violation: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "” at " + source);
-      }
-      if (verbosity > 0) {
-        System.err.println("\n\033[33mWARNING: schema line parse indicates a line with an invalid key of ‘*’: “" + line + "” at " + source + "; ignoring it.\033[0m\n");
-      }
-      return null;
+      throw new IOException("Schema line parse indicates a line with an invalid key of ‘*’: “" + line + "” at " + source);
     }
 
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
@@ -229,24 +223,14 @@ public class Configuration_Master_engine {
     the_value_str = the_split[3].trim();
 
     if (the_maturity_level_to_which_to_compare == -1) { // this can [_only_, I hope] happen if/when the syntactic MLC is "<0", thus desugaring to "≤-1"
-      if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: «" + line + "»; source: " + source);
-      else {
-        System.err.println("\n\033[33mWARNING: an MLC with a seemingly-nonsensical-in-this-context integer value [will _never_ match _any_ query] was found in the line «" + line + "» at " + source + "; ignoring it.\033[0m\n");
-        return null; // ignore the invalid input in non-strict mode
-      }
+      throw new IOException("Grammatical error: an MLC was effectively comparing to -1, which almost-certainly means that the literal input to the MLC engine was “<0” [module ASCII spaces], which is a nonsensical MLC that will _never_ match _any_ queries since negative numbers are explicitly disallowed in both literal integers in MLCs and in the values of maturity-level aliases; input line, after space trimming and comment removal: «" + line + "»; source: " + source);
     }
 
     if (null == the_namespace || null == the_key || null == the_value_str)
       throw new IOException("Internal error: in the config. parser, at least one of the 3 String references was null in a place where this should be impossible.  Source: " + source);
 
     if (the_namespace.length() < 1 || the_key.length() < 1 || the_value_str.length() < 1) {
-      if (strict_checking_mode_enabled)
-        throw new IOException("Grammatical error: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "» at " + source);
-      else {
-        System.err.println("\n\033[33mWARNING: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "» at " + source + "; ignoring it.\033[0m\n");
-        return null; // ignore the invalid input in non-strict mode
-      }
+      throw new IOException("Grammatical error: a configuration which seems to be missing at least one of {namespace, key, value} was found in the line «" + line + "» at " + source);
     }
 
     if (the_maturity_level_to_which_to_compare < 0)  throw new IOException("Internal error: a parsed/“compiled” MLC`s integer value was negative despite all the efforts to prevent such a condition from reaching the point in the code where this exception was thrown.  Source: " + source); // this must come _after_ the line of code that returns null when the line of input was either empty or effectively all-comment
@@ -547,12 +531,7 @@ public class Configuration_Master_engine {
               System.err.println("TESTING 15: schema line parse indicates not a line with valid data, e.g. an effectively-blank or all-comment line");
             }
             if (null != parse_result && null != parse_result.key && null != parse_result.key.the_namespace && null != parse_result.key.the_key && null == parse_result.value) {
-              if (strict_checking_mode_enabled) {
-                throw new IOException("Strict-checking mode violation: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "” at " + source);
-              }
-              if (verbosity > 0) {
-                System.err.println("\n\033[33mWARNING: schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "” at " + source + "; ignoring it.\033[0m\n");
-              }
+              throw new IOException("Schema line parse seems to indicate a line with valid key and namespace, but an _invalid_ type value: “" + line + "” at " + source);
             }
           } else { // looks like a valid line
             if (verbosity > 5) {
@@ -695,7 +674,7 @@ public class Configuration_Master_engine {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
 
-    // for strict-checking mode: enable us to collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK"
+    // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict mode
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
     ArrayList<String>                    the_matches                      = new ArrayList<String>();
 
@@ -740,7 +719,7 @@ public class Configuration_Master_engine {
 
     // System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
 
-    // there is no need to enclose the following switch block in "if (strict_checking_mode_enabled)": if/when _not_, "the_matches" should be _empty_, therefor "case 0:  return null;" will be used, i.e. the same outcome as if the switch block _had_ been enclosed in "if (strict_checking_mode_enabled)"
+    // reminder to self: do _not_ enclose the following switch block in "if (strict_checking_mode_enabled)"
     switch (the_matches.size()) {
       case 0:  return null; // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
       case 1:  return the_matches.get(0); // only 1 match, so no chance that there is a conflict
@@ -766,8 +745,9 @@ public class Configuration_Master_engine {
               final String base_report = "Data conflict and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
               report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
               // the preceding line should always throw, so no more execution here
+              System.exit(-3);
             } else { // non-strict
-              // being _super_-nonstrict here: actually going to search for the first non-null, return _that_
+              // being _super_-nonstrict here: actually going to search for the first non-null, then return _that_
               dump_multiple_matches("WARNING: multiple matches, with the first being null and some being non-null; since engine is in non-strict mode, going to return the first non-null match...", the_matching_KeyOfConfig_objects, the_matches, "31");
               for (String the_match : the_matches)  if (null != the_match)  return the_match;
             }
@@ -786,6 +766,7 @@ public class Configuration_Master_engine {
               final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring types and after converting integers to strings.";
               report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
               // the preceding line should always throw, so no more execution here
+              System.exit(-4);
             } else { // non-strict
               dump_multiple_matches("WARNING: multiple matches, with the first being non-null; since engine is in non-strict mode, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
               return first_match;
