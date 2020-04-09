@@ -1,0 +1,2 @@
+*␟Namespace 1␟key 1␟<http://www.ibm.com/>
+*␟Namespace 1␟key 1␟<http://www.ibm.com/> # redundancy is OK in non-strict mode
