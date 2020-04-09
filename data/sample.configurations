@@ -1,8 +1,9 @@
 =0␟Namespace 1␟key 1␟“string value”
->0␟Namespace 1␟key 1␟“string value”
 <9␟Namespace 1␟key 2␟“string value”
->0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
-<9␟Namespace 1␟key 2␟“string value” ⍝ if you really insist on writing a same-line comment, then start it using the APL lamp
+
+# the next line: commented out b/c it`s redundant WRT the line right after it
+# >0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
+  >0␟Namespace 1␟key 1␟“string value”
 
 # blank lines are allowed, and comment lines are allowed, with a first non-{ASCII space} character of ‘#’
    # leading and trailing ASCII spaces should be ignored
@@ -26,7 +27,7 @@
 # *␟*␟test bad URL ␟<foo>
 # *␟*␟test bad URL ␟http://www.fsf.org/ ⍝ bad b/c it`s missing the surrounding < and > characters
   *␟*␟test good URL␟<http://www.fsf.org/>
-  *␟*␟test good URL␟<http://www.fsf.org/> ⍝  OK b/c it`s redundant
+# *␟*␟test good URL␟<http://www.fsf.org/> ⍝  OK in non-strict mode b/c it`s redundant
 #  *␟*␟test good URL␟<http://www.gnu.org/> ⍝ bad b/c it`s conflicting
 
 # *␟*␟test bad  nonempty_string␟“”
@@ -38,7 +39,7 @@
 # *␟*␟test bad  positive_integer␟0
   *␟*␟test good positive_integer␟1
 
-  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK, as it is redundant [same value as the resepctive line with an asterisked namespace]
+  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK, as it is redundant [same value as the resepctive line with an asterisked namespace] # WIP WIP WIP
 
 #  *␟foo␟test good positive_integer␟2 ⍝ testing conflict detection: this is _bad_ [conflicts with value of 1 in "*␟*␟test good positive_integer␟1"]
 
@@ -57,12 +58,12 @@
 
 
   =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1
-  =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1 ⍝ OK, just redundant
+# =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1 ⍝ redundant: OK only in non-strict mode
 # =1␟*␟test key name for configuration namespace-asterisk conflict checker␟2 ⍝ bad: conflicting
   =3␟*␟test key name for configuration namespace-asterisk conflict checker␟2
 
   =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3
-  =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3 ⍝ OK, just redundant
+# =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3 ⍝ redundant: OK only in non-strict mode
 # =2␟*␟test key name for configuration namespace-asterisk conflict checker␟4 ⍝ bad: conflicting
 
 ### this block: _intentionally_-overlapping maturity levels, and intentionally [completely, i.e. including type] redundant-therefor-OK
