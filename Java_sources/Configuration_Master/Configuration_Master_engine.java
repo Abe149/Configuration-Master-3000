@@ -123,16 +123,19 @@ public class Configuration_Master_engine {
     String                         the_value_str = null;
 
     line = line.trim();
-    if (line.length() > 0 && '#' != line.charAt(0)) { // ignore whole-line-possibly-modulo-leading-space comments
-      line = line.replaceFirst("⍝.*", "").trim(); // HARD-CODED: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
-      final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
+    if (line.length() < 1)  return null; // ignore empty-modulo-leading-and/or-trailing ASCII spaces
 
-      // TO DO: make this fail more elegantly when the number of split results is not as expected
+    line = line.replaceFirst("[#⍝].*", "").trim(); // ‘⍝’: the APL "lamp" symbol for an until-end-of-line comment, AKA "APL FUNCTIONAL SYMBOL UP SHOE JOT"
+    // ignore whole-line-possibly-modulo-leading-ASCII-spaces comments
+    if (line.length() < 1)  return null;
 
-      the_namespace = the_split[0].trim().toLowerCase();
-      the_key       = the_split[1].trim().toLowerCase();
-      the_value_str = the_split[2].trim();
-    }
+    final String[] the_split = line.split("␟"); // HARD-CODED: Unicode visible character for ASCII control "character" UNIT SEPARATOR
+
+    // TO DO: make this fail more elegantly when the number of split results is not as expected
+
+    the_namespace = the_split[0].trim().toLowerCase();
+    the_key       = the_split[1].trim().toLowerCase();
+    the_value_str = the_split[2].trim();
 
     if ("*".equals(the_key)) {
       if (strict_checking_mode_enabled) {
@@ -147,7 +150,7 @@ public class Configuration_Master_engine {
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
 
     return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), get_type_by_name_ignoring_case(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
-  }
+  } // end of "parse_a_line_for_a_schema"
 
 
   private value_types get_type_from_schema(tuple_for_key_of_a_config the_key_of_the_config) {
