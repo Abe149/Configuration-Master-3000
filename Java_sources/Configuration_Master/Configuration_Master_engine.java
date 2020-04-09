@@ -676,7 +676,7 @@ public class Configuration_Master_engine {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
 
-    // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict mode
+    // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict and only-statically-strict modes [i.e. strictness_level values of 0 and 1]
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
     ArrayList<String>                    the_matches                      = new ArrayList<String>();
 
@@ -721,7 +721,7 @@ public class Configuration_Master_engine {
 
     // System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
 
-    // reminder to self: do _not_ enclose the following switch block in "if (strict_checking_mode_enabled)"
+    // reminder to self: do _not_ enclose the following switch block in "if (strict_checking_mode_enabled)" or similar
     switch (the_matches.size()) {
       case 0:  return null; // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
       case 1:  return the_matches.get(0); // only 1 match, so no chance that there is a conflict
@@ -743,14 +743,14 @@ public class Configuration_Master_engine {
             }
           } // end for
           if (bad) {
-            if (strict_checking_mode_enabled) {
+            if (strictness_level >= 2) {
               final String base_report = "Data conflict and/or internal program error: a collection of matches was found to contain at least one null, but not _all_ the matches were null.";
               report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
               // the preceding line should always throw, so no more execution here
               System.exit(-3);
             } else { // non-strict
               // being _super_-nonstrict here: actually going to search for the first non-null, then return _that_
-              dump_multiple_matches("WARNING: multiple matches, with the first being null and some being non-null; since engine is in non-strict mode, going to return the first non-null match...", the_matching_KeyOfConfig_objects, the_matches, "31");
+              dump_multiple_matches("WARNING: multiple matches, with the first being null and some being non-null; since engine has strictness_level < 2, going to return the first non-null match...", the_matching_KeyOfConfig_objects, the_matches, "31");
               for (String the_match : the_matches)  if (null != the_match)  return the_match;
             }
           } // end if bad
@@ -764,13 +764,13 @@ public class Configuration_Master_engine {
             }
           } // end for
           if (bad) {
-            if (strict_checking_mode_enabled) {
+            if (strictness_level >= 2) {
               final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring types and after converting integers to strings.";
               report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
               // the preceding line should always throw, so no more execution here
               System.exit(-4);
             } else { // non-strict
-              dump_multiple_matches("WARNING: multiple matches, with the first being non-null; since engine is in non-strict mode, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
+              dump_multiple_matches("WARNING: multiple matches, with the first being non-null; since engine has strictness_level < 2, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
               return first_match;
             }
           } else { // not bad, therefor good  ;-)
