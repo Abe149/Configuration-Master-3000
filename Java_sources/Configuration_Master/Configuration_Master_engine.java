@@ -266,6 +266,10 @@ public class Configuration_Master_engine {
       case nonnegative_integer:
       case    positive_integer:
       case      IP_port_number:
+        the_value_str = the_value_str.replaceFirst("[^-\\d ].*", "").trim(); // allow trailing "garbage", e.g. a '#'-started comment
+        // the preceding line`s regex: r"\D" [_non_-digit] is _not_  usable here, as I allow negative integers in the case of plain "integer"; including ASCII space in the regex [i.e. _not_ stripping the field at its first remaining ASCII space after trimming] in case "parseLong" allows e.g. "- 1" as input that parses to -1: that`s why I need the ".trim()" at the end
+        if (the_value_str.length() < 1)
+          throw new IOException("Error while type checking; SYNTAX ERROR for an integer or IP port number.  Suspected leading garbage.  Key: " + the_key_of_the_config + "; source: " + source);
         the_value = new config_algebraic_type(Long.parseLong(the_value_str));
         break;
 

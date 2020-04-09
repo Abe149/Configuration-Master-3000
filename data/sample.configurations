@@ -85,7 +85,7 @@
 ⍝ =10006␟␟␟ ⍝ missing "everything"!  What a woild, what a woild!  ;-)
 
 =1␟Namespace 1␟test key name for a port number␟    0 ⍝ good
-=2␟Namespace 1␟test key name for a port number␟65535 ⍝ good
+=2␟Namespace 1␟test key name for a port number␟65535 # good
 # =3␟Namespace 1␟test key name for a port number␟   -1 ⍝  bad
 # =4␟Namespace 1␟test key name for a port number␟65536 ⍝  bad
 
