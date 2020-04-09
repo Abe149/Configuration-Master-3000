@@ -1,8 +1,6 @@
 =0␟Namespace 1␟key 1␟“string value”
->0␟Namespace 1␟key 1␟“string value”
 <9␟Namespace 1␟key 2␟“string value”
 >0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
-<9␟Namespace 1␟key 2␟“string value” ⍝ if you really insist on writing a same-line comment, then start it using the APL lamp
 
 # blank lines are allowed, and comment lines are allowed, with a first non-{ASCII space} character of ‘#’
    # leading and trailing ASCII spaces should be ignored
@@ -13,40 +11,14 @@
 # maturity levels and namespaces can be specified as ‘*’ [without the quotes], meaning “all”;
 #   for a maturity level, this is equivalent to specifying “≥0”
 
-# *␟*␟bad key 1, not in schema␟“string value”
-# *␟*␟bad key 2, not in schema␟“”
-# *␟*␟bad key 3, not in schema␟ 0
-# *␟*␟bad key 4, not in schema␟-1
-# *␟*␟bad key 5, not in schema␟ 1
-# *␟*␟bad key 6, not in schema␟ <> ⍝ invalid URL
 
-
-
-# *␟*␟test bad URL ␟<>
-# *␟*␟test bad URL ␟<foo>
-# *␟*␟test bad URL ␟http://www.fsf.org/ ⍝ bad b/c it`s missing the surrounding < and > characters
   *␟*␟test good URL␟<http://www.fsf.org/>
-  *␟*␟test good URL␟<http://www.fsf.org/> ⍝  OK b/c it`s redundant
-#  *␟*␟test good URL␟<http://www.gnu.org/> ⍝ bad b/c it`s conflicting
 
-# *␟*␟test bad  nonempty_string␟“”
   *␟*␟test good nonempty_string␟“string value”
 
-# *␟*␟test bad  nonnegative_integer␟-1
   *␟*␟test good nonnegative_integer␟ 0
 
-# *␟*␟test bad  positive_integer␟0
   *␟*␟test good positive_integer␟1
-
-  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK, as it is redundant [same value as the resepctive line with an asterisked namespace]
-
-#  *␟foo␟test good positive_integer␟2 ⍝ testing conflict detection: this is _bad_ [conflicts with value of 1 in "*␟*␟test good positive_integer␟1"]
-
-
-# *␟Namespace 1␟key 1␟9 ⍝ BAD: won`t type-check, b/c this value is supposed to be a _string_
-
-# *␟Namespace 1␟*␟9 ⍝ attempting to use '*' as the key will always fail; as of this writing, it fails simply b/c there is no matching [valid] entry in the schema, so the value cannot be type-checked
-
 
 # --- testing aliases for maturity levels --- #
 =sandbox␟Namespace 1␟key 5␟“string value for... maturity level "sandbox"            :: Namespace 1 :: key 5”
@@ -57,35 +29,11 @@
 
 
   =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1
-  =1␟*␟test key name for configuration namespace-asterisk conflict checker␟1 ⍝ OK, just redundant
-# =1␟*␟test key name for configuration namespace-asterisk conflict checker␟2 ⍝ bad: conflicting
   =3␟*␟test key name for configuration namespace-asterisk conflict checker␟2
 
   =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3
-  =2␟*␟test key name for configuration namespace-asterisk conflict checker␟3 ⍝ OK, just redundant
-# =2␟*␟test key name for configuration namespace-asterisk conflict checker␟4 ⍝ bad: conflicting
-
-### this block: _intentionally_-overlapping maturity levels, and intentionally [completely, i.e. including type] redundant-therefor-OK
-  >0␟*␟test key name for a positive integer with redundancy␟1
-  <9␟*␟test key name for a positive integer with redundancy␟1
-# <0␟*␟test key name for a positive integer with redundancy␟1 ⍝ testing for the rejection [or lack thereof] of nonsensical MLC "<0" in strict mode
-
-### this block: _intentionally_-overlapping maturity levels, and intentionally [completely, i.e. including type] redundant-therefor-OK
->0␟*␟test key name for a positive integer with at least one conflict␟2
-<9␟*␟test key name for a positive integer with at least one conflict␟3
-
-### this block: _intentionally_-missing field values; the first one should "crash" the engine in strict mode, and they should all cause warnings [and _not_ any crashes] in non-strict mode
-# =10000␟␟key 5␟“hi” ⍝ missing namespace
-# =10001␟Namespace 1␟␟“hi” ⍝ missing key
-# =10002␟Namespace 1␟key 5␟ ⍝ missing value
-# =10003␟␟␟“hi” ⍝ missing namespace _and_ key
-# =10004␟␟key 5␟ ⍝ missing namespace _and_ value
-# =10005␟Namespace 1␟␟ ⍝ missing key _and_ value
-⍝ =10006␟␟␟ ⍝ missing "everything"!  What a woild, what a woild!  ;-)
 
 =1␟Namespace 1␟test key name for a port number␟    0 ⍝ good
 =2␟Namespace 1␟test key name for a port number␟65535 ⍝ good
-# =3␟Namespace 1␟test key name for a port number␟   -1 ⍝  bad
-# =4␟Namespace 1␟test key name for a port number␟65536 ⍝  bad
 
 ### below this line: not yet supported ###

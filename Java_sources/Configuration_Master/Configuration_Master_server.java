@@ -324,7 +324,8 @@ public class Configuration_Master_server {
             debugFriendly_buffered_FileReader[] dummy_for_conversion = new debugFriendly_buffered_FileReader[0];
 
             // instantiate the engine
-            the_engine = new Configuration_Master_engine(maturityLevel_aliases_input,
+            the_engine = new Configuration_Master_engine(
+                                                         maturityLevel_aliases_input,
                                                          schema_inputs.toArray(dummy_for_conversion),
                                                          config_inputs.toArray(dummy_for_conversion),
                                                          verbosity,
