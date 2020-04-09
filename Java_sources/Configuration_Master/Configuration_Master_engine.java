@@ -660,6 +660,11 @@ public class Configuration_Master_engine {
         System.exit(-1);
       }
 
+      if (the_configurations.size() < 1 && ! allow_no_configurations) {
+        System.err.println("\033[31mCowardly refusing to run without any configurations: what would be the point?\033[0m");
+        System.exit(-2);
+      }
+
     } catch (IOException ioe) {
 
        final String response = "An I/O exception occurred while trying to initialize the Configuration Master engine: " + ioe;

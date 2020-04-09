@@ -222,6 +222,8 @@ public class Configuration_Master_server {
                   "\n"+
                   "allow_empty_schema : allow the schema to be empty [ignoring stripping comments and empty lines], i.e. containing zero valid statements.  Off by default because it`s almost-certainly not intentional.  When the schema is empty, there must be no [zero] configurations, since any such configurations would fail to pass type checking.\n" +
                   "\n"+
+                  "allow_no_configurations : allow the set of configuration to be empty [ignoring stripping comments and empty lines], i.e. containing zero valid statements.  Off by default because it`s almost-certainly not intentional.\n" +
+                  "\n"+
                   "check_only : _only_ start up the engine, i.e. mainly to run syntax+grammar checking of the data.\n" +
                   // "\n"+
                   "\n"
@@ -248,6 +250,11 @@ public class Configuration_Master_server {
                 allow_empty_schema = true;
                 if (verbosity > 0) {
                     System.err.println("INFO: allow_empty_schema enabled, in accordance with CLI arg.");
+                }
+            } else if ("allow_no_configurations".equals(LHS)) {
+                allow_no_configurations = true;
+                if (verbosity > 0) {
+                    System.err.println("INFO: allow_no_configurations enabled, in accordance with CLI arg.");
                 }
             } else if ("verbosity".equals(LHS)) {
                 try {
