@@ -649,7 +649,7 @@ public class Configuration_Master_engine {
 
       if (verbosity > 1) {
         System.err.println();
-        System.err.println("INFO: the_configurations: " + the_configurations);
+        System.err.println("INFO: the_configurations: " + the_configurations); // dump the configurations
         System.err.println();
       }
 
