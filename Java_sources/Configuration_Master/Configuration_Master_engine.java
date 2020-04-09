@@ -585,11 +585,6 @@ public class Configuration_Master_engine {
         }
       }
 
-      if (the_schema.size() < 1 && ! allow_empty_schema) {
-        System.err.println("\033[31mCowardly refusing to run with an empty schema: without _any_ schema entries, no configurations could possibly pass type checking, so what would be the point?\033[0m");
-        System.exit(-1);
-      }
-
       // --- done parsing and validating the schema --- //
 
       the_configurations = new Hashtable<tuple_for_key_of_a_config, config_algebraic_type>();
@@ -658,6 +653,11 @@ public class Configuration_Master_engine {
         System.err.println();
         System.err.println("INFO: the_configurations: " + the_configurations); // dump the configurations
         System.err.println();
+      }
+
+      if (the_schema.size() < 1 && ! allow_empty_schema) {
+        System.err.println("\033[31mCowardly refusing to run with an empty schema: without _any_ schema entries, no configurations could possibly pass type checking, so what would be the point?\033[0m");
+        System.exit(-1);
       }
 
     } catch (IOException ioe) {
