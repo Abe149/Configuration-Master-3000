@@ -12,7 +12,13 @@ from urllib.request import pathname2url # this seems to do what IMO "urlencode" 
 assert sys.version_info[0] >= 3
 
 def get_test():
-  pass
+  CONFIG_SERVER_URL     = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
+
+  the_request = request.Request(url = CONFIG_SERVER_URL + "/test")
+
+  with request.urlopen(the_request) as fileLike:
+    return fileLike.read().decode("utf-8")
+
 
 def get_config(namespace='*', key=None): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
 
