@@ -18,6 +18,8 @@ TO DOs
 * make the engine in super-strict mode _reject_ redundant inputs
   * [at least partially done, e.g. the query-handling code in "get_configuration"; possibly still to do: the same idea but in other places in the code]
 
+* add countdown code [for when strictness > ... 0?  1?] to the server
+  * once that`s working, remove the functionally-{similar/same} code from the "run_<...>" wrapper scripts
 
 
 DONE to-dos
