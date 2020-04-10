@@ -7,7 +7,7 @@ fi
 
 echo
 for countdown in {9..1}; do
-  echo Are you sure you want to run the server in strict mode?
+  echo Are you sure you want to run the server in very-strict mode?
   echo Press Control-C [or do something else similar to that] if not...  counting down, $countdown ...
   echo
   sleep 1s
