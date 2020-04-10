@@ -8,7 +8,7 @@ os.environ["CONFIG_SERVER_URL"]     = "https://localhost:4430/"
 os.environ["CONFIG_MATURITY_LEVEL"] = '9'
 
 def test(key):
-  print (("%-70s" % ("in maturity level " + os.environ["CONFIG_MATURITY_LEVEL"] + ", namespace '*' [i.e. only matches config.s that are present in all namespaces at least in this ML], for key = ''" + key + "'':") + "result = ''" + Configuration_Master_client.get_config(key=key) + "''"))
+  print ("in maturity level " + os.environ["CONFIG_MATURITY_LEVEL"] + ", namespace '*' [i.e. only matches config.s that are present in all namespaces at least in this ML]:\n\t " + ("%-70s" % ("for key = ''" + key + "'':")) + " result = ''" + Configuration_Master_client.get_config(key=key) + "''")
   print ()
 
 print ()
