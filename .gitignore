@@ -28,3 +28,4 @@ hs_err_pid*
 .*.swp
 Build*/
 __pycache__/
+___not_in_Git/
