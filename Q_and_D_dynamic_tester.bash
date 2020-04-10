@@ -40,3 +40,26 @@ else
   CONFIG_MATURITY_LEVEL=5         ./get_config.bash 'should be present in all namespaces' 'test key name for a positive integer with at least one conflict'
 fi
 
+
+echo
+echo
+
+
+# --- test the Python client --- #
+
+echo 'testing "./Python3_sources/Configuration_Master_client/test_001_.py"...'
+if [ -n "$DEBUG" ] && [ $DEBUG -gt 9 ]; then # only when DEBUG > 9 since the debug output in this one [from the Python interpreter itself] is particularly long
+  python3 -v ./Python3_sources/Configuration_Master_client/test_001_.py
+else
+             ./Python3_sources/Configuration_Master_client/test_001_.py
+fi
+
+echo
+echo
+
+echo 'testing "./Python3_sources/Configuration_Master_client/test_002_.py"...'
+if [ -n "$DEBUG" ] && [ $DEBUG -gt 9 ]; then # only when DEBUG > 9 since the debug output in this one [from the Python interpreter itself] is particularly long
+  python3 -v ./Python3_sources/Configuration_Master_client/test_002_.py
+else
+             ./Python3_sources/Configuration_Master_client/test_002_.py
+fi
