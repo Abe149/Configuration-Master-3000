@@ -12,6 +12,7 @@ if ! which curl >/dev/null; then
   exit 1
 fi
 
+readonly API_LEVEL_PREFIX=/API_version_1
 
 # example value: 'https://localhost:4430/' [w/o the quotes, of course]
 # example Bash snippet: export CONFIG_SERVER_URL='https://localhost:4430/'
@@ -52,7 +53,7 @@ fi
 key=`echo $key | sed 's/ /%20/g'` # Q-and-D URL encoding
 
 # the "-k" flag in the cURL invocation is to work around HTTPS servers with broken certificates; remove the 'k' if you want strictness
-curl -fk "$CONFIG_SERVER_URL/get:maturity_level=$CONFIG_MATURITY_LEVEL,namespace=$namespace,key=$key" -w '\n'
+curl -fk "$CONFIG_SERVER_URL$API_LEVEL_PREFIX/get:maturity_level=$CONFIG_MATURITY_LEVEL,namespace=$namespace,key=$key" -w '\n'
 
 # the exit code from this script should be 22 when the server reports a 404 and 0 when the server gives us a 200 [and, we hope, some _data_ too ;-)]
 
