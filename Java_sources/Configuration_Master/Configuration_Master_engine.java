@@ -740,7 +740,7 @@ public class Configuration_Master_engine {
 
         // AFAIK & IIRC there shouldn`t _be_ any nulls in this, but let`s play it safe all the same and handle the theoretical possibility; a policy decision I made: if _all_ of them are null, this is considered OK _here_, i.e. we are letting "somewhere else" deal with the problem
         final config_algebraic_type first_match = the_matches.get(0);
-        boolean bad = false; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
+        boolean all_the_same = true; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
         if (null == first_match) {
           System.err.println("\033[31mFATAL INTERNAL ERROR\033[0m");
           System.exit(-5);
@@ -748,11 +748,14 @@ public class Configuration_Master_engine {
 
         for (config_algebraic_type the_match : the_matches) {
           if (! first_match.equals(the_match)) {
-            bad = true;
+            all_the_same = false;
             break;
           }
         } // end for
-        if (bad) {
+        if (all_the_same) {
+          dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure of CM3000 types]", the_matching_KeyOfConfig_objects, the_matches, "93");
+          return first_match.get_as_String_even_if_the_value_is_an_integer();
+        } else { // not all the same, therefor bad  :-(
           if (strictness_level >= 2) {
             final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring CM3000 types.";
             report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
@@ -762,9 +765,6 @@ public class Configuration_Master_engine {
             dump_multiple_matches("WARNING: multiple matches; since engine has strictness_level < 2, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
             return first_match.get_as_String_even_if_the_value_is_an_integer();
           }
-        } else { // not bad, therefor good  ;-)
-          dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure of CM3000 types]", the_matching_KeyOfConfig_objects, the_matches, "93");
-          return first_match.get_as_String_even_if_the_value_is_an_integer();
         }
 
       // end of "default:"...  "missing" '}' here is OK, b/c we are inside a switch
