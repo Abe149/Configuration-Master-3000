@@ -13,13 +13,10 @@ TO DOs
   * this will probably involve replacing a bunch of "naked" "return null;" statements with e.g. "if (strict<...>) System.err.println("WARNING: <...>"<...> return null;"
 
 * make the engine in non-strict mode report ["WARNING"/"INFO"] ignored redundant inputs
+  * [at least partially done, e.g. the query-handling code in "get_configuration"; possibly still to do: the same idea but in other places in the code]
 
 * make the engine in super-strict mode _reject_ redundant inputs
-
-* make strictness multi-level, with a default level of 0 [zero]
-  * then make the current "strict mode" the new "strictness level 1"
-    * new "strictness level 2": compare matches/results for conflicting values _including_ Java type, i.e. do _not_ consider 1 and "1" to be equivalent and therefor redundant-is-OK
-    * new "strictness level 3": compare matches/results for conflicting values _including_ the _CM3000_ type [e.g. positive_integer]
+  * [at least partially done, e.g. the query-handling code in "get_configuration"; possibly still to do: the same idea but in other places in the code]
 
 
 
@@ -36,4 +33,11 @@ DONE to-dos
   * IGNORE: this might require changing {the handoff from server to engine} from BufferedReader references to plain pathnames [i.e. String references] -- BETTER SOLUTION THOUGHT OF AND IMPLEMENTED: "debugFriendly_buffered_input.java" & "debugFriendly_buffered_FileReader.java"
 
 * write a better test script or rewrite "Q_and_D_tester.bash" so it`s not so Q&D any more
+
+* [DONE] make strictness multi-level, with a default level of 0 [zero] -- DONE as of 016817d9e9612f12e55e367813326c0523deeae9 [Thu Apr 9 17:08:45 2020 -0400]
+  * [DONE] then make the current "strict mode" the new "strictness level 1" -- DONE as of 016817d9e9612f12e55e367813326c0523deeae9 [Thu Apr 9 17:08:45 2020 -0400]
+    * [basically DONE]:
+      * old "specification" of this To Do: new "strictness level 2": compare matches/results for conflicting values _including_ Java type, i.e. do _not_ consider 1 and "1" to be equivalent and therefor redundant-is-OK
+      * what I _actually_ implemented: compare matches/results for conflicting values _including_ Java type, i.e. do _not_ consider 1 and "1" to be equivalent and therefor redundant-is-OK, in _all_ strictness levels... new "strictness level 2": requires multiple matches to be non-conflicting [conflicts are "OK" at levels 1 and below, i.e. 1 and 0, and the runtime will just return the first match after reporting the ambiguity to std. error]
+    * [NOT TO DO after all] new "strictness level 3": compare matches/results for conflicting values _including_ the _CM3000_ type [e.g. positive_integer]
 
