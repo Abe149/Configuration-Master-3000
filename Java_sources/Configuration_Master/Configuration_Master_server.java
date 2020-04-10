@@ -56,7 +56,7 @@ public class Configuration_Master_server {
     public static class TestHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange he) throws IOException {
-            String response = "Hello World from Configuration Master 3000 !!!\n\nProtocol: "
+            final String response = "Hello World from Configuration Master 3000 !!!\n\nProtocol: "
               + he.getProtocol() + "\nHTTP request method: " + he.getRequestMethod() + "\nRequest URI [toASCIIString()]: ''"
               + he.getRequestURI().toASCIIString() + "''\nRequest URI [toString()]: ''" + he.getRequestURI().toString() + "''\n"
               + "Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''\n";
@@ -70,8 +70,18 @@ public class Configuration_Master_server {
         }
     }
 
+    public static class GetStrictnessLevelHandler implements HttpHandler { // IHateCamelCase  ;-)
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            final String response = " " + strictness_level + ' '; // surrounding sapces to avoid the output accidentally being "combined" with another decimal integer; "trim" the output if you need to pass it to something like a strict integer parser
 
-    static Configuration_Master_engine the_engine;
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.sendResponseHeaders(200, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+    }
 
 
     public static class GetHandler implements HttpHandler {
@@ -183,6 +193,11 @@ public class Configuration_Master_server {
     }
 
 
+    private static short strictness_level = 0; // moved here, i.e. outside of "main", so I can report it to the outside world
+
+    static Configuration_Master_engine the_engine;
+
+
     /**
      * @param args
      */
@@ -192,7 +207,6 @@ public class Configuration_Master_server {
         boolean check_only              = false;
         boolean allow_empty_schema      = false;
         boolean allow_no_configurations = false;
-        short   strictness_level        =     0;
 
 
         String data_directory = "data/";
@@ -416,6 +430,8 @@ public class Configuration_Master_server {
 
             final String get_prefix = "/get:"; // DRY
             httpsServer.createContext(get_prefix, new GetHandler(get_prefix));
+
+            httpsServer.createContext("/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
 
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             myLogger.info("About to start the Configuration Master server...");
