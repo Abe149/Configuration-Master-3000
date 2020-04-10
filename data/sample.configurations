@@ -2,8 +2,9 @@
 <9␟Namespace 1␟key 2␟“string value”
 
 # the next line: commented out b/c it`s redundant WRT the line right after it
-# >0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then start it using the APL lamp
+# >0␟Namespace 1␟key 1␟“string value”⍝  if you really insist on writing a same-line comment, then it`s better to start it using the APL lamp
   >0␟Namespace 1␟key 1␟“string value”
+  >1␟Namespace 1␟key 1␟“string value” # when a matches-both-rules query is given to the engine: this triggers the multiple-matches code, i.e. run-time checking, but has a redundant value, all of which means this line should cause a warning when the engine is not being very strict, and a failure if the strictness level is "high enough" [string test case]
 
 # blank lines are allowed, and comment lines are allowed, with a first non-{ASCII space} character of ‘#’
    # leading and trailing ASCII spaces should be ignored
@@ -39,9 +40,10 @@
 # *␟*␟test bad  positive_integer␟0
   *␟*␟test good positive_integer␟1
 
-  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK, as it is redundant [same value as the resepctive line with an asterisked namespace] # WIP WIP WIP
+  *␟foo␟test good positive_integer␟1 ⍝ testing conflict detection: this is actually OK when the strictness level is low enough, as it is redundant [same value as the respective line with an asterisked namespace]
 
 #  *␟foo␟test good positive_integer␟2 ⍝ testing conflict detection: this is _bad_ [conflicts with value of 1 in "*␟*␟test good positive_integer␟1"]
+=9␟foo␟test good positive_integer␟2 # when a matches-both-rules query is given to the engine: this triggers the multiple-matches code, i.e. run-time checking, and conflicts with "*␟*␟test good positive_integer␟1", above, all of which means this line should either {[1] cause a warning, at low strictness, or [2] cause a failure, if the strictness level is "high enough"} [integer test case]
 
 
 # *␟Namespace 1␟key 1␟9 ⍝ BAD: won`t type-check, b/c this value is supposed to be a _string_
