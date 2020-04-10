@@ -736,9 +736,15 @@ public class Configuration_Master_engine {
         if (verbosity > 3) {
           System.err.println("TESTING 24: _did_ get to the fun case [in the run-time (AKA query-processing-time)] conflict/redundancy checker/catcher.");
         }
-        // search for conflicting _values_, i.e. different results for the same query when compared against different MLC spec.s 
 
-        // AFAIK & IIRC there shouldn`t _be_ any nulls in this, but let`s play it safe all the same and handle the theoretical possibility; a policy decision I made: if _all_ of them are null, this is considered OK _here_, i.e. we are letting "somewhere else" deal with the problem
+        if (strictness_level >= 3) { // _EXTREMELY_ strict: no multiple matches allowed!
+          report_match_set_and_throw("Unacceptable when the strictness level is > 2: multiple matches for a single query", the_matching_KeyOfConfig_objects, the_matches);
+          // the preceding line should always throw, so no more execution here
+          System.exit(-6);
+        }
+
+        // search for conflicting _values_, i.e. different results for the same query when compared against different MLC spec.s //
+
         final config_algebraic_type first_match = the_matches.get(0);
         boolean all_the_same = true; // so I can report a very verbose error dump, rather than just throwing as soon as a/the conflict is found
         if (null == first_match) {
@@ -757,8 +763,7 @@ public class Configuration_Master_engine {
           return first_match.get_as_String_even_if_the_value_is_an_integer();
         } else { // not all the same, therefor bad  :-(
           if (strictness_level >= 2) {
-            final String base_report = "Data conflict: a collection of matches was found to contain different results, even when ignoring CM3000 types.";
-            report_conflicting_match_set_and_throw(base_report, the_matching_KeyOfConfig_objects, the_matches);
+            report_match_set_and_throw("Data conflict: a collection of matches was found to contain different results, even when ignoring CM3000 types.", the_matching_KeyOfConfig_objects, the_matches);
             // the preceding line should always throw, so no more execution here
             System.exit(-4);
           } else { // non-strict
@@ -774,10 +779,10 @@ public class Configuration_Master_engine {
   } // end of "get_configuration"
 
 
-  private void report_conflicting_match_set_and_throw(String                               base_report,
-                                                      ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
-                                                      ArrayList<config_algebraic_type>     the_matches
-                                                     ) throws IOException {
+  private void report_match_set_and_throw(String                               base_report,
+                                          ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects,
+                                          ArrayList<config_algebraic_type>     the_matches
+                                         ) throws IOException {
     String string_for_exception = base_report + "  Matches:  ";
 
     System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
