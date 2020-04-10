@@ -12,7 +12,7 @@ from urllib.request import pathname2url # this seems to do what IMO "urlencode" 
 assert sys.version_info[0] >= 3
 
 def get_test():
-  CONFIG_SERVER_URL     = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
+  CONFIG_SERVER_URL = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
 
   the_request = request.Request(url = CONFIG_SERVER_URL + "/test")
 

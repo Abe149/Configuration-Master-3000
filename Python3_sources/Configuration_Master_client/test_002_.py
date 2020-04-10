@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-### testing of keys that are expected to be in all namespaces in ML 9 ###
+### testing of just the "/test" endpoint ###
 
 import Configuration_Master_client, os
 
