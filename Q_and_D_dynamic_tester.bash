@@ -47,19 +47,14 @@ echo
 
 # --- test the Python client --- #
 
-echo 'testing "./Python3_sources/Configuration_Master_client/test_001_.py"...'
-if [ -n "$DEBUG" ] && [ $DEBUG -gt 9 ]; then # only when DEBUG > 9 since the debug output in this one [from the Python interpreter itself] is particularly long
-  python3 -v ./Python3_sources/Configuration_Master_client/test_001_.py
-else
-             ./Python3_sources/Configuration_Master_client/test_001_.py
-fi
+for Python_test in `find ./Python3_sources/Configuration_Master_client/ -iname 'test_*.py' -executable | sort`; do
+  echo "testing ''$Python_test''..."
+  if [ -n "$DEBUG" ] && [ $DEBUG -gt 9 ]; then # only when DEBUG > 9 since the debug output in this one [from the Python interpreter itself] is particularly long
+    python3 -v "$Python_test"
+  else
+               "$Python_test"
+  fi
 
-echo
-echo
-
-echo 'testing "./Python3_sources/Configuration_Master_client/test_002_.py"...'
-if [ -n "$DEBUG" ] && [ $DEBUG -gt 9 ]; then # only when DEBUG > 9 since the debug output in this one [from the Python interpreter itself] is particularly long
-  python3 -v ./Python3_sources/Configuration_Master_client/test_002_.py
-else
-             ./Python3_sources/Configuration_Master_client/test_002_.py
-fi
+  echo
+  echo
+done
