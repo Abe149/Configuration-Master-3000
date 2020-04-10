@@ -432,10 +432,12 @@ public class Configuration_Master_server {
             httpsServer.createContext(                     "/test", new TestHandler());
             httpsServer.createContext(API_version_prefix + "/test", new TestHandler());
 
-            final String get_prefix = "/get:"; // DRY
-            httpsServer.createContext(                     get_prefix, new GetHandler(get_prefix));
-            httpsServer.createContext(API_version_prefix + get_prefix, new GetHandler(API_version_prefix + get_prefix));
+            final String                                     get_prefix_1 = "/get:"; // DRY
+            final String get_prefix_2 = API_version_prefix + get_prefix_1;           // DRY
+            httpsServer.createContext(get_prefix_1, new GetHandler(get_prefix_1));
+            httpsServer.createContext(get_prefix_2, new GetHandler(get_prefix_2));
 
+            // intentionally not DRY-ifiying "/get_strictness_level" here, since the variable`s name would be just as long as the string
             httpsServer.createContext(                     "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
             httpsServer.createContext(API_version_prefix + "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
 
