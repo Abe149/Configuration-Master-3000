@@ -7,7 +7,7 @@ fi
 
 export CONFIG_SERVER_URL='https://localhost:4430/'
 
-# tests that are expected to succeed
+# tests that are expected to succeed when not _too_ strict
 
 echo 'testing "test key name for a positive integer with redundancy"...'
 if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
@@ -15,6 +15,14 @@ if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
 else
   CONFIG_MATURITY_LEVEL=5         ./get_config.bash 'should be present in all namespaces' 'test key name for a positive integer with redundancy'
 fi
+
+echo 'testing "foo"::"test good positive_integer"...'
+if [ -n "$DEBUG" ] && [ $DEBUG -gt 0 ]; then
+  CONFIG_MATURITY_LEVEL=5 bash -x ./get_config.bash foo 'test good positive_integer'
+else
+  CONFIG_MATURITY_LEVEL=5         ./get_config.bash foo 'test good positive_integer'
+fi
+
 
 
 echo
