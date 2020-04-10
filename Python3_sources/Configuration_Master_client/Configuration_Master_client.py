@@ -11,10 +11,13 @@ from urllib.request import pathname2url # this seems to do what IMO "urlencode" 
 
 assert sys.version_info[0] >= 3
 
+API_version_to_use = 1
+API_version_prefix = "/API_version_" + str(API_version_to_use)
+
 def get_test():
   CONFIG_SERVER_URL = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
 
-  the_request = request.Request(url = CONFIG_SERVER_URL + "/test")
+  the_request = request.Request(url = CONFIG_SERVER_URL + API_version_prefix + "/test")
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
@@ -33,7 +36,7 @@ def get_config(namespace='*', key=None): # default value for "namespace": only m
   CONFIG_SERVER_URL     = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
   CONFIG_MATURITY_LEVEL = os.environ["CONFIG_MATURITY_LEVEL"]
 
-  the_request = request.Request(url = CONFIG_SERVER_URL + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(CONFIG_MATURITY_LEVEL), pathname2url(namespace), pathname2url(key))))
+  the_request = request.Request(url = CONFIG_SERVER_URL + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(CONFIG_MATURITY_LEVEL), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
