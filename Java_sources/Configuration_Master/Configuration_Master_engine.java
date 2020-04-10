@@ -344,10 +344,15 @@ public class Configuration_Master_engine {
       use_string = true;
     }
 
-    boolean should_get_as_String() {
+    boolean is_internally_a_String() {
       return use_string;
     }
 
+  /* nah, changed my mind: exposes internal details of this class too much
+    boolean is_internally_a_long() {
+      return ! use_string;
+    }
+  */
     long get_as_long() {
       return integer_value;
     }
@@ -790,7 +795,9 @@ public class Configuration_Master_engine {
     System.err.println("Matches found");
     System.err.println("-------------");
     for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
-      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + the_matches.get(index);
+      final config_algebraic_type the_match = the_matches.get(index);
+      final boolean the_match_is_integral = ! the_match.is_internally_a_String();
+      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ { " + the_matches.get(index) + " [i.e. the " + (the_match_is_integral ? "integer " : "string “") + the_match.get_as_String_even_if_the_value_is_an_integer() + (the_match_is_integral ? "" : "”") + "] }";
       System.err.println("\033[31m" + mapping_string + "\033[0m");
       string_for_exception = string_for_exception + mapping_string;
       if (index < the_matches.size() - 1) { string_for_exception = string_for_exception + "; "; System.err.println(); }
@@ -814,7 +821,9 @@ public class Configuration_Master_engine {
     System.err.println("Matches found");
     System.err.println("-------------");
     for (int index = 0; index < the_matches.size(); ++index) { // intentionally not using a foreach loop, so I can get the matching elements from each ArrayList "in sync"; it would be nice if Java had something like C++`s "pair"
-      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ " + the_matches.get(index);
+      final config_algebraic_type the_match = the_matches.get(index);
+      final boolean the_match_is_integral = ! the_match.is_internally_a_String();
+      final String mapping_string = the_matching_KeyOfConfig_objects.get(index).toString() + " ⇢ { " + the_matches.get(index) + " [i.e. the " + (the_match_is_integral ? "integer " : "string “") + the_match.get_as_String_even_if_the_value_is_an_integer() + (the_match_is_integral ? "" : "”") + "] }";
       System.err.println("\033[" + ANSI_color_string + 'm' + mapping_string + "\033[0m");
       if (index < the_matches.size() - 1)  System.err.println();
     }
