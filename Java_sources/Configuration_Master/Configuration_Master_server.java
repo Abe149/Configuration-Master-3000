@@ -85,7 +85,7 @@ public class Configuration_Master_server {
 
 
     public static class GetHandler implements HttpHandler {
-        private static String my_prefix;
+        private String my_prefix;
 
         public GetHandler(String prefix_in) {
             my_prefix = prefix_in;
@@ -426,12 +426,18 @@ public class Configuration_Master_server {
                     }
                 }
             });
-            httpsServer.createContext("/test", new TestHandler());
+
+            final String API_version_prefix = "/API_version_1"; // HARD-CODED
+
+            httpsServer.createContext(                     "/test", new TestHandler());
+            httpsServer.createContext(API_version_prefix + "/test", new TestHandler());
 
             final String get_prefix = "/get:"; // DRY
-            httpsServer.createContext(get_prefix, new GetHandler(get_prefix));
+            httpsServer.createContext(                     get_prefix, new GetHandler(get_prefix));
+            httpsServer.createContext(API_version_prefix + get_prefix, new GetHandler(API_version_prefix + get_prefix));
 
-            httpsServer.createContext("/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
+            httpsServer.createContext(                     "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
+            httpsServer.createContext(API_version_prefix + "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
 
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
             myLogger.info("About to start the Configuration Master server...");
