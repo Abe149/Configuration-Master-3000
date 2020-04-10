@@ -13,7 +13,9 @@ for countdown in {9..1}; do
   sleep 1s
 done
 
+pushd `dirname "$0"` > /dev/null
 ant && java -jar ./Build/jars/Configuration_Master.jar strict_checking verbosity=9 "$@"
 result="$?"
 /usr/bin/env echo -e "\nResult code: $result"
+popd > /dev/null
 exit $result
