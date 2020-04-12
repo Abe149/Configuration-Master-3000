@@ -73,7 +73,7 @@ public class Configuration_Master_server {
     public static class GetStrictnessLevelHandler implements HttpHandler { // IHateCamelCase  ;-)
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response = " " + strictness_level + ' '; // surrounding sapces to avoid the output accidentally being "combined" with another decimal integer; "trim" the output if you need to pass it to something like a strict integer parser
+            final String response = " " + strictness_level + ' '; // surrounding spaces to avoid the output accidentally being "combined" with another decimal integer; "trim" the output if you need to pass it to something like a strict integer parser
 
             he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             he.sendResponseHeaders(200, response.getBytes().length);
