@@ -50,7 +50,11 @@ public class Configuration_Master_engine {
     public String toString_with_inverted_MLC_kind_and_integer() { // for the benefit of "simple_overlappingML_config_finder"
       return " tuple_for_key_of_a_config<the_MLC_kind=\033[7m" + the_MLC_kind + "\033[27m, the_maturity_level_to_which_to_compare=\033[7m" + the_maturity_level_to_which_to_compare + "\033[27m, the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
-  }
+
+    public String toString_concisely() { // for the "brain dump"
+      return "when ML" + (maturityLevel_comparison_types.less_than_or_equal_to == the_MLC_kind ? '≤' : maturityLevel_comparison_types.equal_to == the_MLC_kind ? '=' : maturityLevel_comparison_types.greater_than_or_equal_to == the_MLC_kind ? '≥' : " --ERROR-- ") + the_maturity_level_to_which_to_compare + ", namespace=" + stringize_safely(the_namespace) + ", key=" + stringize_safely(the_key);
+    }
+  } // end of class "tuple_for_key_of_a_config"
 
 
   private class tuple_for_key_of_a_schema {
@@ -382,7 +386,11 @@ public class Configuration_Master_engine {
     public String toString() { // for debugging etc.
       return " config_algebraic_type<use_string=" + use_string + ", integer_value=" + integer_value + ", string_value=" + stringize_safely(string_value) + "> ";
     }
-  }
+
+    public String toString_concisely() { // for the "brain dump"
+      return use_string ? stringize_safely(string_value) : (" " + integer_value + ' '); // spaces in the integer case in case the result of this method might come up "too close" to another ASCII decimal digit
+    }
+  } // end of class "config_algebraic_type"
 
 
   private Hashtable<tuple_for_key_of_a_config, config_algebraic_type> the_configurations;
@@ -670,7 +678,8 @@ public class Configuration_Master_engine {
         String temp_S = "";
         for ( tuple_for_key_of_a_config key : the_configurations.keySet() ) {
           final config_algebraic_type temp_alg = the_configurations.get(key);
-          temp_S = temp_S + key + " -> " + temp_alg + '\n';
+       // temp_S = temp_S + key + " -> " + temp_alg + '\n';
+          temp_S = temp_S + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
         }
         final String sort_result = sort_lines(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
