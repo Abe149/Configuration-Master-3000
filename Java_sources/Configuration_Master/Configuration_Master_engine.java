@@ -711,29 +711,32 @@ public class Configuration_Master_engine {
 
       // maybe TO DO: make the following more concise and not such a DRY violation...  perhaps using [a] lambda[s]?  this could be impractical due to the different checks re '≤' vs. '=' vs. '≥'
 
-      // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
-      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
-      /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-      final String curr_result = get_configuration( // ...
-      /* ... */    curr_ML,                        the_namespace, the_key);
+      { // an unpredicated inner scope, to limit the scope of "curr_result" [to prevent accidental bugs...  are there any other kind?  ;-)]
 
-      if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
-        if (null == curr_result) {
-          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected.\033[0m");
-        } else { // not null
-          final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
-          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-          if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
-        }
-      } else {           // ML ≥ 0, so now null in the result is _bad_
-        if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
-          final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
-          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-          if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
-        } else { // not null
-          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
-        }
-      } // end if
+        // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
+        System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+        /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
+        final String curr_result = get_configuration( // ...
+        /* ... */    curr_ML,                        the_namespace, the_key);
+
+        if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
+          if (null == curr_result) {
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected.\033[0m");
+          } else { // not null
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
+          }
+        } else {           // ML ≥ 0, so now null in the result is _bad_
+          if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
+          } else { // not null
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
+          }
+        } // end if
+      } // end of unpredicated inner scope
 
 
       // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
