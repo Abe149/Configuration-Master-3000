@@ -442,6 +442,7 @@ public class Configuration_Master_server {
             httpsServer.createContext(API_version_prefix + "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
 
             httpsServer.setExecutor(new ThreadPoolExecutor(4, 8, 30, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100))); // thanks to "rustyx" at <https://stackoverflow.com/questions/2308479/simple-java-https-server>
+            System.err.println("\n"); // this is here for when the verbosity level is very high, so the logging from the next line will still "stand out" visually
             myLogger.info("About to start the Configuration Master server...");
             httpsServer.start();
 
