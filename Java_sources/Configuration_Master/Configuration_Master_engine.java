@@ -813,13 +813,20 @@ public class Configuration_Master_engine {
     final boolean the_query_is_synthetic = the_query_is_synthetic___off_AKA_false_by_default; // for readability
 
     if (maturity_level_of_query < 0) {
+      if (the_query_is_synthetic) {
+        System.err.println("\n\033[31mWARNING: a negative ML was found in a non-synthetic query.\033[0m");
+
+
 
 // WIP
 
-    }
+      } else { // _not_ the_query_is_synthetic
 
 
+// WIP
 
+      } // end if
+    } // end if
 
     // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict and only-statically-strict modes [i.e. strictness_level values of 0 and 1]
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
@@ -853,7 +860,7 @@ public class Configuration_Master_engine {
         }
 
         if (null == the_match) // save some headaches later by omitting nulls, which probably shouldn`t be in the hashtable anyway
-          System.err.println("\n\033[31mWARNING: a null was found in a value of ''the_configurations''; this is not expected to be possible."); // would it be good to also throw/exit here, at least if the strictness level is high enough?
+          System.err.println("\n\033[31mWARNING: a null was found in a value of ''the_configurations''; this is not expected to be possible.\033[0m"); // would it be good to also throw/exit here, at least if the strictness level is high enough?
         else {
           the_matching_KeyOfConfig_objects.add(the_key_of_the_config);
           the_matches                     .add(the_match);
