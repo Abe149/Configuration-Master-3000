@@ -686,9 +686,10 @@ public class Configuration_Master_engine {
       System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
 
       // these local variables: for convenience and {readability of code}
-      final int curr_ML          = the_key_of_the_config.the_maturity_level_to_which_to_compare; // "curr": short for "current"
-      final String the_namespace = the_key_of_the_config.the_namespace;
-      final String the_key       = the_key_of_the_config.the_key;
+      final int curr_ML                                 = the_key_of_the_config.the_maturity_level_to_which_to_compare; // "curr": short for "current"
+      final String the_namespace                        = the_key_of_the_config.the_namespace;
+      final String the_key                              = the_key_of_the_config.the_key;
+      final maturityLevel_comparison_types the_MLC_kind = the_key_of_the_config.the_MLC_kind;
 
       final int pred_ML = curr_ML - 1; // "pred": short for "predecessor"
       final int succ_ML = curr_ML + 1; // "succ": short for "successor"
@@ -725,13 +726,13 @@ public class Configuration_Master_engine {
           } else { // not null
             final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
             if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
+            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
           }
         } else {           // ML ≥ 0, so now null in the result is _bad_
           if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
             final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
             if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
+            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
           } else { // not null
             if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
           }
@@ -744,6 +745,30 @@ public class Configuration_Master_engine {
       /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String succ_result = get_configuration( // ...
       /* ... */    succ_ML,                        the_namespace, the_key);
+
+      if (succ_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
+        if (null == succ_result) {
+          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was null, as expected.\033[0m");
+        } else { // not null
+          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was _not_ null, and it was expected to be null.";
+          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+        }
+      } else if (maturityLevel_comparison_types.greater_than_or_equal_to == the_MLC_kind) { // ML ≥ 0, so now null in the result is _bad_ if/when the MLC kind is greater_than_or_equal_to
+        if (null == succ_result) { // while checking a non-negative "succ_ML" -- since the succent code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
+          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was null, and it was _not_ expected to be null.";
+          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+        } else { // not null
+          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was non-null, as expected.\033[0m");
+        }
+      } else { // the ML is not negative, but the MLC kind is _not_ greater_than_or_equal_to so we cannot make any assumptions about the goodness/badness of null results
+        if (verbosity > 0)  System.err.println("INFO: the result for ML=" + succ_ML + " was " + (null == succ_result ? "" : "non-") + "null [no expectation involved].");
+      } // end if
+
+
+
+
 
 
 //        case    less_than_or_equal_to:
