@@ -801,7 +801,6 @@ public class Configuration_Master_engine {
   }
 
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
-    // REMINDER: do NOT throw just b/c maturity_level_of_query<0, no _matter_ what the strictness level is, since the call with maturity_level_of_query<0 may come from a pseudo-query generated/executed by "simple_overlappingML_config_finder"
 
     if (null == namespace_of_query || null == key_of_query)
       throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
@@ -812,21 +811,37 @@ public class Configuration_Master_engine {
 
     final boolean the_query_is_synthetic = the_query_is_synthetic___off_AKA_false_by_default; // for readability
 
+
+    // this double-blank-line-delimited block: deal with negative ML inputs as appropriate based on: whether or not the query is synthetic, the verbosity level, and the level of strictness
     if (maturity_level_of_query < 0) {
-      if (the_query_is_synthetic) {
-        System.err.println("\n\033[31mWARNING: a negative ML was found in a non-synthetic query.\033[0m");
+      if (the_query_is_synthetic) { // synthetic queries are allowed to have an ML of -1, but no more negative than that
 
+        final String report_without_ANSI_color = "a negative ML [" + maturity_level_of_query + "] was found in a synthetic query."; // this may not get used in the current execution
 
-
-// WIP
+        if (maturity_level_of_query == -1) {
+          System.err.println(                            "INFO: " +    report_without_ANSI_color);
+        } else { // ML < -1
+          if (verbosity > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "033[0m"); // at all verbosity levels, even zero: ML < -1 is seriously bad, even in synthetic queries
+          if (strictness_level > 5) {
+            throw new IOException(                                     report_without_ANSI_color);
+          }
+        }
 
       } else { // _not_ the_query_is_synthetic
 
+        final String report_without_ANSI_color = "a negative ML [" + maturity_level_of_query + "] was found in a non-synthetic query."; // this may not get used in the current execution
 
-// WIP
+        if (verbosity > 0) {
+          System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "033[0m");
+        }
+
+        if (strictness_level > 5) {
+          throw new IOException(                   report_without_ANSI_color);
+        }
 
       } // end if
     } // end if
+
 
     // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict and only-statically-strict modes [i.e. strictness_level values of 0 and 1]
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
