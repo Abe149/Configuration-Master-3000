@@ -84,14 +84,16 @@ public final class utility_class {
 
     // the rest of this function: allowing "IOException" exceptions to escape
 
-   //   final Process my_Process = Runtime.getRuntime().exec(cmd);
-    final Process my_Process = Runtime.getRuntime().exec(cmd.split(" "));
-//    final Process my_Process = new ProcessBuilder(cmd.split(" ")).start();
+    final Process my_Process = Runtime.getRuntime().exec(cmd);
+//  final Process my_Process = Runtime.getRuntime().exec(cmd.split(" "));
+//  final Process my_Process = new ProcessBuilder(cmd.split(" ")).start();
+ // -- NOT to uncomment: final Process my_Process = new ProcessBuilder(cmd).start(); // no good: barfs on param.s, e.g. the " -a" in "uname -a"
 
     final OutputStream my_OutputStream = my_Process.getOutputStream();
     final InputStream  my_InputStream  = my_Process.getInputStream();
     my_OutputStream.write(input.getBytes());
     my_OutputStream.flush();
+    my_OutputStream.close();
 
     boolean done = false;
     do {
@@ -131,7 +133,7 @@ public final class utility_class {
 
     System.out.println("\nTEST 5");
     System.out.println("Testing ''sort_lines''...\n\nTest case\n---------");
-    final String sort_test_case = "A\nB\nC\n";
+    final String sort_test_case = "Z\nB\nC\n";
     System.out.println(sort_test_case);
     System.out.println("Test result\n-----------");
     System.out.println(sort_lines(sort_test_case));
