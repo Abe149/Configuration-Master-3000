@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-./check.sh && ./Run_all_tests.bash
+./check_non-strictly.sh && ./Run_all_tests.bash
