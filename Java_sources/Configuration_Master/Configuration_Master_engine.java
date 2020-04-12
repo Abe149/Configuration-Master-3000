@@ -692,6 +692,12 @@ public class Configuration_Master_engine {
       final int pred_ML = curr_ML - 1; // "pred": short for "predecessor"
       final int succ_ML = curr_ML + 1; // "succ": short for "successor"
 
+      if (curr_ML<0) {
+        final String report_without_ANSI_color = "WARNING: an internal ML to compare to was <0, and this should NOT be possible: " + curr_ML;
+        System.err.println("\n\033[31m" + report_without_ANSI_color + "\033[0m");
+        if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
+      }
+
       // saving the results for later, when I will be checking for nulls
 
       // odd formatting of the next 3 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
@@ -711,9 +717,30 @@ public class Configuration_Master_engine {
       final String succ_result = get_configuration( // ...
       /* ... */    succ_ML,                        the_namespace, the_key);
 
+    // -- snippet for WIP: System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
+
+      // in the rest of this procedure: "pretending" that MLs less than zero are supposed to be possible [i.e. valid, not only synthetically -- i.e. the -1 that comes from taking the predecessor of zero -- but also as "real data"], just as a "belt and suspenders" approach, i.e. I don`t want _this_ block of code to crash -- or, worse yet, fail to warn/throw when it _should_ -- just b/c there`s a bug somewhere _else_ in CM3000 [almost certainly in the engine] [regardless of whether the bug was along the lines of "failure to catch invalid input" or some other bug]
+
+      // TO DO: make the following more concise and not such a DRY violation...  perhaps using a lambda?
+
+      if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
+        if (null == curr_result) {
+        } else { // not null
+        }
+      } else {           // ML ≥ 0, so now null in the result is _bad_
+        if (null == curr_result) {
+        } else { // not null
+        }
+      }
+
+
+
 
       switch (the_key_of_the_config.the_MLC_kind) {
         case    less_than_or_equal_to:
+          if (curr_ML <= 0) { // when testing ML=-1, null in "pred_result" is a _good_ thing
+          } else { // curr_ML ≠ 0, so now null in "pred_result" is _bad_
+          }
 
           // REMINDER: do _not_ throw [maybe don`t even warn?] when a null comes back from testing ML=-1 ...  maybe even _require_ it, i.e. warn/throw when the result is _not_ null?
 
@@ -728,6 +755,10 @@ public class Configuration_Master_engine {
         default:
            throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
       } // end switch
+
+
+
+
     } // end for
   } // end of "simple_overlappingML_config_finder"
 
