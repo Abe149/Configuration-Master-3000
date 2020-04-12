@@ -682,21 +682,27 @@ public class Configuration_Master_engine {
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
-      if (verbosity > 5)  System.err.println("INFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''..."); // WIP VL
+      if (verbosity > 5)  System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
 
       // these local variables: for convenience and {readability of code}
       final int current_ML       = the_key_of_the_config.the_maturity_level_to_which_to_compare;
       final String the_namespace = the_key_of_the_config.the_namespace;
       final String the_key       = the_key_of_the_config.the_key;
 
+      final int pred_ML = current_ML - 1; // "pred": short for "predecessor"
+      final int succ_ML = current_ML + 1; // "succ": short for "successor"
+
       // saving the results for later, when I will be checking for nulls
-      final String pred_result = get_configuration(current_ML - 1, the_namespace, the_key); // "pred": short for "predecessor"
-      final String curr_result = get_configuration(current_ML    , the_namespace, the_key);
-      final String succ_result = get_configuration(current_ML + 1, the_namespace, the_key); // "succ": short for "successor"
+      final String pred_result = get_configuration(   pred_ML, the_namespace, the_key);
+      final String curr_result = get_configuration(current_ML, the_namespace, the_key);
+      final String succ_result = get_configuration(   succ_ML, the_namespace, the_key);
 
 
       switch (the_key_of_the_config.the_MLC_kind) {
         case    less_than_or_equal_to:
+
+          // REMINDER: do _not_ throw [maybe don`t even warn?] when a null comes back from testing ML=-1 ...  maybe even _require_ it, i.e. warn/throw when the result is _not_ null?
+
           // if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
           break;
         case                 equal_to:
