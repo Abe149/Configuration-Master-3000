@@ -36,7 +36,7 @@ public final class utility_class {
   }
 
 
-  public static boolean are_we_running_on_a_POSIX_environment() { // this is best-effort, due to lack of anything standardized in the Java spec to do this AFAIK
+  public static boolean we_are_running_on_a_POSIX_environment() { // this is best-effort, due to lack of anything standardized in the Java spec to do this AFAIK
     return does_the_first_param_match_any_of_the_elements_of_the_second_param___ignore_case // ...
              (
                System.getProperty("os.name"),
@@ -80,7 +80,7 @@ public final class utility_class {
     // https://docs.oracle.com/javase/6/docs/api/java/lang/Process.html#getOutputStream()
 
     if (null == input || null == cmd)               return null; // would it be better to throw?
-    if (! are_we_running_on_a_POSIX_environment())  return null; // would it be better to throw?
+    if (! we_are_running_on_a_POSIX_environment())  return null; // would it be better to throw?
 
     // the rest of this function: allowing "IOException" exceptions to escape
 
