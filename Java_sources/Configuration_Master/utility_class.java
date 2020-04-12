@@ -67,7 +67,7 @@ public final class utility_class {
 
     // the next block of code: allowing "IOException" exceptions to escape
     while (in.ready()) {
-      temp = temp + in.readLine();
+      temp = temp + in.readLine() + '\n';
     }
     in.close();
 
