@@ -712,28 +712,36 @@ public class Configuration_Master_engine {
       final String curr_result = get_configuration( // ...
       /* ... */    curr_ML,                        the_namespace, the_key);
 
-      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
-      /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-      final String succ_result = get_configuration( // ...
-      /* ... */    succ_ML,                        the_namespace, the_key);
-
     // -- snippet for WIP: System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
 
       // in the rest of this procedure: "pretending" that MLs less than zero are supposed to be possible [i.e. valid, not only synthetically -- i.e. the -1 that comes from taking the predecessor of zero -- but also as "real data"], just as a "belt and suspenders" approach, i.e. I don`t want _this_ block of code to crash -- or, worse yet, fail to warn/throw when it _should_ -- just b/c there`s a bug somewhere _else_ in CM3000 [almost certainly in the engine] [regardless of whether the bug was along the lines of "failure to catch invalid input" or some other bug]
 
-      // TO DO: make the following more concise and not such a DRY violation...  perhaps using a lambda?
+      // maybe TO DO: make the following more concise and not such a DRY violation...  perhaps using [a] lambda[s]?
 
       if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
         if (null == curr_result) {
+          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected.\033[0m");
         } else { // not null
+          final String report_without_ANSI_color = "INFO: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
+          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
         }
       } else {           // ML ≥ 0, so now null in the result is _bad_
-        if (null == curr_result) {
+        if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
+          final String report_without_ANSI_color = "INFO: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
+          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
         } else { // not null
+          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
         }
       }
 
 
+
+      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+      /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
+      final String succ_result = get_configuration( // ...
+      /* ... */    succ_ML,                        the_namespace, the_key);
 
 
       switch (the_key_of_the_config.the_MLC_kind) {
@@ -764,6 +772,8 @@ public class Configuration_Master_engine {
 
 
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+    // REMINDER: do NOT throw just b/c maturity_level_of_query<0, no _matter_ what the strictness level is, since the call with maturity_level_of_query<0 may come from a pseudo-query generated/executed by "simple_overlappingML_config_finder"
+
     if (null == namespace_of_query || null == key_of_query)
       throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
 
