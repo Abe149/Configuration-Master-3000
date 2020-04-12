@@ -689,9 +689,10 @@ public class Configuration_Master_engine {
       final String the_namespace = the_key_of_the_config.the_namespace;
       final String the_key       = the_key_of_the_config.the_key;
 
-      final String pred_result; // saving the result for later, when I will be checking for nulls
-      final String curr_result; // saving the result for later, when I will be checking for nulls
-      final String succ_result; // saving the result for later, when I will be checking for nulls
+      // saving the results for later, when I will be checking for nulls
+      final String pred_result = get_configuration(current_ML - 1, the_namespace, the_key); // "pred": short for "predecessor"
+      final String curr_result = get_configuration(current_ML    , the_namespace, the_key);
+      final String succ_result = get_configuration(current_ML + 1, the_namespace, the_key); // "succ": short for "successor"
 
 
       switch (the_key_of_the_config.the_MLC_kind) {
