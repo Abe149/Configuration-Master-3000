@@ -82,7 +82,11 @@ public class Configuration_Master_engine {
     public String toString() { // for debugging etc.
       return " tuple_for_key_of_a_schema<the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
-  }
+
+    public String toString_concisely() { // for the "brain dump"
+      return "namespace=" + stringize_safely(the_namespace) + ", key=" + stringize_safely(the_key);
+    }
+  } // end of class "tuple_for_key_of_a_schema"
 
 
   private class parsed_line_for_a_config {
@@ -599,7 +603,7 @@ public class Configuration_Master_engine {
         String temp_S = "";
         for ( tuple_for_key_of_a_schema key : the_schema.keySet() ) {
           final value_types temp_enum = the_schema.get(key);
-          temp_S = temp_S + key + " -> " + temp_enum + '\n';
+          temp_S = temp_S + key.toString_concisely() + " -> " + temp_enum + '\n';
         }
         final String sort_result = sort_lines(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
