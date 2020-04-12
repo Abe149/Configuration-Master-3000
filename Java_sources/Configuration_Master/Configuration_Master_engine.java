@@ -699,8 +699,8 @@ public class Configuration_Master_engine {
       final int succ_ML = curr_ML + 1; // "succ": short for "successor"
 
       if (curr_ML < 0) {
-        final String report_without_ANSI_color = "WARNING: an internal ML to compare to was <0, and this should NOT be possible: " + curr_ML;
-        System.err.println("\n\033[31m" +                report_without_ANSI_color + "\033[0m");
+        final String report_without_ANSI_color = "an internal ML to compare to was <0, and this should NOT be possible: " + curr_ML;
+        System.err.println("\n\033[31mWARNING: " +       report_without_ANSI_color + "\033[0m");
         if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
       }
 
@@ -718,15 +718,15 @@ public class Configuration_Master_engine {
           if (null == pred_result) {
             if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was null, as expected because the ML was negative.\033[0m");
           } else { // not null
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
-            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+            final String report_without_ANSI_color = "the result for ML=" + pred_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
+            if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
           }
         } else if (maturityLevel_comparison_types.less_than_or_equal_to == the_MLC_kind) { // ML ≥ 0, so now null in the result is _bad_ if/when the MLC kind is less_than_or_equal_to
           if (null == pred_result) { // while checking a non-negative "pred_ML" -- since the predent code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was null, and it was _not_ expected to be null.";
-            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+            final String report_without_ANSI_color = "the result for ML=" + pred_ML + " was null, and it was _not_ expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
           } else { // not null
             if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was non-null, as expected.\033[0m");
           }
@@ -749,15 +749,15 @@ public class Configuration_Master_engine {
           if (null == curr_result) {
             if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected because the ML was negative.\033[0m");
           } else { // not null
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
-            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+            final String report_without_ANSI_color = "the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
+            if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
           }
         } else {           // ML ≥ 0, so now null in the result is _bad_
           if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
-            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+            final String report_without_ANSI_color = "the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
           } else { // not null
             if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
           }
@@ -775,15 +775,15 @@ public class Configuration_Master_engine {
         if (null == succ_result) {
           if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was null, as expected because the ML was negative.\033[0m");
         } else { // not null
-          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
-          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-          if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+          final String report_without_ANSI_color = "the result for ML=" + succ_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
+          if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
         }
       } else if (maturityLevel_comparison_types.greater_than_or_equal_to == the_MLC_kind) { // ML ≥ 0, so now null in the result is _bad_ if/when the MLC kind is greater_than_or_equal_to
         if (null == succ_result) { // while checking a non-negative "succ_ML" -- since the succent code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
-          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was null, and it was _not_ expected to be null.";
-          if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
-          if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+          final String report_without_ANSI_color = "the result for ML=" + succ_ML + " was null, and it was _not_ expected to be null.";
+          if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "\033[0m");
+          if (strictness_level > 0)  throw new IOException(                   report_without_ANSI_color);
         } else { // not null
           if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was non-null, as expected.\033[0m");
         }
@@ -809,6 +809,17 @@ public class Configuration_Master_engine {
     if (verbosity > 1) {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
     }
+
+    final boolean the_query_is_synthetic = the_query_is_synthetic___off_AKA_false_by_default; // for readability
+
+    if (maturity_level_of_query < 0) {
+
+// WIP
+
+    }
+
+
+
 
     // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict and only-statically-strict modes [i.e. strictness_level values of 0 and 1]
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
