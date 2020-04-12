@@ -712,7 +712,7 @@ public class Configuration_Master_engine {
         System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
         /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
         final String pred_result = get_configuration( // ...
-        /* ... */    pred_ML,                        the_namespace, the_key);
+        /* ... */    pred_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
         if (pred_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == pred_result) {
@@ -743,7 +743,7 @@ public class Configuration_Master_engine {
         System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
         /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
         final String curr_result = get_configuration( // ...
-        /* ... */    curr_ML,                        the_namespace, the_key);
+        /* ... */    curr_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
         if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == curr_result) {
@@ -769,7 +769,7 @@ public class Configuration_Master_engine {
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String succ_result = get_configuration( // ...
-      /* ... */    succ_ML,                        the_namespace, the_key);
+      /* ... */    succ_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
       if (succ_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
         if (null == succ_result) {
