@@ -660,6 +660,27 @@ public class Configuration_Master_engine {
       } // end for config_input : config_inputs
 
 
+      if (verbosity > 1) {
+        System.err.println();
+        System.err.println("INFO: the_configurations: " + the_configurations); // dump the configurations
+        System.err.println();
+      }
+
+      if (verbosity > 0 && we_are_running_on_a_POSIX_environment()) {
+        String temp_S = "";
+        for ( tuple_for_key_of_a_config key : the_configurations.keySet() ) {
+          final config_algebraic_type temp_alg = the_configurations.get(key);
+          temp_S = temp_S + key + " -> " + temp_alg + '\n';
+        }
+        final String sort_result = sort_lines(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+        System.err.println();
+        System.err.println("INFO: the_configurations...");
+        System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
+        System.err.println("INFO: [end of the_configurations]");
+        System.err.println();
+        System.err.println();
+      }
+
       // --- "asterisk validation" for the configurations     --- //
       // --- performance warning: this is BRUTE FORCE for now --- //
 
@@ -678,12 +699,6 @@ public class Configuration_Master_engine {
             }
           }
         }
-      }
-
-      if (verbosity > 1) {
-        System.err.println();
-        System.err.println("INFO: the_configurations: " + the_configurations); // dump the configurations
-        System.err.println();
       }
 
       if (the_schema.size() < 1 && ! allow_empty_schema) {
