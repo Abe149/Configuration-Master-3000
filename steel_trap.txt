@@ -28,7 +28,8 @@ TO DOs
 * add countdown code [for when strictness > ... 0?  1?] to the server
   * once that`s working, remove the functionally-{similar/same} code from the "run_<...>" wrapper scripts
 
-* support MLC specifier '≠'
+*   maybe not, since maybe it`s useless in the real world: support MLC specifier '≠'
+  * maybe not, since maybe it`s useless in the real world _and_ its effect can be provided by just using two config. rules instead of one; example: one line with "<X" and another line with ">X" but otherwise identical [possibly modulo comments]
   * this is syntactic sugar; example: "≠X" is syntactic sugar for two almost-the-same config. rules, one for "<X" and one for ">X"
   * reminder: '<' itself is now mere syntactic sugar; example: "<X" is syntactic sugar for "≤(X-1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
   * reminder: '>' itself is now mere syntactic sugar; example: ">X" is syntactic sugar for "≥(X+1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
