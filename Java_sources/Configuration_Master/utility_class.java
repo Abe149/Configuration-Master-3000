@@ -69,24 +69,40 @@ public final class utility_class {
     while (in.ready()) {
       temp = temp + in.readLine();
     }
+    in.close();
 
     return temp;
   }
 
 
-  public String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
+  public static String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
     // in Java`s "Process", input is output and output is input  :-P
     // https://docs.oracle.com/javase/6/docs/api/java/lang/Process.html#getOutputStream()
 
     if (null == input || null == cmd)               return null; // would it be better to throw?
     if (! are_we_running_on_a_POSIX_environment())  return null; // would it be better to throw?
 
-    // the next block of code: allowing "IOException" exceptions to escape
-    final Process my_Process = Runtime.getRuntime().exec(cmd);
+    // the rest of this function: allowing "IOException" exceptions to escape
+
+   //   final Process my_Process = Runtime.getRuntime().exec(cmd);
+    final Process my_Process = Runtime.getRuntime().exec(cmd.split(" "));
+//    final Process my_Process = new ProcessBuilder(cmd.split(" ")).start();
+
     final OutputStream my_OutputStream = my_Process.getOutputStream();
     final InputStream  my_InputStream  = my_Process.getInputStream();
     my_OutputStream.write(input.getBytes());
-    // my_OutputStream.flush();
+    my_OutputStream.flush();
+
+    boolean done = false;
+    do {
+      try {
+        my_Process.waitFor(); // potentially throws InterruptedException, so you gotta do this in a loop  :-(
+        done = true;
+      } catch (InterruptedException ie) {
+      }
+    } while (! done);
+
+
     return read_all_lines_from_a_BufferedReader(new BufferedReader(new InputStreamReader(new BufferedInputStream(my_InputStream)))); // GOD how I hate Java I/O
   }
 
@@ -102,7 +118,7 @@ public final class utility_class {
     System.out.println(pipe_first_param_through_POSIX_command_in_second_param("",      "uname -a"));
 
     System.out.println("\nTEST 2");
-    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("", "/bin/uname"));
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("", "/bin/uname")); // 
 
     System.out.println("\nTEST 3");
     System.out.println(pipe_first_param_through_POSIX_command_in_second_param("",      "uname"));
