@@ -679,9 +679,9 @@ public class Configuration_Master_engine {
         for ( tuple_for_key_of_a_config key : the_configurations.keySet() ) {
           final config_algebraic_type temp_alg = the_configurations.get(key);
        // temp_S = temp_S + key + " -> " + temp_alg + '\n';
-          temp_S = temp_S + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
+          temp_S = temp_S + String.format("%9d", key.the_maturity_level_to_which_to_compare) + " ... " + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
         }
-        final String sort_result = sort_lines(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+        final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
         System.err.println("INFO: the_configurations...");
         System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
