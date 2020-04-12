@@ -625,8 +625,6 @@ public class Configuration_Master_engine {
       } // end for config_input : config_inputs
 
 
-      // INCOMPLETENESS WARNING: this implementation almost-certainly only finds conflicts that have the same maturity-level comparison specifier
-
       // --- "asterisk validation" for the configurations     --- //
       // --- performance warning: this is BRUTE FORCE for now --- //
 
@@ -663,6 +661,8 @@ public class Configuration_Master_engine {
         System.exit(-2);
       }
 
+      simple_overlappingML_config_finder(); // simple simulation of queries, to try to find overlaps and [depending on "downstream code", i.e. callees] {{give INFO / throw} for redundant entries [INFO when low strictness level, throw when "high enough"] and {warn/throw for conflicting entries [warn when low strictness level, throw when "high enough"]}
+
     } catch (IOException ioe) {
 
        final String response = "An I/O exception occurred while trying to initialize the Configuration Master engine: " + ioe;
@@ -682,7 +682,7 @@ public class Configuration_Master_engine {
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
-      if (verbosity > 5)  System.err.println("INFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...");
+      if (verbosity > 5)  System.err.println("INFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''..."); // WIP VL
 
       // these local variables: for convenience and {readability of code}
       final int current_ML       = the_key_of_the_config.the_maturity_level_to_which_to_compare;
@@ -803,7 +803,7 @@ public class Configuration_Master_engine {
           }
         } // end for
         if (all_the_same) {
-          dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure of CM3000 types]", the_matching_KeyOfConfig_objects, the_matches, "93");
+          if (verbosity > 5)  dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure of CM3000 types]", the_matching_KeyOfConfig_objects, the_matches, "93");
           return first_match.get_as_String_even_if_the_value_is_an_integer();
         } else { // not all the same, therefor bad  :-(
           if (strictness_level >= 2) {
@@ -811,7 +811,7 @@ public class Configuration_Master_engine {
             // the preceding line should always throw, so no more execution here
             System.exit(-4);
           } else { // non-strict
-            dump_multiple_matches("WARNING: multiple matches; since engine has strictness_level < 2, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
+            if (verbosity > 5)  dump_multiple_matches("WARNING: multiple matches; since engine has strictness_level < 2, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
             return first_match.get_as_String_even_if_the_value_is_an_integer();
           }
         }
