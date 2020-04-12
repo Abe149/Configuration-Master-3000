@@ -432,8 +432,8 @@ public class Configuration_Master_server {
             httpsServer.createContext(                     "/test", new TestHandler());
             httpsServer.createContext(API_version_prefix + "/test", new TestHandler());
 
-            final String                                     get_prefix_1 = "/get:"; // DRY
-            final String get_prefix_2 = API_version_prefix + get_prefix_1;           // DRY
+            final String                                     get_prefix_1 = "/get:"; // DRY; I need this for the param. to the ctor of "GetHandler"
+            final String get_prefix_2 = API_version_prefix + get_prefix_1;           // DRY; I need this for the param. to the ctor of "GetHandler"
             httpsServer.createContext(get_prefix_1, new GetHandler(get_prefix_1));
             httpsServer.createContext(get_prefix_2, new GetHandler(get_prefix_2));
 
