@@ -700,13 +700,13 @@ public class Configuration_Master_engine {
 
       // saving the results for later, when I will be checking for nulls
 
-      // odd formatting of the next 3 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
-
+      // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String pred_result = get_configuration( // ...
       /* ... */    pred_ML,                        the_namespace, the_key);
 
+      // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String curr_result = get_configuration( // ...
@@ -722,13 +722,13 @@ public class Configuration_Master_engine {
         if (null == curr_result) {
           if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected.\033[0m");
         } else { // not null
-          final String report_without_ANSI_color = "INFO: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
+          final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
           if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
           if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
         }
       } else {           // ML ≥ 0, so now null in the result is _bad_
         if (null == curr_result) { // while checking a non-negative "curr_ML" -- since the current code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
-          final String report_without_ANSI_color = "INFO: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
+          final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was null, and it was _not_ expected to be null.";
           if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
           if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
         } else { // not null
@@ -738,31 +738,16 @@ public class Configuration_Master_engine {
 
 
 
+      // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String succ_result = get_configuration( // ...
       /* ... */    succ_ML,                        the_namespace, the_key);
 
 
-      switch (the_key_of_the_config.the_MLC_kind) {
-        case    less_than_or_equal_to:
-          if (curr_ML <= 0) { // when testing ML=-1, null in "pred_result" is a _good_ thing
-          } else { // curr_ML ≠ 0, so now null in "pred_result" is _bad_
-          }
-
-          // REMINDER: do _not_ throw [maybe don`t even warn?] when a null comes back from testing ML=-1 ...  maybe even _require_ it, i.e. warn/throw when the result is _not_ null?
-
-          // if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-          break;
-        case                 equal_to:
-          // if (! (maturity_level_of_query == the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-          break;
-        case greater_than_or_equal_to:
-          // if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
-          break;
-        default:
-           throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
-      } // end switch
+//        case    less_than_or_equal_to:
+//        case greater_than_or_equal_to:
+//           throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
 
 
 
