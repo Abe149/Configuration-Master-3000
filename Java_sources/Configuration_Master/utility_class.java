@@ -74,6 +74,41 @@ public final class utility_class {
     return temp;
   }
 
+  public static String pipe_first_param_through_POSIX_command_in_second_param___set_locale_to_C(String input, String cmd) throws IOException { // {working around}/solving Unicode-related problems
+
+    // in Java`s "Process", input is output and output is input  :-P
+    // https://docs.oracle.com/javase/6/docs/api/java/lang/Process.html#getOutputStream()
+
+    if (null == input || null == cmd)               return null; // would it be better to throw?
+    if (! we_are_running_on_a_POSIX_environment())  return null; // would it be better to throw?
+
+    // the rest of this function: allowing "IOException" exceptions to escape
+
+    // NOTE: I needed to switch from "Runtime.getRuntime().exec" to "ProcessBuilder" so as to be able to edit the environment
+
+ // -- NOT to uncomment: final Process my_Process = new ProcessBuilder(cmd).start(); // no good: barfs on param.s, e.g. the " -a" in "uname -a"
+    final ProcessBuilder my_PB = new ProcessBuilder(cmd.split(" "));
+    my_PB.environment().put("LC_ALL", "C");
+    final Process my_Process = my_PB.start();
+
+    final OutputStream my_OutputStream = my_Process.getOutputStream();
+    final InputStream  my_InputStream  = my_Process.getInputStream();
+    my_OutputStream.write(input.getBytes());
+    my_OutputStream.flush();
+    my_OutputStream.close();
+
+    boolean done = false;
+    do {
+      try {
+        my_Process.waitFor(); // potentially throws InterruptedException, so you gotta do this in a loop  :-(
+        done = true;
+      } catch (InterruptedException ie) {
+      }
+    } while (! done);
+
+    return read_all_lines_from_a_BufferedReader(new BufferedReader(new InputStreamReader(new BufferedInputStream(my_InputStream)))); // GOD how I hate Java I/O
+  }
+
 
   public static String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
     // in Java`s "Process", input is output and output is input  :-P
@@ -103,7 +138,6 @@ public final class utility_class {
       } catch (InterruptedException ie) {
       }
     } while (! done);
-
 
     return read_all_lines_from_a_BufferedReader(new BufferedReader(new InputStreamReader(new BufferedInputStream(my_InputStream)))); // GOD how I hate Java I/O
   }

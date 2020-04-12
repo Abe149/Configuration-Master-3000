@@ -682,16 +682,10 @@ public class Configuration_Master_engine {
         String temp_S = "";
         for ( tuple_for_key_of_a_config key : the_configurations.keySet() ) {
           final config_algebraic_type temp_alg = the_configurations.get(key);
-          /*
-          try {
-            temp_S = temp_S + String.format("%9d", key.the_maturity_level_to_which_to_compare) + ' ' + key.the_MLC_kind.get_as_char() + " ... " + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
-          } catch (Exception e) { // needed due to "key.the_MLC_kind.get_as_char()" throwing when the enum is invalid or unaccounted for in "the_MLC_kind.get_as_char"
-            System.err.println("WTF happened?!?"); // this should probably do something else  ;-)  ... TO DO
-          }
-          */
           temp_S = temp_S + String.format("%9d", key.the_maturity_level_to_which_to_compare) + ' ' + key.the_MLC_kind.get_as_a_twoChar_ASCII_string() + " ... " + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
         }
-        final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+//      final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+        final String sort_result = sort_lines_of_config_brain_dump(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
         System.err.println("INFO: the_configurations...");
         System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
@@ -1052,6 +1046,14 @@ public class Configuration_Master_engine {
       if (index < the_matches.size() - 1)  System.err.println();
     }
     System.err.println("-------------\n");
+  }
+
+  public static String sort_lines_of_config_brain_dump(String input) throws IOException {
+    // funky things happened during testing, and analysis indicated it was b/c of the Unicode locale
+ // return pipe_first_param_through_POSIX_command_in_second_param(input, "sort -n");
+ // return pipe_first_param_through_POSIX_command_in_second_param(input, "sort -k 3,3n -k 4,4");
+ // return pipe_first_param_through_POSIX_command_in_second_param___set_locale_to_C(input, "sort -k 3,3n -k 4,4");
+    return pipe_first_param_through_POSIX_command_in_second_param___set_locale_to_C(input, "sort -n");
   }
 
 } // end of class "Configuration_Master_engine"

@@ -9,6 +9,7 @@ Useful [and complicated enough to be worth preserving here] Unix commands
 
 ./check_non-strictly.sh 2>&1|grep INFO | grep --color synthetic -B9 -A9
 
+ls -l / | sed -e 's/Apr/<=/' -e 's/Jun/==/' -e 's/Mar/>=/' | sort -k 5,5n -k 6,6
 
 
 
