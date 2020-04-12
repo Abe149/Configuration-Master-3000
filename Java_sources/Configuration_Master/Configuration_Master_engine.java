@@ -522,6 +522,21 @@ public class Configuration_Master_engine {
         System.err.println();
       }
 
+      if (verbosity > 0 && we_are_running_on_a_POSIX_environment()) {
+        String temp_S = "";
+        for ( String key : maturityLevel_aliases.keySet() ) {
+          final int temp_i = maturityLevel_aliases.get(key);
+          temp_S = temp_S + String.format("%9d", temp_i) + " -> " + key + " <- " + temp_i + '\n';
+          // << + String.format("%-40s", key) + >> instead of << key >> didn`t work as I wanted it to, due to double-width Asian characters in the sample data for aliases
+        }
+        final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+        System.err.println();
+        System.err.println("INFO: maturityLevel_aliases...");
+        System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
+        System.err.println();
+        System.err.println();
+      }
+
       the_schema = new Hashtable<tuple_for_key_of_a_schema, value_types>();
       for (debugFriendly_buffered_input schema_input : schema_inputs) {
         while (schema_input.ready()) {

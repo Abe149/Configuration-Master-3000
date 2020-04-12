@@ -114,6 +114,11 @@ public final class utility_class {
     return pipe_first_param_through_POSIX_command_in_second_param(input, "sort");
   }
 
+  public static String sort_lines_numerically(String input) throws IOException {
+    // it _should_ be possible to do this in "pure Java", but it`s a headache and a half, and I`m just too sick and tired of Java`s stupidity to write lots of code just to compensate for it
+    return pipe_first_param_through_POSIX_command_in_second_param(input, "sort -n");
+  }
+
   public static void main(String[] args) throws IOException { // for testing
 
     System.out.println("\nTEST 1");
@@ -147,7 +152,6 @@ public final class utility_class {
     System.out.println("Testing ''ls -l /'' and ''sort_lines''...\n");
     System.out.println("Test result at the end of the chain\n-----------");
     System.out.println(sort_lines(pipe_first_param_through_POSIX_command_in_second_param("", "ls -l /")));
-
 
   }
 }
