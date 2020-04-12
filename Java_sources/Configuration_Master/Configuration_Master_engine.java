@@ -676,9 +676,10 @@ public class Configuration_Master_engine {
   private void simple_overlappingML_config_finder() throws IOException { // I didn`t feel like putting this right in the ctor of the main/primary class of this file, even if it`s only going to be called from one place
 
     // REMINDER: a null returned from "get_configuration" is OK in some places in this procedure, since a matching config. for the given synthesized ML value may not exist.
-    // Once this procedure gets more sophisticated, it can throw/exit upon finding a null returned-from-"get_configuration" result for:
-    //   * the exact value [all three supported MLC types, i.e. '≤', '=', & '≥']
+
+    // when strictness is enabled, this procedure can throw/exit upon finding a null returned-from-"get_configuration" result for:
     //   * the preceding value only -- for '≤' only
+    //   * the current   value [all three supported MLC types, i.e. '≤', '=', & '≥']
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
@@ -706,17 +707,15 @@ public class Configuration_Master_engine {
       final String pred_result = get_configuration( // ...
       /* ... */    pred_ML,                        the_namespace, the_key);
 
+      // in the rest of this procedure: "pretending" that MLs less than zero are supposed to be possible [i.e. valid, not only synthetically -- i.e. the -1 that comes from taking the predecessor of zero -- but also as "real data"], just as a "belt and suspenders" approach, i.e. I don`t want _this_ block of code to crash -- or, worse yet, fail to warn/throw when it _should_ -- just b/c there`s a bug somewhere _else_ in CM3000 [almost certainly in the engine] [regardless of whether the bug was along the lines of "failure to catch invalid input" or some other bug]
+
+      // maybe TO DO: make the following more concise and not such a DRY violation...  perhaps using [a] lambda[s]?  this could be impractical due to the different checks re '≤' vs. '=' vs. '≥'
+
       // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String curr_result = get_configuration( // ...
       /* ... */    curr_ML,                        the_namespace, the_key);
-
-    // -- snippet for WIP: System.err.println("\n\033[31mWARNING: " + base_report + "\033[0m");
-
-      // in the rest of this procedure: "pretending" that MLs less than zero are supposed to be possible [i.e. valid, not only synthetically -- i.e. the -1 that comes from taking the predecessor of zero -- but also as "real data"], just as a "belt and suspenders" approach, i.e. I don`t want _this_ block of code to crash -- or, worse yet, fail to warn/throw when it _should_ -- just b/c there`s a bug somewhere _else_ in CM3000 [almost certainly in the engine] [regardless of whether the bug was along the lines of "failure to catch invalid input" or some other bug]
-
-      // maybe TO DO: make the following more concise and not such a DRY violation...  perhaps using [a] lambda[s]?
 
       if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
         if (null == curr_result) {
@@ -734,8 +733,7 @@ public class Configuration_Master_engine {
         } else { // not null
           if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was non-null, as expected.\033[0m");
         }
-      }
-
+      } // end if
 
 
       // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
