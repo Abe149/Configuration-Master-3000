@@ -673,6 +673,32 @@ public class Configuration_Master_engine {
   } // end of ctor
 
 
+  private void simple_overlappingML_config_finder() throws IOException { // I didn`t feel like putting this right in the ctor of the main/primary class of this file, even if it`s only going to be called from one place
+
+    // REMINDER: a null returned from "get_configuration" is OK in some places in this procedure, since a matching config. for the given synthesized ML value may not exist.
+    // Once this procedure gets more sophisticated, it can throw/exit upon finding a null returned-from-"get_configuration" result for:
+    //   * the exact value [all three supported MLC types, i.e. '≤', '=', & '≥']
+    //   * the preceding value only -- for '≤' only
+    //   * the next      value only -- for '≥' only
+
+    for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
+      switch (the_key_of_the_config.the_MLC_kind) {
+        case    less_than_or_equal_to:
+          // if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case                 equal_to:
+          // if (! (maturity_level_of_query == the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        case greater_than_or_equal_to:
+          // if (! (maturity_level_of_query >= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
+          break;
+        default:
+           throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
+      }
+    }
+  } // end of "simple_overlappingML_config_finder"
+
+
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
     if (null == namespace_of_query || null == key_of_query)
       throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
