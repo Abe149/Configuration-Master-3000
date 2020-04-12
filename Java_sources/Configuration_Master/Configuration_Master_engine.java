@@ -716,9 +716,9 @@ public class Configuration_Master_engine {
 
         if (pred_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == pred_result) {
-            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was null, as expected.\033[0m");
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was null, as expected because the ML was negative.\033[0m");
           } else { // not null
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was _not_ null, and it was expected to be null.";
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
             if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
             if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
           }
@@ -747,9 +747,9 @@ public class Configuration_Master_engine {
 
         if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == curr_result) {
-            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected.\033[0m");
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + curr_ML + " was null, as expected because the ML was negative.\033[0m");
           } else { // not null
-            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null.";
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + curr_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
             if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
             if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
           }
@@ -773,9 +773,9 @@ public class Configuration_Master_engine {
 
       if (succ_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
         if (null == succ_result) {
-          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was null, as expected.\033[0m");
+          if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + succ_ML + " was null, as expected because the ML was negative.\033[0m");
         } else { // not null
-          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was _not_ null, and it was expected to be null.";
+          final String report_without_ANSI_color = "WARNING: the result for ML=" + succ_ML + " was _not_ null, and it was expected to be null because the ML was negative.";
           if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
           if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
         }
