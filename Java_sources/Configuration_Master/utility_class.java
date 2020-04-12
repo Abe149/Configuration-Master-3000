@@ -9,17 +9,14 @@ public final class utility_class {
     return "“" + input + "”";
   }
 
-  public static boolean does_the_first_param_include_any_of_the_elements_of_the_second_param_as_a_string_prefix
-                        (
-                         String first,
-                         String[] rest
-                        )
-  {
-    return false; // WIP
+  public static boolean does_the_first_param_start_with_any_of_the_elements_of_the_second_param(String first, String[] rest) {
+    // allowing this to crash if "first" is null
+    for (String foo : rest)  if (first.startsWith(foo))  return true;
+    return false;
   }
 
   public static boolean are_we_running_on_a_POSIX_environment() { // this is best-effort, due to lack of anything standardized in the Java spec to do this AFAIK
-    return does_the_first_param_include_any_of_the_elements_of_the_second_param_as_a_string_prefix
+    return does_the_first_param_start_with_any_of_the_elements_of_the_second_param
              (
                System.getProperty("os.name"),
                new String[]{} // WIP
