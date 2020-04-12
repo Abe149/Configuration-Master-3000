@@ -682,6 +682,18 @@ public class Configuration_Master_engine {
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
+      if (verbosity > 5)  System.err.println("INFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...");
+
+      // these local variables: for convenience and {readability of code}
+      final int current_ML       = the_key_of_the_config.the_maturity_level_to_which_to_compare;
+      final String the_namespace = the_key_of_the_config.the_namespace;
+      final String the_key       = the_key_of_the_config.the_key;
+
+      final String pred_result; // saving the result for later, when I will be checking for nulls
+      final String curr_result; // saving the result for later, when I will be checking for nulls
+      final String succ_result; // saving the result for later, when I will be checking for nulls
+
+
       switch (the_key_of_the_config.the_MLC_kind) {
         case    less_than_or_equal_to:
           // if (! (maturity_level_of_query <= the_key_of_the_config.the_maturity_level_to_which_to_compare))  continue;
@@ -694,8 +706,8 @@ public class Configuration_Master_engine {
           break;
         default:
            throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
-      }
-    }
+      } // end switch
+    } // end for
   } // end of "simple_overlappingML_config_finder"
 
 
