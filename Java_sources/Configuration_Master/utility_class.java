@@ -22,8 +22,20 @@ public final class utility_class {
     return false;
   }
 
+
+  public static boolean does_the_first_param_match_any_of_the_elements_of_the_second_param___ignore_case // ...
+    /* ... */             (String first, String[] rest) {
+    // allowing this to crash if "first" is null
+
+    // "?i" is Java`s way of saying "this regex is case-insensitive"
+    // <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#CASE_INSENSITIVE>
+    for (String foo : rest)  if (first.matches("?i" + foo))  return true;
+    return false;
+  }
+
+
   public static boolean are_we_running_on_a_POSIX_environment() { // this is best-effort, due to lack of anything standardized in the Java spec to do this AFAIK
-    return does_the_first_param_start_with_any_of_the_elements_of_the_second_param___ignore_case // ...
+    return does_the_first_param_match_any_of_the_elements_of_the_second_param___ignore_case // ...
              (
                System.getProperty("os.name"),
                new String[]{
@@ -35,10 +47,30 @@ public final class utility_class {
                              "FreeBSD",
                              "OpenBSD",
                              "NetBSD",
+                             "Dragon.*fly.*BSD", // IMO it should be "Dragonfly BSD", but IIRC the guy responsible spells it with a capital 'F'
+                             "Solaris",
+                             "SunOS" // should be deader than a doornail, but was supported by the Java team at Sun for obvious reasons
+                             // maybe TO DO: are there any _other_ POSIX-ish OSes that can run Java code?
 
+                             // maybe TO DO: support Cygwin?
 
+                             // an embedded assumption here: most Interix-like things on WinDOS can NOT run Java code
                            }
              );
+  }
+
+
+
+
+  public static String sort_lines(String input) {
+
+    // it _should_ be possible to do this in "pure Java", but it`s a headache and a half, and I`m just too sick and tired of Java`s stupidity to write lots of code just to compensate for it
+
+
+
+
+    return ""; // WIP
+
   }
 
 }
