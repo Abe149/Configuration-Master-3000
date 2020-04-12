@@ -700,17 +700,38 @@ public class Configuration_Master_engine {
         if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
       }
 
-      // saving the results for later, when I will be checking for nulls
-
-      // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
-      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
-      /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-      final String pred_result = get_configuration( // ...
-      /* ... */    pred_ML,                        the_namespace, the_key);
-
       // in the rest of this procedure: "pretending" that MLs less than zero are supposed to be possible [i.e. valid, not only synthetically -- i.e. the -1 that comes from taking the predecessor of zero -- but also as "real data"], just as a "belt and suspenders" approach, i.e. I don`t want _this_ block of code to crash -- or, worse yet, fail to warn/throw when it _should_ -- just b/c there`s a bug somewhere _else_ in CM3000 [almost certainly in the engine] [regardless of whether the bug was along the lines of "failure to catch invalid input" or some other bug]
 
-      // maybe TO DO: make the following more concise and not such a DRY violation...  perhaps using [a] lambda[s]?  this could be impractical due to the different checks re '≤' vs. '=' vs. '≥'
+      { // an unpredicated inner scope, to limit the scope of "pred_result" [to prevent accidental bugs...  are there any other kind?  ;-)]
+
+        // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
+        System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+        /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
+        final String pred_result = get_configuration( // ...
+        /* ... */    pred_ML,                        the_namespace, the_key);
+
+        if (pred_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
+          if (null == pred_result) {
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was null, as expected.\033[0m");
+          } else { // not null
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was _not_ null, and it was expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+          }
+        } else if (maturityLevel_comparison_types.less_than_or_equal_to == the_MLC_kind) { // ML ≥ 0, so now null in the result is _bad_ if/when the MLC kind is less_than_or_equal_to
+          if (null == pred_result) { // while checking a non-negative "pred_ML" -- since the predent code of CM3000 only internally supports the MLC specifiers '≤', '=', and '≥' -- we can assume that we should have at least one match, and therefor a non-null result
+            final String report_without_ANSI_color = "WARNING: the result for ML=" + pred_ML + " was null, and it was _not_ expected to be null.";
+            if (verbosity        > 0)  System.err.println("\033[31m" + report_without_ANSI_color + "\033[0m");
+            if (strictness_level > 0)  throw new IOException(          report_without_ANSI_color);
+          } else { // not null
+            if (verbosity > 0)  System.err.println("\033[32mINFO: the result for ML=" + pred_ML + " was non-null, as expected.\033[0m");
+          }
+        } else { // the ML is not negative, but the MLC kind is _not_ less_than_or_equal_to so we cannot make any assumptions about the goodness/badness of null results
+          if (verbosity > 0)  System.err.println("INFO: the result for ML=" + pred_ML + " was " + (null == pred_result ? "" : "non-") + "null [no expectation involved].");
+        } // end if
+
+      } // end of unpredicated inner scope
+
 
       { // an unpredicated inner scope, to limit the scope of "curr_result" [to prevent accidental bugs...  are there any other kind?  ;-)]
 
@@ -766,20 +787,9 @@ public class Configuration_Master_engine {
         if (verbosity > 0)  System.err.println("INFO: the result for ML=" + succ_ML + " was " + (null == succ_result ? "" : "non-") + "null [no expectation involved].");
       } // end if
 
-
-
-
-
-
-//        case    less_than_or_equal_to:
-//        case greater_than_or_equal_to:
-//           throw new IOException("Internal program error while trying to validate the system, in ''simple_overlappingML_config_finder''.");
-
-
-
-
     } // end for
   } // end of "simple_overlappingML_config_finder"
+
 
 
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
