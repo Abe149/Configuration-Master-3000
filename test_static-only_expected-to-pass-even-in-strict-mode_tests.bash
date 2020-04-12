@@ -28,11 +28,11 @@ for dir in $dirs_to_try; do
   echo -n '  '
 
   failed= # empty means false here
-  if ! ./check_non-strictly.sh directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
+  if ! ./check_non-strictly.sh       directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
     echo -en '\033[31mFAILED in non-strict mode\033[0m  '
     failed=true # it could be any non-empty string
   fi
-  if ! ./check.sh              directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
+  if ! ./check_EXTREMELY_strictly.sh directory_from_which_to_load_data=$dir >/dev/null 2>/dev/null; then
     echo -en '  \033[31mFAILED in strict mode\033[0m'
     failed=true # it could be any non-empty string
   fi
