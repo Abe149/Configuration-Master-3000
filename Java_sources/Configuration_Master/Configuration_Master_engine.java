@@ -685,17 +685,25 @@ public class Configuration_Master_engine {
       if (verbosity > 5)  System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
 
       // these local variables: for convenience and {readability of code}
-      final int current_ML       = the_key_of_the_config.the_maturity_level_to_which_to_compare;
+      final int curr_ML          = the_key_of_the_config.the_maturity_level_to_which_to_compare; // "curr": short for "current"
       final String the_namespace = the_key_of_the_config.the_namespace;
       final String the_key       = the_key_of_the_config.the_key;
 
-      final int pred_ML = current_ML - 1; // "pred": short for "predecessor"
-      final int succ_ML = current_ML + 1; // "succ": short for "successor"
+      final int pred_ML = curr_ML - 1; // "pred": short for "predecessor"
+      final int succ_ML = curr_ML + 1; // "succ": short for "successor"
 
       // saving the results for later, when I will be checking for nulls
-      final String pred_result = get_configuration(   pred_ML, the_namespace, the_key);
-      final String curr_result = get_configuration(current_ML, the_namespace, the_key);
-      final String succ_result = get_configuration(   succ_ML, the_namespace, the_key);
+
+      // odd formatting of the next 3 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
+
+      final String pred_result = get_configuration( // ...
+                   pred_ML,                        the_namespace, the_key);
+
+      final String curr_result = get_configuration( // ...
+                   curr_ML,                        the_namespace, the_key);
+
+      final String succ_result = get_configuration( // ...
+                   succ_ML,                        the_namespace, the_key);
 
 
       switch (the_key_of_the_config.the_MLC_kind) {
