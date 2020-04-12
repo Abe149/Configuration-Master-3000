@@ -137,5 +137,17 @@ public final class utility_class {
     System.out.println(sort_test_case);
     System.out.println("Test result\n-----------");
     System.out.println(sort_lines(sort_test_case));
+
+    System.out.println("\nTEST 6");
+    System.out.println("Testing ''ls -l /''...\n");
+    System.out.println("Test result\n-----------");
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("", "ls -l /"));
+
+    System.out.println("\nTEST 7");
+    System.out.println("Testing ''ls -l /'' and ''sort_lines''...\n");
+    System.out.println("Test result at the end of the chain\n-----------");
+    System.out.println(sort_lines(pipe_first_param_through_POSIX_command_in_second_param("", "ls -l /")));
+
+
   }
 }
