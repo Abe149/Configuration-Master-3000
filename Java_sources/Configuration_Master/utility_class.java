@@ -29,9 +29,9 @@ public final class utility_class {
     /* ... */             (String first, String[] rest) {
     // allowing this to crash if "first" is null
 
-    // "?i" is Java`s way of saying "this regex is case-insensitive"
+    // "(?i)" is Java`s way of saying "this regex is case-insensitive"
     // <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html#CASE_INSENSITIVE>
-    for (String foo : rest)  if (first.matches("?i" + foo))  return true;
+    for (String foo : rest)  if (first.matches("(?i)" + foo))  return true;
     return false;
   }
 
@@ -73,7 +73,8 @@ public final class utility_class {
     return temp;
   }
 
-  public static String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
+
+  public String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
     // in Java`s "Process", input is output and output is input  :-P
     // https://docs.oracle.com/javase/6/docs/api/java/lang/Process.html#getOutputStream()
 
@@ -81,11 +82,12 @@ public final class utility_class {
     if (! are_we_running_on_a_POSIX_environment())  return null; // would it be better to throw?
 
     // the next block of code: allowing "IOException" exceptions to escape
-    Process myProcess = Runtime.getRuntime().exec(cmd);
-
-
-
-    return ""; // WIP
+    final Process my_Process = Runtime.getRuntime().exec(cmd);
+    final OutputStream my_OutputStream = my_Process.getOutputStream();
+    final InputStream  my_InputStream  = my_Process.getInputStream();
+    my_OutputStream.write(input.getBytes());
+    // my_OutputStream.flush();
+    return read_all_lines_from_a_BufferedReader(new BufferedReader(new InputStreamReader(new BufferedInputStream(my_InputStream)))); // GOD how I hate Java I/O
   }
 
 
@@ -94,4 +96,28 @@ public final class utility_class {
     return pipe_first_param_through_POSIX_command_in_second_param(input, "sort");
   }
 
+  public static void main(String[] args) throws IOException { // for testing
+
+    System.out.println("\nTEST 1");
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("",      "uname -a"));
+
+    System.out.println("\nTEST 2");
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("", "/bin/uname"));
+
+    System.out.println("\nTEST 3");
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("",      "uname"));
+
+    System.out.println("\nTEST 4");
+    System.out.println(pipe_first_param_through_POSIX_command_in_second_param("", "/bin/uname"));
+
+//  return pipe_first_param_through_POSIX_command_in_second_param(input, "ls -l /");
+//  return pipe_first_param_through_POSIX_command_in_second_param(input, "/bin/ls -l /");
+
+    System.out.println("\nTEST 5");
+    System.out.println("Testing ''sort_lines''...\n\nTest case\n---------");
+    final String sort_test_case = "A\nB\nC\n";
+    System.out.println(sort_test_case);
+    System.out.println("Test result\n-----------");
+    System.out.println(sort_lines(sort_test_case));
+  }
 }
