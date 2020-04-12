@@ -682,7 +682,7 @@ public class Configuration_Master_engine {
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
-      if (verbosity > 5)  System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
+      System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
 
       // these local variables: for convenience and {readability of code}
       final int curr_ML          = the_key_of_the_config.the_maturity_level_to_which_to_compare; // "curr": short for "current"
