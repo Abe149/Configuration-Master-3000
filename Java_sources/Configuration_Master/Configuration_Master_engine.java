@@ -700,7 +700,7 @@ public class Configuration_Master_engine {
 
       if (curr_ML < 0) {
         final String report_without_ANSI_color = "WARNING: an internal ML to compare to was <0, and this should NOT be possible: " + curr_ML;
-        System.err.println("\n\033[31m" + report_without_ANSI_color + "\033[0m");
+        System.err.println("\n\033[31m" +                report_without_ANSI_color + "\033[0m");
         if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
       }
 
@@ -795,8 +795,12 @@ public class Configuration_Master_engine {
   } // end of "simple_overlappingML_config_finder"
 
 
-
+  // working around the fact that Java doesn`t have defaults for param.s
   public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+    return get_configuration(maturity_level_of_query, namespace_of_query, key_of_query, false);
+  }
+
+  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
     // REMINDER: do NOT throw just b/c maturity_level_of_query<0, no _matter_ what the strictness level is, since the call with maturity_level_of_query<0 may come from a pseudo-query generated/executed by "simple_overlappingML_config_finder"
 
     if (null == namespace_of_query || null == key_of_query)
