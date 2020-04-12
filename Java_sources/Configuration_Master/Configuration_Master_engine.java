@@ -46,6 +46,10 @@ public class Configuration_Master_engine {
     public String toString() { // for debugging etc.
       return " tuple_for_key_of_a_config<the_MLC_kind=" + the_MLC_kind + ", the_maturity_level_to_which_to_compare=" + the_maturity_level_to_which_to_compare + ", the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
     }
+
+    public String toString_with_inverted_MLC_kind_and_integer() { // for the benefit of "simple_overlappingML_config_finder"
+      return " tuple_for_key_of_a_config<the_MLC_kind=\033[7m" + the_MLC_kind + "\033[27m, the_maturity_level_to_which_to_compare=\033[7m" + the_maturity_level_to_which_to_compare + "\033[27m, the_namespace=" + stringize_safely(the_namespace) + ", the_key=" + stringize_safely(the_key) + "> ";
+    }
   }
 
 
@@ -683,7 +687,7 @@ public class Configuration_Master_engine {
     //   * the next      value only -- for '≥' only
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
-      System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config + " in ''simple_overlappingML_config_finder''...\033[0m");
+      System.err.println("\033[30;105mINFO: about to check " + the_key_of_the_config.toString_with_inverted_MLC_kind_and_integer() + " in ''simple_overlappingML_config_finder''...\033[0m");
 
       // these local variables: for convenience and {readability of code}
       final int curr_ML                                 = the_key_of_the_config.the_maturity_level_to_which_to_compare; // "curr": short for "current"
@@ -694,7 +698,7 @@ public class Configuration_Master_engine {
       final int pred_ML = curr_ML - 1; // "pred": short for "predecessor"
       final int succ_ML = curr_ML + 1; // "succ": short for "successor"
 
-      if (curr_ML<0) {
+      if (curr_ML < 0) {
         final String report_without_ANSI_color = "WARNING: an internal ML to compare to was <0, and this should NOT be possible: " + curr_ML;
         System.err.println("\n\033[31m" + report_without_ANSI_color + "\033[0m");
         if (strictness_level > 0)  throw new IOException(report_without_ANSI_color);
