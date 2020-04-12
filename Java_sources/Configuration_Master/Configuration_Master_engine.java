@@ -696,14 +696,20 @@ public class Configuration_Master_engine {
 
       // odd formatting of the next 3 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
 
+      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+      /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String pred_result = get_configuration( // ...
-                   pred_ML,                        the_namespace, the_key);
+      /* ... */    pred_ML,                        the_namespace, the_key);
 
+      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+      /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String curr_result = get_configuration( // ...
-                   curr_ML,                        the_namespace, the_key);
+      /* ... */    curr_ML,                        the_namespace, the_key);
 
+      System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
+      /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
       final String succ_result = get_configuration( // ...
-                   succ_ML,                        the_namespace, the_key);
+      /* ... */    succ_ML,                        the_namespace, the_key);
 
 
       switch (the_key_of_the_config.the_MLC_kind) {
