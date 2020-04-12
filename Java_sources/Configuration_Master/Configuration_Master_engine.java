@@ -23,8 +23,8 @@ public class Configuration_Master_engine {
     public String                         the_namespace;
     public String                         the_key; // confusing, innit?  ;-)
 
-    tuple_for_key_of_a_config(maturityLevel_comparison_types MLCt_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
-      the_MLC_kind                           = MLCt_in;
+    tuple_for_key_of_a_config(maturityLevel_comparison_types MLC_kind_in, int maturity_level_in, String namespace_in, String key_in) { // ctor
+      the_MLC_kind                           = MLC_kind_in;
       the_maturity_level_to_which_to_compare = maturity_level_in;
       the_namespace                          = namespace_in;
       the_key                                = key_in;
@@ -682,8 +682,11 @@ public class Configuration_Master_engine {
         String temp_S = "";
         for ( tuple_for_key_of_a_config key : the_configurations.keySet() ) {
           final config_algebraic_type temp_alg = the_configurations.get(key);
-       // temp_S = temp_S + key + " -> " + temp_alg + '\n';
-          temp_S = temp_S + String.format("%9d", key.the_maturity_level_to_which_to_compare) + " ... " + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
+          try {
+            temp_S = temp_S + String.format("%9d", key.the_maturity_level_to_which_to_compare) + ' ' + key.the_MLC_kind.get_as_char() + " ... " + key.toString_concisely() + " -> " + temp_alg.toString_concisely() + '\n';
+          } catch (Exception e) { // needed due to "key.the_MLC_kind.get_as_char()" throwing when the enum is invalid or unaccounted for in "the_MLC_kind.get_as_char"
+            System.err.println("WTF happened?!?"); // this should probably do something else  ;-)  ... TO DO
+          }
         }
         final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
