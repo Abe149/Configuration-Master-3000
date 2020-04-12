@@ -722,7 +722,6 @@ public class Configuration_Master_engine {
 
     // collect _all_ matches, and if there is a multiplicity, check whether or not it`s redundant [i.e. all have the same value] and therefor "stupid but OK" in non-strict and only-statically-strict modes [i.e. strictness_level values of 0 and 1]
     ArrayList<tuple_for_key_of_a_config> the_matching_KeyOfConfig_objects = new ArrayList<tuple_for_key_of_a_config>();
-//  ArrayList<String>                    the_matches                      = new ArrayList<String>(); // DE
     ArrayList<config_algebraic_type>     the_matches                      = new ArrayList<config_algebraic_type>();
 
     for (tuple_for_key_of_a_config the_key_of_the_config : the_configurations.keySet()) {
@@ -746,11 +745,9 @@ public class Configuration_Master_engine {
           && key_of_query.equalsIgnoreCase(the_key_of_the_config.the_key)
          )
       {
-     // final String                the_match = the_configurations.get(the_key_of_the_config).get_as_String_even_if_the_value_is_an_integer(); // DE
         final config_algebraic_type the_match = the_configurations.get(the_key_of_the_config);
 
         if (verbosity > 3) {
-//        System.err.println("TESTING 22: match if not null: " + stringize_safely(the_match)); // DE
           System.err.println("TESTING 22: match if not null: " +                  the_match );
         }
 
