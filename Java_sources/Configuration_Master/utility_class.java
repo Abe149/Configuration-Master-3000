@@ -23,12 +23,19 @@ public final class utility_class {
   }
 
   public static boolean are_we_running_on_a_POSIX_environment() { // this is best-effort, due to lack of anything standardized in the Java spec to do this AFAIK
-    return does_the_first_param_start_with_any_of_the_elements_of_the_second_param
+    return does_the_first_param_start_with_any_of_the_elements_of_the_second_param___ignore_case // ...
              (
                System.getProperty("os.name"),
                new String[]{
                  // strings stolen from <http://commons.apache.org/proper/commons-lang/javadocs/api-release/src-html/org/apache/commons/lang3/SystemUtils.html>; this code written b/c I didn`t want to introduce an external dependency
-                             "AIX", "HP-UX", "Irix", 
+                             "AIX", "HP-UX", "Irix",
+                             "Linux", // the disrespectful morons at Sun didn`t call this by its true name, i.e. "GNU/Linux"
+                             "Mac OS X",
+                             "macOS", // Apple`s new-ish marketing moniker for Mac OS X
+                             "FreeBSD",
+                             "OpenBSD",
+                             "NetBSD",
+
 
                            }
              );
