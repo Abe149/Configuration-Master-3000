@@ -526,13 +526,14 @@ public class Configuration_Master_engine {
         String temp_S = "";
         for ( String key : maturityLevel_aliases.keySet() ) {
           final int temp_i = maturityLevel_aliases.get(key);
-          temp_S = temp_S + String.format("%9d", temp_i) + " -> " + key + " <- " + temp_i + '\n';
+          temp_S = temp_S + String.format("%9d", temp_i) + " <- " + key + " -> " + temp_i + '\n';
           // << + String.format("%-40s", key) + >> instead of << key >> didn`t work as I wanted it to, due to double-width Asian characters in the sample data for aliases
         }
         final String sort_result = sort_lines_numerically(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
         System.err.println();
         System.err.println("INFO: maturityLevel_aliases...");
         System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
+        System.err.println("INFO: [end of maturityLevel_aliases]");
         System.err.println();
         System.err.println();
       }
@@ -583,6 +584,21 @@ public class Configuration_Master_engine {
       if (verbosity > 0) {
         System.err.println();
         System.err.println("INFO: the_schema: " + the_schema);
+        System.err.println();
+      }
+
+      if (verbosity > 0 && we_are_running_on_a_POSIX_environment()) {
+        String temp_S = "";
+        for ( tuple_for_key_of_a_schema key : the_schema.keySet() ) {
+          final value_types temp_enum = the_schema.get(key);
+          temp_S = temp_S + key + " -> " + temp_enum + '\n';
+        }
+        final String sort_result = sort_lines(temp_S).replaceFirst("\n*$", ""); // trim() at the end of this chain damages the results, so I replaced it with the "replaceFirst" expression and a careful regex
+        System.err.println();
+        System.err.println("INFO: the_schema...");
+        System.err.println("INFO: ... " + sort_result.replaceAll("\n", "\nINFO: ... "));
+        System.err.println("INFO: [end of the_schema]");
+        System.err.println();
         System.err.println();
       }
 

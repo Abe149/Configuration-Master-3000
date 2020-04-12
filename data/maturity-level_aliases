@@ -8,7 +8,7 @@ UserAcceptanceTesting = 16750 # _this_ [as opposed to using ASCII spaces] is OK,
              #  * the aliases are all matched case-insensitively, so a query with e.g. "useracceptancetesting" will also match
              #  * since -- in this sample file -- "UserAcceptanceTesting" is defined on a separate line from "UAT" & "user-acceptance_testing", it is fundamentally unrelated to them and varies from them independently.  The program does _not_ have any artificial intelligence to: try and "understand" what the aliases "mean", if anything, and then figure out if you`ve made a mistake that a simple syntax-and-grammar parser cannot catch.
 
-# further explanation of the warning <<spaces are thrown away, so don`t try to make an alias like "user-acceptance testing">>: it won`t work as expected, since it _will_ "work" but will create a/the alias "user-acceptancetesting", which will not match the queries you will probably make if you try to actually use the alias-with-an-ASCII-space you _thought_ you created
+# further explanation of the warning <<spaces are thrown away, so don`t try to make an alias like "user-acceptance testing">>: it won`t work as expected, since it _will_ "work" but will create an/the alias "user-acceptancetesting", which will not match the queries you will probably make if you try to actually use the alias-with-an-ASCII-space you _thought_ you created
 
 # bad=-1 # a "stress test"
 
