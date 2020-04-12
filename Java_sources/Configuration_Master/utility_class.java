@@ -1,5 +1,7 @@
 package Configuration_Master;
 
+import java.io.*;
+
 public final class utility_class {
 
   private utility_class() { } // blocked ctor
@@ -59,18 +61,37 @@ public final class utility_class {
              );
   }
 
+  public static String read_all_lines_from_a_BufferedReader(BufferedReader in) throws IOException { // there ought to be a better way to do "read _all_ the input" in one call
+    if (null == in)  return null; // would it be better to throw?
+    String temp = "";
 
+    // the next block of code: allowing "IOException" exceptions to escape
+    while (in.ready()) {
+      temp = temp + in.readLine();
+    }
 
+    return temp;
+  }
 
-  public static String sort_lines(String input) {
+  public static String pipe_first_param_through_POSIX_command_in_second_param(String input, String cmd) throws IOException {
+    // in Java`s "Process", input is output and output is input  :-P
+    // https://docs.oracle.com/javase/6/docs/api/java/lang/Process.html#getOutputStream()
 
-    // it _should_ be possible to do this in "pure Java", but it`s a headache and a half, and I`m just too sick and tired of Java`s stupidity to write lots of code just to compensate for it
+    if (null == input || null == cmd)               return null; // would it be better to throw?
+    if (! are_we_running_on_a_POSIX_environment())  return null; // would it be better to throw?
 
+    // the next block of code: allowing "IOException" exceptions to escape
+    Process myProcess = Runtime.getRuntime().exec(cmd);
 
 
 
     return ""; // WIP
+  }
 
+
+  public static String sort_lines(String input) throws IOException {
+    // it _should_ be possible to do this in "pure Java", but it`s a headache and a half, and I`m just too sick and tired of Java`s stupidity to write lots of code just to compensate for it
+    return pipe_first_param_through_POSIX_command_in_second_param(input, "sort");
   }
 
 }
