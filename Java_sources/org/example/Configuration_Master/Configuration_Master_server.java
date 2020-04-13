@@ -1,4 +1,6 @@
-package Configuration_Master;
+package org.example.Configuration_Master;
+
+import org.example.shared.*; // debugFriendly_buffered_FileReader;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -39,7 +41,7 @@ import java.util.ArrayList;
 
 import java.net.URLDecoder;
 
-import static Configuration_Master.utility_class.*;
+import static org.example.shared.utility_class.*;
 
 // "Configuration_Master.keystore", "self-signed"
 

@@ -1,4 +1,4 @@
-package Configuration_Master;
+package org.example.shared;
 
 import java.io.*;
 

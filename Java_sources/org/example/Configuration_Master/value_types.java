@@ -1,4 +1,4 @@
-package Configuration_Master;
+package org.example.Configuration_Master;
 
 public enum value_types {
               integer,

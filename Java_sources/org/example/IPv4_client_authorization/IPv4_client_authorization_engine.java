@@ -1,8 +1,10 @@
-package IPv4_client_authorization;
+package org.example.IPv4_client_authorization;
 
 import java.net.InetAddress;
 import java.util.Set;
 import java.util.HashSet;
+import org.example.shared.*;
+
 
 // private class engine_state // I realized after typing this: why bother?
 
@@ -16,6 +18,19 @@ public class IPv4_client_authorization_engine {
   private Set<InetAddress> whitelisted_IPs   = new HashSet<InetAddress>();
 
   private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
+
+
+
+
+// debugFriendly_buffered_input
+
+  // start of ctor
+  IPv4_client_authorization_engine(debugFriendly_buffered_input input) {
+
+
+
+
+  }
 
 
 

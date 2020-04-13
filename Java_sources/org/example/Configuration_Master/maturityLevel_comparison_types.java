@@ -1,4 +1,4 @@
-package Configuration_Master;
+package org.example.Configuration_Master;
  
 public enum maturityLevel_comparison_types {
      less_than_or_equal_to,

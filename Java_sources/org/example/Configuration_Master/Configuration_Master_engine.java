@@ -1,4 +1,7 @@
-package Configuration_Master;
+package org.example.Configuration_Master;
+
+// import org.example.shared.debugFriendly_buffered_FileReader;
+import org.example.shared.*; // debugFriendly_buffered_FileReader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -7,7 +10,7 @@ import java.util.regex.*;
 import java.net.URL;
 import java.net.MalformedURLException;
   
-import static Configuration_Master.utility_class.*;
+import static org.example.shared.utility_class.*;
 
 public class Configuration_Master_engine {
 

@@ -1,4 +1,4 @@
-package IPv4_client_authorization;
+package org.example.IPv4_client_authorization;
 
 public enum strategy_types {
 
