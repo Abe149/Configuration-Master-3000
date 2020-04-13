@@ -28,18 +28,23 @@ public class IPv4_client_authorization_engine {
   private boolean require_loopback  = false;
 
   // start of ctor
-  public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in) throws IOException {
-    final short strictness_level = strictness_level___in; // doing it "the idiom way" on purpose in case I will later need to move this [i.e. the non-"_in" version] to being a class data member variable thingy
+  public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, short verbosity_in) throws IOException {
+    // both of the next 2 lines: doing it "the idiom way" on purpose in case I will later need to move this [i.e. the non-"_in" version] to being a class data member variable thingy
+    final short strictness_level = strictness_level___in;
+    final short verbosity        = verbosity_in;
 
     while (input.ready()) {
-      final String line = input.readLine().replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+      final String unstripped_line = input.readLine().replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line before stripping: ''" + unstripped_line + "''");
+      final String line = unstripped_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+      if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: line after  stripping: ''" + line + "''");
 
       if (line.equalsIgnoreCase("require site-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
         if (require_siteLocal && strictness_level > 0) {
           if                    (strictness_level > 1)
-            throw new IOException("Redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          System.err.println("WARNING: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_siteLocal = true;
       } else if (line.equalsIgnoreCase("require link-local")) {
@@ -50,8 +55,15 @@ public class IPv4_client_authorization_engine {
           System.err.println("WARNING: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_linkLocal = true;
+      } else if (line.equalsIgnoreCase("require loopback")) {
+        // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
+        if (require_loopback  && strictness_level > 0) {
+          if                    (strictness_level > 1)
+            throw new IOException("Redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          System.err.println("WARNING: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        }
+        require_loopback = true;
       }
-
 
 
     } // end while
