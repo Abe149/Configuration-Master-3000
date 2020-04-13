@@ -23,5 +23,5 @@ public class debugFriendly_buffered_FileReader implements debugFriendly_buffered
 
   private String         pathname;
   private BufferedReader my_BR;
-  private long           line_number = -9000; // so it will probably result in nonsense if Java does the wrong thing
+  private long           line_number = Long.MIN_VALUE; // so it will almost-certainly result in nonsense if Java does the wrong thing
 }
