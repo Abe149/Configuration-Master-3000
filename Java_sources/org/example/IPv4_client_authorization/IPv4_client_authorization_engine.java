@@ -31,6 +31,30 @@ public class IPv4_client_authorization_engine {
   public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in) throws IOException {
     final short strictness_level = strictness_level___in; // doing it "the idiom way" on purpose in case I will later need to move this [i.e. the non-"_in" version] to being a class data member variable thingy
 
+    while (input.ready()) {
+      final String line = input.readLine().replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+
+      if (line.equalsIgnoreCase("require site-local")) {
+        // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
+        if (require_siteLocal && strictness_level > 0) {
+          if                    (strictness_level > 1)
+            throw new IOException("Redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          System.err.println("WARNING: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        }
+        require_siteLocal = true;
+      } else if (line.equalsIgnoreCase("require link-local")) {
+        // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
+        if (require_linkLocal && strictness_level > 0) {
+          if                    (strictness_level > 1)
+            throw new IOException("Redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          System.err.println("WARNING: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        }
+        require_linkLocal = true;
+      }
+
+
+
+    } // end while
 
 
 
