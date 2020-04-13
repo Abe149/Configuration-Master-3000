@@ -1,12 +1,14 @@
 package org.example.IPv4_client_authorization;
 
+import org.example.shared.*;
+
 import java.net.InetAddress;
 import java.util.Set;
 import java.util.HashSet;
-import org.example.shared.*;
+import java.io.*;
 
 
-// private class engine_state // I realized after typing this: why bother?
+// private class engine_state // I realized after typing this: why bother? // DE
 
 public class IPv4_client_authorization_engine {
 
@@ -19,13 +21,13 @@ public class IPv4_client_authorization_engine {
 
   private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
 
-
-
-
-// debugFriendly_buffered_input
+  private boolean require_siteLocal = false;
+  private boolean require_linkLocal = false;
+  private boolean require_loopback  = false;
 
   // start of ctor
-  IPv4_client_authorization_engine(debugFriendly_buffered_input input) {
+  public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in) throws IOException {
+    final short strictness_level = strictness_level___in; // doing it "the idiom way" on purpose in case I will later need to move this [i.e. the non-"_in" version] to being a class data member variable thingy
 
 
 
@@ -35,7 +37,15 @@ public class IPv4_client_authorization_engine {
 
 
 
-  boolean is_connection_from_this_address_authorized(InetAddress addr) {
+  public boolean is_connection_from_this_address_authorized(InetAddress addr) {
+    if (require_siteLocal && ! addr.isSiteLocalAddress())  return false;
+    if (require_linkLocal && ! addr.isLinkLocalAddress())  return false;
+    if (require_loopback  && ! addr. isLoopbackAddress())  return false;
+
+    // WIP WIP WIP //
+    // WIP WIP WIP //
+    // WIP WIP WIP //
+
     return false; // WIP WIP WIP //
   }
 
