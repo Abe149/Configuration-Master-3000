@@ -12,15 +12,17 @@ import java.io.*;
 
 public class IPv4_client_authorization_engine {
 
-  private Set<String>      blacklisted_FQDNs = new HashSet<String>();
-  private Set<String>      whitelisted_FQDNs = new HashSet<String>();
+  // strategic plan: the language accepts [Java] regexes, and when these regexes are processed there is an implicit leading '^' and an implicit trailing '$'
+  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>();
+  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>();
 
-  // should I used something "lighter" instead, e.g. "byte[4]"?
-  private Set<InetAddress> blacklisted_IPs   = new HashSet<InetAddress>();
-  private Set<InetAddress> whitelisted_IPs   = new HashSet<InetAddress>();
+  // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
+  private Set<short[]>   blacklisted_IP_patterns = new HashSet<short[]>();
+  private Set<short[]>   whitelisted_IP_patterns = new HashSet<short[]>();
 
   private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
 
+  // strategic plan: when strictness=0, ignore duplicate directives; when strictness=1, warn about them; when strictness>1, reject inputs with duplicate directives
   private boolean require_siteLocal = false;
   private boolean require_linkLocal = false;
   private boolean require_loopback  = false;
