@@ -14,10 +14,7 @@ strategy whitelisting # This means that whitelisting rules are acceptable in thi
                       #   the engine will label _all_ connections as unauthorized...  as required.  ;-)
 
 
-# I`m pretty sure that having all these requirements in a single authorization engine setup is redundant,
-# but what the hell, it`s good for testing.
-
-require site-local
-require link-local
+# require site-local
+# require link-local
 require loopback
 

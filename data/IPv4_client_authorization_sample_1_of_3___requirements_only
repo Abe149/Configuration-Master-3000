@@ -6,10 +6,7 @@ strategy requirements-only # This means no blacklist rules _and_ no whitelist ru
                            #   whatever doesn`t fail to meet requirements is deemed to be good.
 
 
-# I`m pretty sure that having all these requirements in a single authorization engine setup is redundant,
-# but what the hell, it`s good for testing.
-
-require site-local
-require link-local
+# require site-local
+# require link-local
 require loopback
 
