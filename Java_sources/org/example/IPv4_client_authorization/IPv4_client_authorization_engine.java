@@ -11,13 +11,18 @@ import java.util.regex.*;
 import java.util.Arrays;
 
 
-// private class engine_state // I realized after typing this: why bother? // DE
+
+// TO DO: add support for "syntactic sugar" for NON-pattern [i.e. literal match] FQDNs, so noobs won`t get tripped up on the period
+
+// TO DO: make the WARNING messages in this file come out in red on ANSI-color-capable environments
+
+
 
 public class IPv4_client_authorization_engine {
 
   // strategic plan: the language accepts [Java] regexes, and when these regexes are processed there is an implicit leading '^' and an implicit trailing '$'
-  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>();
-  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>();
+  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>(); // maybe TO DO: replace String with Pattern here
+  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>(); // maybe TO DO: replace String with Pattern here
 
   // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
   private Set<short[]>   blacklisted_IP_patterns = new HashSet<short[]>();
@@ -259,29 +264,58 @@ public class IPv4_client_authorization_engine {
 
       case blacklisting:
 
+        // first, the easy part: the textual matching
+        for (String pattern : blacklisted_FQDN_patterns)  if (pattern.matches(addr.getCanonicalHostName()))  return false;
+
 
 
         return true; // the default answer when blacklisting
 
       case whitelisting:
 
+        // first, the easy part: the textual matching
+        for (String pattern : whitelisted_FQDN_patterns)  if (pattern.matches(addr.getCanonicalHostName()))  return true;
 
+        for (short[] IP_pattern_array : whitelisted_IP_patterns) {
+          // cheating again: going to use string matching
+          String IP_pattern_regex = "^";
+          boolean bad_pattern = false;
+          for (short index = 0; index < 4; ++index) {
+            if (      IP_pattern_array[index] < -1) {
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element was < -1, unacceptable when strictness level > 1");
+              System.err.println( "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element was < -1, ignored it since strictness level ≤ 0");
+            }
+            else if (-1 == IP_pattern_array[index]) // wildcard
+              IP_pattern_regex = IP_pattern_regex + "\\d+";
+            else if       (IP_pattern_array[index] >= 0 && IP_pattern_array[index] <= 255) // a normal octet
+              IP_pattern_regex = IP_pattern_regex + IP_pattern_array[index];
+            else { // IP_pattern_array[index] must be > 255
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element was > 255, unacceptable when strictness level > 1");
+              System.err.println( "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element was > 255, ignored it since strictness level ≤ 0");
+              bad_pattern = true;
+            } // end if
+            if (index < 3)  IP_pattern_regex = IP_pattern_regex + "\\."; // IP octet separator
+          } // end for
+          final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
+          if (bad_pattern) {
+          } else {
+            if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]))  return true;
+          } // end if
+        } // end for
 
-
+        if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because no rules matched.");
         return false; // the default answer when whitelisting
 
       default:
-        if (strictness_level > 0)
-          throw new IOException("In IPv4_client_authorization_engine: invalid input to a switch statement.  This is not supposed to be possible.");
+        if (strictness_level > 0) throw new IOException("In IPv4_client_authorization_engine: invalid input to a switch statement.  This is not supposed to be possible.");
         if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: invalid input to a switch statement.  This is not supposed to be possible.");
       // the lack of a '}' here is OK
     } // end switch
 
-    if (strictness_level > 0)
-      throw new IOException("In IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.");
-    if (verbosity > 0)
-      System.err.println("WARNING: in IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.  Returning false.");
+    if (strictness_level > 0) throw new IOException("In IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.");
+    if (verbosity > 0) System.err.println( "WARNING: in IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.  Returning false.");
+
     return false;
-  }
+  } // end of "is_connection_from_this_address_authorized"
 
 } // end of class "IPv4_client_authorization_engine"
