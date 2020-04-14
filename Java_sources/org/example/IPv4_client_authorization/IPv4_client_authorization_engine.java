@@ -45,7 +45,7 @@ public class IPv4_client_authorization_engine {
     final String IP_pattern_regex = "(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)";
 
     while (input.ready()) {
-      final String unstripped_line = input.readLine().replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+      final String unstripped_line = input.readLine();
       if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line before stripping: ''" + unstripped_line + "''");
       final String line = unstripped_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
       if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: line after  stripping: ''" + line + "''");
