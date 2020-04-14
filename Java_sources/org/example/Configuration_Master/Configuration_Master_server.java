@@ -80,7 +80,18 @@ public class Configuration_Master_server {
     public static class    TestHandler_WITH_client_authorization implements HttpHandler {
         @Override
         public void handle(HttpExchange he) throws IOException {
-          code_shared_between_the_two_test_handlers(he);
+            InetAddress the_client = he.getRemoteAddress().getAddress(); // for readability
+            if (! my_client_authorization_engine.is_connection_from_this_address_authorized(the_client)) {
+                final String response = "unauthorized";
+                he.sendResponseHeaders(403, response.getBytes().length);
+                // NOTE: using 403 ["Forbidden"] instead of 401 ["Unauthorized"] b/c acc. to English Wikipedia
+                //       [<https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#4xx_Client_errors>],
+                //       when you return a 401, "The response must include a WWW-Authenticate header
+                //       field containing a challenge applicable to the requested resource."
+                OutputStream os = he.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } else code_shared_between_the_two_test_handlers(he);
         }
     }
 
