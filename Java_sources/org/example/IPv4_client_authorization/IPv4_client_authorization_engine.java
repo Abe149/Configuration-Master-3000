@@ -91,17 +91,23 @@ public class IPv4_client_authorization_engine {
 
       } else if (line.matches("(?i)blacklist FQDN pattern .+")) {
 
-        final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
-        if (blacklisted_FQDN_patterns.contains(pattern)) {
-          if (strictness_level > 1)
-            throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-        }
-        else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-        blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
+         if (strategy_types.blacklisting == the_active_strategy_type) {
 
+          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
+          if (blacklisted_FQDN_patterns.contains(pattern)) {
+            if (strictness_level > 1)
+              throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          }
+          else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
-      // { // a different statement type
+        } else { // _not_ in blacklist mode, so the input was wrong
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+
+        } // end if
 
 
   // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
