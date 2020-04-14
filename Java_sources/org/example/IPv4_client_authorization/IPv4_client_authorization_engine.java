@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.io.*;
 import java.util.regex.*;
 
+import java.util.Arrays;
 
 
 // private class engine_state // I realized after typing this: why bother? // DE
@@ -134,7 +135,44 @@ public class IPv4_client_authorization_engine {
         if (strategy_types.blacklisting == the_active_strategy_type) {
 
           final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
-          Matcher m1 = Pattern.compile("").matcher(IP_pattern_regex);
+          final Matcher m1 = Pattern.compile(IP_pattern_regex).matcher(pattern); // sorry, I know it`s confusing
+          final boolean matched_the_regex = m1.find(); // CRUCIAL
+
+          final String octets_or_asterisks[] = new String[4];
+
+          // maybe TO DO here: assert that 4==m1.groupCount()
+
+          // the following "looks wrong" b/c of the offset in the indices, but Don`t Panic
+          octets_or_asterisks[0] = m1.group(1);
+          octets_or_asterisks[1] = m1.group(2);
+          octets_or_asterisks[2] = m1.group(3);
+          octets_or_asterisks[3] = m1.group(4);
+
+          final short pattern_as_array_of_shorts[] = new short[4];
+          for (short index = 0; index < 4; ++index) {
+
+            if ("*".equals(octets_or_asterisks[index]))  pattern_as_array_of_shorts[index] = -1;
+            else {
+              final short the_octet = Short.parseShort(octets_or_asterisks[index]);
+              // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
+              if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+
+              if (the_octet > 255) {
+                if (strictness_level > 0)
+                  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+                if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+              } // end if
+
+            } // end if
+
+          } // end for
+
+          if (blacklisted_IP_patterns.contains(pattern_as_array_of_shorts) {
+            if (strictness_level > 1)
+              throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          }
+          blacklisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
           if (strictness_level > 0)
