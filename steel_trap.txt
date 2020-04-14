@@ -44,6 +44,9 @@ TO DOs
   * e.g. "> 7" [w/o the quotes], as syntactic sugar for "≥ 8", same as in the CM3000 engine
   * ranges that are inclusive at both ends, e.g. "[ 10 … 99 ]"
   * inequality is probably useless in this context, and might even be confusing
+  * as long as not implementing inequality, maybe even '≤' & '≥' can be considered "mere syntactic sugar"
+    * e.g. "≤ 6" == [0 …   6]
+    * e.g. "≥ 9" == [9 … 255]
 
 
 
