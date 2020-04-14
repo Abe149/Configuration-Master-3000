@@ -160,6 +160,8 @@ public class IPv4_client_authorization_engine {
                 if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
               } // end if
 
+              pattern_as_array_of_shorts[index] = the_octet;
+
             } // end if
 
           } // end for
@@ -208,6 +210,8 @@ public class IPv4_client_authorization_engine {
                 if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
                 if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
               } // end if
+
+              pattern_as_array_of_shorts[index] = the_octet;
 
             } // end if
 
