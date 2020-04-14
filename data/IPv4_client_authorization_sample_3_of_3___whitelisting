@@ -18,6 +18,12 @@ strategy whitelisting # This means that whitelisting rules are acceptable in thi
 # require link-local
 require loopback
 
+
+
+whitelist FQDN pattern localhost
+
+
+
 whitelist IP pattern 127.0.0.1
 
 # --- testing the whitelist IP pattern parser --- #
