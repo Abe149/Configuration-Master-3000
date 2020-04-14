@@ -309,7 +309,7 @@ public class IPv4_client_authorization_engine {
           } else { // _not_ a bad internal pattern
             IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
             if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
-            if ((IP_pattern_regex).matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+            if ((String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]).matches(IP_pattern_regex)) {
               if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
               return false;
             } // end if
@@ -359,7 +359,7 @@ public class IPv4_client_authorization_engine {
           } else { // _not_ a bad internal pattern
             IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
             if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
-            if ((IP_pattern_regex).matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+            if ((String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]).matches(IP_pattern_regex)) {
               if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
               return true;
             } // end if
