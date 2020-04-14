@@ -280,9 +280,13 @@ public class IPv4_client_authorization_engine {
           if (bad_pattern) {
             // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
             System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
-          } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
-            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
-            return false;
+          } else { // _not_ a bad internal pattern
+            IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
+            if ((IP_pattern_regex).matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+              if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
+              return false;
+            } // end if
           } // end if
         } // end for
 
@@ -320,9 +324,13 @@ public class IPv4_client_authorization_engine {
           if (bad_pattern) {
             // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
             System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
-          } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
-            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
-            return true;
+          } else { // _not_ a bad internal pattern
+            IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
+            if ((IP_pattern_regex).matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+              if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
+              return true;
+            } // end if
           } // end if
         } // end for
 
