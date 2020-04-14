@@ -267,9 +267,40 @@ public class IPv4_client_authorization_engine {
         // first, the easy part: the textual matching
         for (String pattern : blacklisted_FQDN_patterns)  if (pattern.matches(addr.getCanonicalHostName()))  return false;
 
+        for (short[] IP_pattern_array : blacklisted_IP_patterns) {
+          // cheating again: going to use string matching
+          String IP_pattern_regex = "^";
+          boolean bad_pattern = false;
+          for (short index = 0; index < 4; ++index) {
+            if (      IP_pattern_array[index] < -1) {
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, unacceptable when "+"strictness level > 1");
+              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, ignored it since " +"strictness level ≤ 0");
+              bad_pattern = true;
+            }
+            else if (-1 == IP_pattern_array[index]) // wildcard
+              IP_pattern_regex = IP_pattern_regex + "\\d+";
+            else if       (IP_pattern_array[index] >= 0 && IP_pattern_array[index] <= 255) // a normal octet
+              IP_pattern_regex = IP_pattern_regex + IP_pattern_array[index];
+            else { // IP_pattern_array[index] must be > 255
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, unacceptable when "+"strictness level > 1");
+              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, ignored it since " +"strictness level ≤ 0");
+              bad_pattern = true;
+            } // end if
+            if (index < 3)  IP_pattern_regex = IP_pattern_regex + "\\."; // IP octet separator
+          } // end for
+          final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
+          if (bad_pattern) {
+            // there`s no need to check the strictness level and maybe throw here, since the code that computes "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
+            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
+          } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
+            return false;
+          } // end if
+        } // end for
 
-
+        if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because no rules matched.");
         return true; // the default answer when blacklisting
+
 
       case whitelisting:
 
@@ -282,28 +313,32 @@ public class IPv4_client_authorization_engine {
           boolean bad_pattern = false;
           for (short index = 0; index < 4; ++index) {
             if (      IP_pattern_array[index] < -1) {
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element was < -1, unacceptable when strictness level > 1");
-              System.err.println( "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element was < -1, ignored it since strictness level ≤ 0");
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, unacceptable when "+"strictness level > 1");
+              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, ignored it since " +"strictness level ≤ 0");
+              bad_pattern = true;
             }
             else if (-1 == IP_pattern_array[index]) // wildcard
               IP_pattern_regex = IP_pattern_regex + "\\d+";
             else if       (IP_pattern_array[index] >= 0 && IP_pattern_array[index] <= 255) // a normal octet
               IP_pattern_regex = IP_pattern_regex + IP_pattern_array[index];
             else { // IP_pattern_array[index] must be > 255
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element was > 255, unacceptable when strictness level > 1");
-              System.err.println( "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element was > 255, ignored it since strictness level ≤ 0");
+              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, unacceptable when "+"strictness level > 1");
+              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, ignored it since " +"strictness level ≤ 0");
               bad_pattern = true;
             } // end if
             if (index < 3)  IP_pattern_regex = IP_pattern_regex + "\\."; // IP octet separator
           } // end for
           final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
           if (bad_pattern) {
-          } else {
-            if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]))  return true;
+            // there`s no need to check the strictness level and maybe throw here, since the code that computes "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
+            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
+          } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
+            return true;
           } // end if
         } // end for
 
-        if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because no rules matched.");
+        if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because no rules matched.");
         return false; // the default answer when whitelisting
 
       default:
