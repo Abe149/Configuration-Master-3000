@@ -30,11 +30,13 @@ public class IPv4_client_authorization_engine {
   private boolean require_linkLocal = false;
   private boolean require_loopback  = false;
 
+  private short verbosity, strictness_level;
+
   // start of ctor
   public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, short verbosity_in) throws IOException {
-    // both of the next 2 lines: doing it "the idiom way" on purpose in case I will later need to move this [i.e. the non-"_in" version] to being a class data member variable thingy
-    final short strictness_level = strictness_level___in;
-    final short verbosity        = verbosity_in;
+    strictness_level = strictness_level___in;
+
+    verbosity = verbosity_in;
     final String IP_pattern_regex = "(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)";
 
     while (input.ready()) {
@@ -237,10 +239,24 @@ public class IPv4_client_authorization_engine {
   } // end of ctor
 
 
-  public boolean is_connection_from_this_address_authorized(InetAddress addr) {
+  public boolean is_connection_from_this_address_authorized(InetAddress addr) throws IOException {
     if (require_siteLocal && ! addr.isSiteLocalAddress())  return false;
     if (require_linkLocal && ! addr.isLinkLocalAddress())  return false;
     if (require_loopback  && ! addr. isLoopbackAddress())  return false;
+
+
+    switch (the_active_strategy_type) {
+
+
+      default:
+        if (strictness_level > 0)
+          throw new IOException("In IPv4_client_authorization_engine: invalid input to a switch statement.  This is not supposed to be possible.");
+        if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: invalid input to a switch statement.  This is not supposed to be possible.");
+      // the lack of a '}' here is OK
+    } // end switch
+
+
+
 
     // WIP WIP WIP //
     // WIP WIP WIP //
