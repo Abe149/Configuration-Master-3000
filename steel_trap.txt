@@ -15,6 +15,8 @@ ls -l / | sed -e 's/Apr/<=/' -e 's/Jun/==/' -e 's/Mar/>=/' | sort -k 5,5n -k 6,6
 
 TO DOs
 ------
+* write the brain dump code in/for "IPv4_client_authorization_engine.java"
+
 * find the remaining places in the code where an exception could be thrown even when strictness level is zero, make them predicated upon strictness level is > zero
 
 * [IN PROGRESS] break out the test cases into files that can be tested individually
@@ -37,6 +39,11 @@ TO DOs
   * reminder: '<' itself is now mere syntactic sugar; example: "<X" is syntactic sugar for "≤(X-1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
   * reminder: '>' itself is now mere syntactic sugar; example: ">X" is syntactic sugar for "≥(X+1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
 
+* maybe this is too "pie in the sky", since it would be a lot of work for relatively-little benefit: in "IPv4_client_authorization_engine.java", upgrade the IP-pattern parsing and [query-time] matching so it supports not only literal decimal integers and '*' but also arithmetic expressions
+  * e.g. "< 7" [w/o the quotes], as syntactic sugar for "≤ 6", same as in the CM3000 engine
+  * e.g. "> 7" [w/o the quotes], as syntactic sugar for "≥ 8", same as in the CM3000 engine
+  * ranges that are inclusive at both ends, e.g. "[ 10 … 99 ]"
+  * inequality is probably useless in this context, and might even be confusing
 
 
 
