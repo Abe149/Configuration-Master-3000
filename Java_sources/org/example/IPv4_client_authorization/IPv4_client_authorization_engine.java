@@ -48,25 +48,22 @@ public class IPv4_client_authorization_engine {
       if (line.equalsIgnoreCase("require site-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
         if (require_siteLocal) {
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
         require_siteLocal = true;
       } else if (line.equalsIgnoreCase("require link-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
         if (require_linkLocal) {
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
         require_linkLocal = true;
       } else if (line.equalsIgnoreCase("require loopback")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
         if (require_loopback) {
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
         require_loopback = true;
 
@@ -79,14 +76,12 @@ public class IPv4_client_authorization_engine {
         else if (second_field.equalsIgnoreCase("blacklisting"))      the_new_strategy_type = strategy_types.blacklisting;
         else if (second_field.equalsIgnoreCase("whitelisting"))      the_new_strategy_type = strategy_types.whitelisting;
         else { // oops, user error
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: unrecognized strategy found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: unrecognized strategy found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: unrecognized strategy found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: unrecognized strategy found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
 
         if (null != the_active_strategy_type) { // oops, user error
-          if (strictness_level > 1)
-            throw new IOException("In IPv4_client_authorization_engine: non-first strategy statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: non-first strategy statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (strictness_level > 0 && the_new_strategy_type != the_active_strategy_type)
             throw new IOException("In IPv4_client_authorization_engine: conflicting strategy statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: non-first strategy statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
@@ -101,17 +96,15 @@ public class IPv4_client_authorization_engine {
 
           final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
           if (blacklisted_FQDN_patterns.contains(pattern)) {
-            if (strictness_level > 1)
-              throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
           else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
 
       } else if (line.matches("(?i)whitelist FQDN pattern .+")) {
@@ -120,16 +113,14 @@ public class IPv4_client_authorization_engine {
 
           final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
           if (whitelisted_FQDN_patterns.contains(pattern)) {
-            if (strictness_level > 1)
-              throw new IOException("In IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
           else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''whitelist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           whitelisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
         } else { // _not_ in whitelist mode, so the input was wrong
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
 
       } else if (line.matches("(?i)blacklist IP pattern " + IP_pattern_regex)) { // cheating a little bit by using a regex
@@ -160,9 +151,8 @@ public class IPv4_client_authorization_engine {
               if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
               if (the_octet > 255) {
-                if (strictness_level > 0)
-                  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-                if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+                if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+                if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
               } // end if
 
             } // end if
@@ -170,16 +160,14 @@ public class IPv4_client_authorization_engine {
           } // end for
 
           if (blacklisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
-            if (strictness_level > 1)
-              throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
           blacklisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
 
       } else if (line.matches("(?i)whitelist IP pattern " + IP_pattern_regex)) { // cheating a little bit by using a regex
@@ -210,9 +198,8 @@ public class IPv4_client_authorization_engine {
               if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
               if (the_octet > 255) {
-                if (strictness_level > 0)
-                  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-                if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+                if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+                if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
               } // end if
 
             } // end if
@@ -220,21 +207,30 @@ public class IPv4_client_authorization_engine {
           } // end for
 
           if (whitelisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
-            if (strictness_level > 1)
-              throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
           whitelisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in whitelist mode, so the input was wrong
-          if (strictness_level > 0)
-            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } // end if
 
       } // end if
 
     } // end while
+
+    if (verbosity > 8) {
+
+
+
+            // TO DO: brain dump
+
+
+
+
+      } // end if
 
   } // end of ctor
 
@@ -244,9 +240,35 @@ public class IPv4_client_authorization_engine {
     if (require_linkLocal && ! addr.isLinkLocalAddress())  return false;
     if (require_loopback  && ! addr. isLoopbackAddress())  return false;
 
-
     switch (the_active_strategy_type) {
+      case any_client_that_meets_all_active_requirements:  return true; // one of the close-by above 3 "if"s would have already returned false if that was the correct answer
 
+
+
+
+
+/*
+  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>();
+  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>();
+
+  // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
+  private Set<short[]>   blacklisted_IP_patterns = new HashSet<short[]>();
+  private Set<short[]>   whitelisted_IP_patterns = new HashSet<short[]>();
+*/
+
+
+      case blacklisting:
+
+
+
+        return true; // the default answer when blacklisting
+
+      case whitelisting:
+
+
+
+
+        return false; // the default answer when whitelisting
 
       default:
         if (strictness_level > 0)
@@ -255,14 +277,11 @@ public class IPv4_client_authorization_engine {
       // the lack of a '}' here is OK
     } // end switch
 
-
-
-
-    // WIP WIP WIP //
-    // WIP WIP WIP //
-    // WIP WIP WIP //
-
-    return false; // WIP WIP WIP //
+    if (strictness_level > 0)
+      throw new IOException("In IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.");
+    if (verbosity > 0)
+      System.err.println("WARNING: in IPv4_client_authorization_engine: ''is_connection_from_this_address_authorized'' reached a point in the code that it is not supposed to be able to reach.  Returning false.");
+    return false;
   }
 
 } // end of class "IPv4_client_authorization_engine"
