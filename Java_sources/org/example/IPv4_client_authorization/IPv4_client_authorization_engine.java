@@ -41,43 +41,49 @@ public class IPv4_client_authorization_engine {
 
       if (line.equalsIgnoreCase("require site-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
-        if (require_siteLocal && strictness_level > 0) {
-          if                    (strictness_level > 1)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        if (require_siteLocal) {
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_siteLocal = true;
       } else if (line.equalsIgnoreCase("require link-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
-        if (require_linkLocal && strictness_level > 0) {
-          if                    (strictness_level > 1)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        if (require_linkLocal) {
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_linkLocal = true;
       } else if (line.equalsIgnoreCase("require loopback")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
-        if (require_loopback  && strictness_level > 0) {
-          if                    (strictness_level > 1)
-            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        if (require_loopback) {
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_loopback = true;
 
       } else if (line.matches("(?i)strategy .*")) {
+        final String second_field = line.split(" ")[1]; // TO DO: handle syntax errors more elegantly
+
+        strategy_types the_new_strategy_type = null;
+
+        if      (second_field.equalsIgnoreCase("requirements-only")) the_new_strategy_type = strategy_types.any_client_that_meets_all_active_requirements;
+        else if (second_field.equalsIgnoreCase("blacklisting"))      the_new_strategy_type = strategy_types.blacklisting;
+        else if (second_field.equalsIgnoreCase("whitelisting"))      the_new_strategy_type = strategy_types.whitelisting;
+        else { // oops, user error
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: unrecognized strategy found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: unrecognized strategy found, ignoring it; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        }
+
         if (null != the_active_strategy_type) { // oops, user error
           if (strictness_level > 1)
             throw new IOException("In IPv4_client_authorization_engine: non-first strategy statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          System.err.println("WARNING: in IPv4_client_authorization_engine: non-first strategy statement found, ignoring it; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-        }
-
-        final String second_field = line.split(" ")[1]; // TO DO: handle syntax errors more elegantly
-
-        if      (second_field.equalsIgnoreCase("requirements-only")) the_active_strategy_type = strategy_types.any_client_that_meets_all_active_requirements;
-        else if (second_field.equalsIgnoreCase("blacklisting"))      the_active_strategy_type = strategy_types.blacklisting;
-        else if (second_field.equalsIgnoreCase("whitelisting"))      the_active_strategy_type = strategy_types.whitelisting;
-        else { // oops, user error
-
+          if (strictness_level > 0 && the_new_strategy_type != the_active_strategy_type)
+            throw new IOException("In IPv4_client_authorization_engine: conflicting strategy statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: non-first strategy statement found, ignoring it; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
 
 
