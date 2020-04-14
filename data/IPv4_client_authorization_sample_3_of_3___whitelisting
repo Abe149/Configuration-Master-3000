@@ -21,7 +21,7 @@ require loopback
 
 
 # whitelist FQDN pattern localhost
-  whitelist FQDN pattern local.*host
+# whitelist FQDN pattern local.*host
 
 
 
