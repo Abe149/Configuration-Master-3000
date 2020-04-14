@@ -47,6 +47,7 @@ TO DOs
   * as long as not implementing inequality, maybe even '≤' & '≥' can be considered "mere syntactic sugar"
     * e.g. "≤ 6" == [0 …   6]
     * e.g. "≥ 9" == [9 … 255]
+  * maybe even '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
 
 
 
