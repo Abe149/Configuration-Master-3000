@@ -55,23 +55,36 @@ public class Configuration_Master_server {
 
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
-    public static class TestHandler implements HttpHandler {
+    private static IPv4_client_authorization_engine my_client_authorization_engine;
+
+    private static void code_shared_between_the_two_test_handlers(HttpExchange he) throws IOException {
+        final String response = "Hello World from Configuration Master 3000 !!!\n\nProtocol: "
+          + he.getProtocol() + "\nHTTP request method: " + he.getRequestMethod() + "\nRequest URI [toASCIIString()]: ''"
+          + he.getRequestURI().toASCIIString() + "''\nRequest URI [toString()]: ''" + he.getRequestURI().toString() + "''\n"
+          + "Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''\n";
+
+        he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        he.sendResponseHeaders(200, response.getBytes().length);
+        OutputStream os = he.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    public static class TestHandler_withOUT_client_authorization implements HttpHandler {
         @Override
         public void handle(HttpExchange he) throws IOException {
-            final String response = "Hello World from Configuration Master 3000 !!!\n\nProtocol: "
-              + he.getProtocol() + "\nHTTP request method: " + he.getRequestMethod() + "\nRequest URI [toASCIIString()]: ''"
-              + he.getRequestURI().toASCIIString() + "''\nRequest URI [toString()]: ''" + he.getRequestURI().toString() + "''\n"
-              + "Request URI [toString()], decoded: ''" + URLDecoder.decode(he.getRequestURI().toString()) + "''\n";
-
-            // HttpsExchange httpsExchange = (HttpsExchange) he;
-            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            he.sendResponseHeaders(200, response.getBytes().length);
-            OutputStream os = he.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+          code_shared_between_the_two_test_handlers(he);
         }
     }
 
+    public static class    TestHandler_WITH_client_authorization implements HttpHandler {
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+          code_shared_between_the_two_test_handlers(he);
+        }
+    }
+
+    // maybe TO DO: should we restrict this endpoint to authorized IPs?  It`s not very sensitive information, after all.
     public static class GetStrictnessLevelHandler implements HttpHandler { // IHateCamelCase  ;-)
         @Override
         public void handle(HttpExchange he) throws IOException {
@@ -431,8 +444,19 @@ public class Configuration_Master_server {
 
             final String API_version_prefix = "/API_version_1"; // HARD-CODED
 
-            httpsServer.createContext(                     "/test", new TestHandler());
-            httpsServer.createContext(API_version_prefix + "/test", new TestHandler());
+            // on the next line: the capitalization of the leading 'T' is both intentional and _very_ important
+            httpsServer.createContext(                     "/Test_with_client_authorization",
+            /* ... */                                      new    TestHandler_WITH_client_authorization());
+
+            // on the next line: the capitalization of the leading 'T' is both intentional and _very_ important
+            httpsServer.createContext(API_version_prefix + "/Test_with_client_authorization",
+            /* ... */                                      new    TestHandler_WITH_client_authorization());
+
+            httpsServer.createContext(API_version_prefix + "/test",
+            /* ... */                                      new TestHandler_withOUT_client_authorization());
+
+            httpsServer.createContext(                     "/test",
+            /* ... */                                      new TestHandler_withOUT_client_authorization());
 
             final String                                     get_prefix_1 = "/get:"; // DRY; I need this for the param. to the ctor of "GetHandler"
             final String get_prefix_2 = API_version_prefix + get_prefix_1;           // DRY; I need this for the param. to the ctor of "GetHandler"
