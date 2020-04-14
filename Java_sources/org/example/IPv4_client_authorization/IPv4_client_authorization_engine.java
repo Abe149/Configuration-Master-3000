@@ -167,7 +167,9 @@ public class IPv4_client_authorization_engine {
           if (blacklisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          }
+          } else {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: adding the internal-style IP pattern " + (pattern_as_array_of_shorts[0]>=0 ? pattern_as_array_of_shorts[0] : '*') + '.' + (pattern_as_array_of_shorts[1]>=0 ? pattern_as_array_of_shorts[1] : '*') + '.' + (pattern_as_array_of_shorts[2]>=0 ? pattern_as_array_of_shorts[2] : '*') + '.' + (pattern_as_array_of_shorts[3]>=0 ? pattern_as_array_of_shorts[3] : '*'));
+          } // end if
           blacklisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
@@ -214,7 +216,9 @@ public class IPv4_client_authorization_engine {
           if (whitelisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          }
+          } else {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: adding the internal-style IP pattern " + (pattern_as_array_of_shorts[0]>=0 ? pattern_as_array_of_shorts[0] : '*') + '.' + (pattern_as_array_of_shorts[1]>=0 ? pattern_as_array_of_shorts[1] : '*') + '.' + (pattern_as_array_of_shorts[2]>=0 ? pattern_as_array_of_shorts[2] : '*') + '.' + (pattern_as_array_of_shorts[3]>=0 ? pattern_as_array_of_shorts[3] : '*'));
+          } // end if
           whitelisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in whitelist mode, so the input was wrong
