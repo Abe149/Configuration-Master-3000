@@ -46,7 +46,7 @@ public class IPv4_client_authorization_engine {
 
     while (input.ready()) {
       final String unstripped_line = input.readLine();
-      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line before stripping: ''" + unstripped_line + "''");
+      if (verbosity > 5)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: line before stripping: ''" + unstripped_line + "''\033[0m"); // dark-grey text on a black bkgr.
       final String line = unstripped_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
       if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: line after  stripping: ''" + line + "''");
 
@@ -241,12 +241,22 @@ public class IPv4_client_authorization_engine {
 
 
   public boolean is_connection_from_this_address_authorized(InetAddress addr) throws IOException {
+    if (verbosity > 8) {
+      System.err.println("INFO: in IPv4_client_authorization_engine: got input «" + addr + '»');
+
+      System.err.println("INFO: in IPv4_client_authorization_engine: addr.isSiteLocalAddress() -> " + addr.isSiteLocalAddress());
+      System.err.println("INFO: in IPv4_client_authorization_engine: addr.isLinkLocalAddress() -> " + addr.isLinkLocalAddress());
+      System.err.println("INFO: in IPv4_client_authorization_engine: addr. isLoopbackAddress() -> " + addr. isLoopbackAddress());
+    }
+
     if (require_siteLocal && ! addr.isSiteLocalAddress())  return false;
     if (require_linkLocal && ! addr.isLinkLocalAddress())  return false;
     if (require_loopback  && ! addr. isLoopbackAddress())  return false;
 
     switch (the_active_strategy_type) {
-      case any_client_that_meets_all_active_requirements:  return true; // one of the close-by above 3 "if"s would have already returned false if that was the correct answer
+      case any_client_that_meets_all_active_requirements:
+        if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: in requirements-only mode [''strategy''] and all requirements were met, so returning true");
+        return true; // one of the close-by above group of 3 adjacent "if"s would have already returned false if that was the correct answer
 
       // TO DO if/when I have good working test cases with good coverage for this file of code: DRY-ify the blacklisting-vs.-whitelisting matching code
 
