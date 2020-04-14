@@ -1,0 +1,17 @@
+# testing...
+  # ... comments.
+
+
+strategy blacklisting # This means that blacklisting rules are acceptable [but not required!] in this file.
+                      # In the absence of any blacklist rules, this is equivalent to a file of this kind
+                      #   that has a "strategy requirements-only" statement and the same requirements
+                      #   [or lack thereof] as the requirements [or lack thereof] in this file, since in both
+                      #   cases each connection will be authorized if it complies with all the requirements.
+
+# I`m pretty sure that having all these requirements in a single authorization engine setup is redundant,
+# but what the hell, it`s good for testing.
+
+require site-local
+require link-local
+require loopback
+
