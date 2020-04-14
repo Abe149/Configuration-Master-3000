@@ -267,7 +267,15 @@ public class IPv4_client_authorization_engine {
       case blacklisting:
 
         // first, the easy part: the textual matching
-        for (String pattern : blacklisted_FQDN_patterns)  if (pattern.matches(addr.getCanonicalHostName()))  return false;
+        { // an unpredicated inner scope to hide _this_ "FQDN" variable from the one in the whitelisting-processing code block
+          final String FQDN = addr.getCanonicalHostName();
+          for (String pattern : blacklisted_FQDN_patterns) {
+            if (verbosity > 8)  System.err.print("INFO: in IPv4_client_authorization_engine: comparing pattern ''" + pattern + "'' with FQDN ''" + FQDN + "''... ");
+            final boolean it_matched = FQDN.matches(pattern);
+            if (verbosity > 8)  System.err.println(" it_matched = " + it_matched);
+            if (it_matched)  return true;
+          } // end for
+        }
 
         for (short[] IP_pattern_array : blacklisted_IP_patterns) {
           // cheating again: going to use string matching
@@ -311,7 +319,13 @@ public class IPv4_client_authorization_engine {
       case whitelisting:
 
         // first, the easy part: the textual matching
-        for (String pattern : whitelisted_FQDN_patterns)  if (pattern.matches(addr.getCanonicalHostName()))  return true;
+        final String FQDN = addr.getCanonicalHostName();
+        for (String pattern : whitelisted_FQDN_patterns) {
+          if (verbosity > 8)  System.err.print("INFO: in IPv4_client_authorization_engine: comparing pattern ''" + pattern + "'' with FQDN ''" + FQDN + "''... ");
+          final boolean it_matched = FQDN.matches(pattern);
+          if (verbosity > 8)  System.err.println(" it_matched = " + it_matched);
+          if (it_matched)  return true;
+        } // end for
 
         for (short[] IP_pattern_array : whitelisted_IP_patterns) {
           // cheating again: going to use string matching

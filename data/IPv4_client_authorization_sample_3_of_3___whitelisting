@@ -20,7 +20,8 @@ require loopback
 
 
 
-whitelist FQDN pattern localhost
+# whitelist FQDN pattern localhost
+  whitelist FQDN pattern local.*host
 
 
 
