@@ -29,3 +29,4 @@ hs_err_pid*
 Build*/
 __pycache__/
 ___not_in_Git/
+data/IPv4_client_authorization___disabled

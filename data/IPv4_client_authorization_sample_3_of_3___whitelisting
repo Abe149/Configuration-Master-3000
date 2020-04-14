@@ -18,3 +18,4 @@ strategy whitelisting # This means that whitelisting rules are acceptable in thi
 # require link-local
 require loopback
 
+whitelist IP pattern 127.0.0.1
