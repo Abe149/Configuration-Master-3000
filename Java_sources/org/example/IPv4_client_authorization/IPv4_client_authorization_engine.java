@@ -44,7 +44,7 @@ public class IPv4_client_authorization_engine {
         if (require_siteLocal) {
           if (strictness_level > 0)
             throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_siteLocal = true;
       } else if (line.equalsIgnoreCase("require link-local")) {
@@ -52,7 +52,7 @@ public class IPv4_client_authorization_engine {
         if (require_linkLocal) {
           if (strictness_level > 0)
             throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_linkLocal = true;
       } else if (line.equalsIgnoreCase("require loopback")) {
@@ -60,7 +60,7 @@ public class IPv4_client_authorization_engine {
         if (require_loopback) {
           if (strictness_level > 0)
             throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
         require_loopback = true;
 
@@ -75,7 +75,7 @@ public class IPv4_client_authorization_engine {
         else { // oops, user error
           if (strictness_level > 0)
             throw new IOException("In IPv4_client_authorization_engine: unrecognized strategy found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: unrecognized strategy found, ignoring it; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: unrecognized strategy found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         }
 
         if (null != the_active_strategy_type) { // oops, user error
@@ -83,7 +83,7 @@ public class IPv4_client_authorization_engine {
             throw new IOException("In IPv4_client_authorization_engine: non-first strategy statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (strictness_level > 0 && the_new_strategy_type != the_active_strategy_type)
             throw new IOException("In IPv4_client_authorization_engine: conflicting strategy statement found, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: non-first strategy statement found, ignoring it; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: non-first strategy statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
         } else { // the_active_strategy_type _is_ null, which is what we "want" it to be at this point, for a certain meaning of the word "want"
           the_active_strategy_type = the_new_strategy_type;
           if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: set the strategy to " + the_active_strategy_type);
@@ -97,7 +97,7 @@ public class IPv4_client_authorization_engine {
           if (blacklisted_FQDN_patterns.contains(pattern)) {
             if (strictness_level > 1)
               throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
           else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
@@ -105,7 +105,26 @@ public class IPv4_client_authorization_engine {
         } else { // _not_ in blacklist mode, so the input was wrong
           if (strictness_level > 0)
             throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        }
+
+      } else if (line.matches("(?i)whitelist FQDN pattern .+")) {
+
+         if (strategy_types.whitelisting == the_active_strategy_type) {
+
+          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
+          if (whitelisted_FQDN_patterns.contains(pattern)) {
+            if (strictness_level > 1)
+              throw new IOException("In IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, unacceptable when strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          }
+          else if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''whitelist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          whitelisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
+
+        } else { // _not_ in blacklist mode, so the input was wrong
+          if (strictness_level > 0)
+            throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          if (verbosity > 0)  System.err.println("WARNING: in IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, ignored it since strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
         } // end if
 
