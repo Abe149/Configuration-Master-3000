@@ -248,19 +248,7 @@ public class IPv4_client_authorization_engine {
     switch (the_active_strategy_type) {
       case any_client_that_meets_all_active_requirements:  return true; // one of the close-by above 3 "if"s would have already returned false if that was the correct answer
 
-
-
-
-
-/*
-  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>();
-  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>();
-
-  // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
-  private Set<short[]>   blacklisted_IP_patterns = new HashSet<short[]>();
-  private Set<short[]>   whitelisted_IP_patterns = new HashSet<short[]>();
-*/
-
+      // TO DO if/when I have good working test cases with good coverage for this file of code: DRY-ify the blacklisting-vs.-whitelisting matching code
 
       case blacklisting:
 
@@ -290,8 +278,8 @@ public class IPv4_client_authorization_engine {
           } // end for
           final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
           if (bad_pattern) {
-            // there`s no need to check the strictness level and maybe throw here, since the code that computes "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
-            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
+            // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
+            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
           } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
             if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
             return false;
@@ -330,8 +318,8 @@ public class IPv4_client_authorization_engine {
           } // end for
           final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
           if (bad_pattern) {
-            // there`s no need to check the strictness level and maybe throw here, since the code that computes "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
-            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
+            // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
+            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
           } else if ((IP_pattern_regex + '$').matches(String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3])) {
             if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
             return true;
