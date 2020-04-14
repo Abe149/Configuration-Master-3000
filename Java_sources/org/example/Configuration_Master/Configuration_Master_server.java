@@ -342,9 +342,9 @@ public class Configuration_Master_server {
         try {
             // set up the engine
 
-            debugFriendly_buffered_FileReader maturityLevel_aliases_input = new debugFriendly_buffered_FileReader(data_directory + "/maturity-level_aliases"); // HARD-CODED
-            ArrayList<debugFriendly_buffered_FileReader> config_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
-            ArrayList<debugFriendly_buffered_FileReader> schema_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
+            final debugFriendly_buffered_FileReader maturityLevel_aliases_input = new debugFriendly_buffered_FileReader(data_directory + "/maturity-level_aliases"); // HARD-CODED
+            final ArrayList<debugFriendly_buffered_FileReader> config_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
+            final ArrayList<debugFriendly_buffered_FileReader> schema_inputs = new ArrayList<debugFriendly_buffered_FileReader>();
 
             // thanks to "jjnguy" at <https://stackoverflow.com/questions/4852531/find-files-in-a-folder-using-java>
             final File data_directory_as_a_Java_File_object = new File(data_directory);
@@ -386,7 +386,7 @@ public class Configuration_Master_server {
 
             debugFriendly_buffered_FileReader[] dummy_for_conversion = new debugFriendly_buffered_FileReader[0];
 
-            // instantiate the engine
+            // instantiate the CM3000 engine
             the_engine = new Configuration_Master_engine(
                                                          maturityLevel_aliases_input,
                                                          schema_inputs.toArray(dummy_for_conversion),
@@ -397,7 +397,10 @@ public class Configuration_Master_server {
                                                          allow_no_configurations
                                                         );
 
+            debugFriendly_buffered_FileReader IPv4_client_authorization_input = new debugFriendly_buffered_FileReader(data_directory + "/IPv4_client_authorization"); // HARD-CODED
 
+            // ctor reminder: IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, short verbosity_in)
+            my_client_authorization_engine = new IPv4_client_authorization_engine(IPv4_client_authorization_input, strictness_level, verbosity);
 
             if (check_only) {
                 if (verbosity > 0) {
