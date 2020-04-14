@@ -1,0 +1,23 @@
+# testing...
+  # ... comments.
+
+
+strategy whitelisting # This means that whitelisting rules are acceptable in this file.
+
+                      # Although -- _technically_ -- whitelisting rules are not required in this file,
+                      #   in the absence of any such rules, the engine will label _all_ connections
+                      #   as unauthorized.
+
+                      # All the requirements are still processed, same is in the other strategy modes,
+                      #   so if _none_ of your whitelisting rules meet the requirements of _all_
+                      #   of the requirements stated in "require" statements, then, as above,
+                      #   the engine will label _all_ connections as unauthorized...  as required.  ;-)
+
+
+# I`m pretty sure that having all these requirements in a single authorization engine setup is redundant,
+# but what the hell, it`s good for testing.
+
+require site-local
+require link-local
+require loopback
+
