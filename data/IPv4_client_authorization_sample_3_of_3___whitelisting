@@ -19,3 +19,20 @@ strategy whitelisting # This means that whitelisting rules are acceptable in thi
 require loopback
 
 whitelist IP pattern 127.0.0.1
+
+# --- testing the whitelist IP pattern parser --- #
+whitelist IP pattern 127.0.0.*
+whitelist IP pattern 127.0.*.1
+whitelist IP pattern 127.0.*.*
+whitelist IP pattern 127.*.0.1
+whitelist IP pattern 127.*.0.*
+whitelist IP pattern 127.*.*.1
+whitelist IP pattern 127.*.*.*
+whitelist IP pattern   *.0.0.1
+whitelist IP pattern   *.0.0.*
+whitelist IP pattern   *.0.*.1
+whitelist IP pattern   *.0.*.*
+whitelist IP pattern   *.*.0.1
+whitelist IP pattern   *.*.0.*
+whitelist IP pattern   *.*.*.1
+whitelist IP pattern   *.*.*.* # this would be _super_-dangerous in production: it`s basically a way of saying "ALLOW FROM ALL"!
