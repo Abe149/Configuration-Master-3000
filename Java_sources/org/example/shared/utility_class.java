@@ -15,7 +15,7 @@ public final class utility_class {
     if (null == input)  return null;
     // testing of "Matcher.quoteReplacement" and reading of its docs at <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#quoteReplacement(java.lang.String)> seems to indicate that it only literalizes '\' & '$', i.e. _not_ also '.' [that last part proven by testing]  :-(
     // first WIP: uses String.replaceAll("\\.", "\\\\.")
-    return input.replaceAll("\\.", "\\\\."); // this line`s call to ".replaceAll" _looks_ insane, but testing shows that it _is_ correct; please see <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)> if you want to know why it looks like it does
+    return input.replaceAll("(\\.)", "\\\\$1"); // this line`s call to ".replaceAll" _looks_ insane, but testing shows that it _is_ correct; please see <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)> and <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#appendReplacement(java.lang.StringBuffer,%20java.lang.String)> if you want to know why it looks like it does
   }
 
   public static boolean does_the_first_param_start_with_any_of_the_elements_of_the_second_param(String first, String[] rest) {
