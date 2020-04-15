@@ -188,7 +188,7 @@ public class IPv4_client_authorization_engine {
         // the "missing" '}' here is OK
       }
 
-      System.err.println("\033[93mWARNING: an FQDN was given [“" + colorized_FQDN + "\033[93m”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--\033[31m" + in.replaceAll(regex_for_chars_believed_VALID_in_FQDNs + '*', "") + "\033[93m-->\033[0m");
+      System.err.println("\033[93mWARNING: an FQDN was given [“" + colorized_FQDN + "\033[93m”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]; inserting ASCII space characters into the string of “bad” characters so that Unicode characters that tend to come out overlapping with their “neighbors” in a terminal will be readable: <--\033[31m" + in.replaceAll(regex_for_chars_believed_VALID_in_FQDNs + '*', "").replaceAll("(.)", " $1 ") + "\033[93m-->\033[0m");
     }
     return in;
   }

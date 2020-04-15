@@ -75,3 +75,4 @@ whitelist IP pattern ≥9.*.*.*
 # testing code that warns us when we have a character in a literal FQDN that probably should not be there b/c the rule will never match
 whitelist FQDN literal insane_test_2_of_literalization___().*$^+[]{}|?\___
 whitelist FQDN literal insane_test_3_of_literalization___≠
+whitelist FQDN literal test_משוגע_①⑵⒊❹➄➏７_of_literalization # making full use of the insanity of Unicode`s suites of digits; intentionally _not_ including any samples of _other_ Unicode suites of digits, e.g. modern Arabic, b/c those may be considered instances wherein Unicode is acutally _sane_ for a change
