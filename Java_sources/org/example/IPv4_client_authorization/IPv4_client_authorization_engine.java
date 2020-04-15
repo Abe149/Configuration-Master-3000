@@ -212,22 +212,22 @@ public class IPv4_client_authorization_engine {
           final Matcher m1 = Pattern.compile(IP_pattern_regex).matcher(pattern); // sorry, I know it`s confusing
           final boolean matched_the_regex = m1.find(); // CRUCIAL
 
-          final String octets_or_asterisks[] = new String[4];
+          final String pattern_segments[] = new String[4];
 
           // maybe TO DO here: assert that 4==m1.groupCount()
 
           // the following "looks wrong" b/c of the offset in the indices, but Don`t Panic
-          octets_or_asterisks[0] = m1.group(1);
-          octets_or_asterisks[1] = m1.group(2);
-          octets_or_asterisks[2] = m1.group(3);
-          octets_or_asterisks[3] = m1.group(4);
+          pattern_segments[0] = m1.group(1);
+          pattern_segments[1] = m1.group(2);
+          pattern_segments[2] = m1.group(3);
+          pattern_segments[3] = m1.group(4);
 
           final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
 
-            if ("*".equals(octets_or_asterisks[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
+            if ("*".equals(pattern_segments[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
             else {
-              final short the_octet = Short.parseShort(octets_or_asterisks[index]);
+              final short the_octet = Short.parseShort(pattern_segments[index]);
               // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
               if (the_octet <   0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
@@ -260,22 +260,22 @@ public class IPv4_client_authorization_engine {
           final Matcher m1 = Pattern.compile(IP_pattern_regex).matcher(pattern); // sorry, I know it`s confusing
           final boolean matched_the_regex = m1.find(); // CRUCIAL
 
-          final String octets_or_asterisks[] = new String[4];
+          final String pattern_segments[] = new String[4];
 
           // maybe TO DO here: assert that 4==m1.groupCount()
 
           // the following "looks wrong" b/c of the offset in the indices, but Don`t Panic
-          octets_or_asterisks[0] = m1.group(1);
-          octets_or_asterisks[1] = m1.group(2);
-          octets_or_asterisks[2] = m1.group(3);
-          octets_or_asterisks[3] = m1.group(4);
+          pattern_segments[0] = m1.group(1);
+          pattern_segments[1] = m1.group(2);
+          pattern_segments[2] = m1.group(3);
+          pattern_segments[3] = m1.group(4);
 
           final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
 
-            if ("*".equals(octets_or_asterisks[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
+            if ("*".equals(pattern_segments[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
             else {
-              final short the_octet = Short.parseShort(octets_or_asterisks[index]);
+              final short the_octet = Short.parseShort(pattern_segments[index]);
               // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
               if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
