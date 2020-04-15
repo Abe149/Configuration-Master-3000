@@ -58,6 +58,42 @@ public class IPv4_client_authorization_engine {
         validate_octet(  to_inclusive);
 
         check_for_backwardsness_and_handle_it_if_found();
+
+      } else if (input.matches("<\\d+")) { // TO DO: allow ASCII spaces inside the expression
+
+        from_inclusive = 0;
+          to_inclusive = (short)(Short.parseShort(input.substring(1)) - 1);
+
+        validate_octet(to_inclusive);
+
+        // _intentionally_ no call to check_for_backwardsness_and_handle_it_if_found() here
+
+      } else if (input.matches("≤\\d+")) { // TO DO: allow ASCII spaces inside the expression
+
+        from_inclusive = 0;
+          to_inclusive = Short.parseShort(input.substring(1));
+
+        validate_octet(to_inclusive);
+
+        // _intentionally_ no call to check_for_backwardsness_and_handle_it_if_found() here
+
+      } else if (input.matches(">\\d+")) { // TO DO: allow ASCII spaces inside the expression
+
+        from_inclusive = (short)(Short.parseShort(input.substring(1)) + 1);
+          to_inclusive = 255;
+
+        validate_octet(from_inclusive);
+
+        // _intentionally_ no call to check_for_backwardsness_and_handle_it_if_found() here
+
+      } else if (input.matches("≥\\d+")) { // TO DO: allow ASCII spaces inside the expression
+
+        from_inclusive = Short.parseShort(input.substring(1));
+          to_inclusive = 255;
+
+        validate_octet(from_inclusive);
+
+        // _intentionally_ no call to check_for_backwardsness_and_handle_it_if_found() here
       } // end if
     } // end of (String) ctor
 
@@ -156,7 +192,15 @@ public class IPv4_client_authorization_engine {
 
     if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 ");
 
-    final String                    IP_pattern_regex_for_each_element = "(\\d+|\\*|\\[\\d+…\\d+\\])";
+    final String                    IP_pattern_regex_for_each_element = "(" +
+                                                                          "\\d+"            + // just ASCII decimal digits
+                                                                        '|'+ // or
+                                                                          "\\*"             + // a literal ASCII asterisk
+                                                                        '|'+ // or
+                                                                          "\\[\\d+…\\d+\\]" + // ranges, e.g. [1…9]
+                                                                        '|'+ // or
+                                                                          "[<>≤≥]\\d+"      + // inequalities, excluding '≠'
+                                                                        ")";
 
     final String IP_pattern_regex = IP_pattern_regex_for_each_element + "\\." +
                                     IP_pattern_regex_for_each_element + "\\." +
