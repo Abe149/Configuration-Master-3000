@@ -16,9 +16,31 @@ import java.util.Arrays;
 
 // TO DO: make the WARNING messages in this file come out in red on ANSI-color-capable environments
 
-
-
 public class IPv4_client_authorization_engine {
+
+
+  private class IPv4_pattern_element {
+    private byte from_inclusive,
+                   to_inclusive;
+  }
+
+
+  private class IPv4_pattern {
+    public IPv4_pattern_element the_pattern[] = new IPv4_pattern_element[4]; // maybe TO DO: write [a] getter[s] and [a] setter[s], make this private?
+
+    public int hashCode() { return the_pattern.hashCode(); } // I hope Java will Do The Right Thing for a change
+
+    public boolean equals(Object other) {
+      if (! (other instanceof IPv4_pattern))  return false;
+      return Arrays.equals(the_pattern, ((IPv4_pattern)other).the_pattern);
+    }
+
+    public String toString() {
+      return " " + the_pattern[0] + '.' + the_pattern[1] + '.' + the_pattern[2] + '.' + the_pattern[3] + ' ';
+    }
+  }
+
+
 
   // strategic plan: the language accepts [Java] regexes, and when these regexes are processed there is an implicit leading '^' and an implicit trailing '$'
   private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>(); // maybe TO DO: replace String with Pattern here
