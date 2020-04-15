@@ -55,6 +55,8 @@ public class IPv4_client_authorization_engine {
         if (require_siteLocal) {
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        } else {
+          if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding requirement: site-local");
         } // end if
         require_siteLocal = true;
       } else if (line.equalsIgnoreCase("require link-local")) {
@@ -62,6 +64,8 @@ public class IPv4_client_authorization_engine {
         if (require_linkLocal) {
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        } else {
+          if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding requirement: link-local");
         } // end if
         require_linkLocal = true;
       } else if (line.equalsIgnoreCase("require loopback")) {
@@ -69,6 +73,8 @@ public class IPv4_client_authorization_engine {
         if (require_loopback) {
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: redundant statement found, unacceptable when"+" strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant statement found, ignored it since" +" strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+        } else {
+          if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding requirement: loopback");
         } // end if
         require_loopback = true;
 
