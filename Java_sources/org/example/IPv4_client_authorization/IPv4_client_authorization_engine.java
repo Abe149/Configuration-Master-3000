@@ -168,17 +168,17 @@ public class IPv4_client_authorization_engine {
 
   private String warn_of_probably_invalidInFQDN_chars(String in) { // this function _must_ return its input unaltered
   System.err.println("--in warn_of_probably_invalidInFQDN_chars--");
-    final String regex_for_chars_believed_valid_in_FQDN = "[_A-Za-z0-9-.]"; // DRY
+    final String                                             regex_for_chars_believed_VALID_in_FQDNs = "[_A-Za-z0-9-.]"; // DRY
+    final String regex_for_chars_believed_INvalid_in_FQDNs = regex_for_chars_believed_VALID_in_FQDNs.replaceFirst("\\[", "[^");
      // I`m not sure ASCII underscore is valid in an FQDN, but I`m willing to give it the benefit of the doubt.
      // Maybe upper-case letters -- even ASCII ones -- are _also_ not supposed to be in an FQDN?  I dunno.  Being tolerant about that, at least for now.
     if (
         verbosity > 0
         &&
-        in.matches(".*" + regex_for_chars_believed_valid_in_FQDN.replaceFirst("\\[", "[^") + ".*")
-        //                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^: "translate" "_must_ be in this list of char.s" to "must _not_ be in this list of char.s"
+        in.matches(".*" + regex_for_chars_believed_INvalid_in_FQDNs + ".*")
        ) {
 
-      System.err.println("\033[93mWARNING: an FQDN was given [“" + in + "”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--\033[31m" + in.replaceAll(regex_for_chars_believed_valid_in_FQDN + '*', "") + "\033[93m-->\033[0m");
+      System.err.println("\033[93mWARNING: an FQDN was given [“" + in.replaceAll("(" + regex_for_chars_believed_INvalid_in_FQDNs + "*)", "\033[31m$1\033[93m") + "”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--\033[31m" + in.replaceAll(regex_for_chars_believed_VALID_in_FQDNs + '*', "") + "\033[93m-->\033[0m");
     }
     return in;
   }
