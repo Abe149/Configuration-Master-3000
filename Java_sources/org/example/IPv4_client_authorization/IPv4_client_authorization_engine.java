@@ -567,7 +567,6 @@ public class IPv4_client_authorization_engine {
 
          System.err.println();
 
-//       System.err.println("blacklisted_IP_patterns: " + blacklisted_IP_patterns);
          System.err.print("blacklisted_IP_patterns: ");
          if (blacklisted_IP_patterns.size() < 1)  System.err.println("[none]");
          else {
@@ -580,7 +579,6 @@ public class IPv4_client_authorization_engine {
          } // end if
 
          System.err.println();
-//       System.err.println("whitelisted_IP_patterns: " + whitelisted_IP_patterns);
          System.err.print("whitelisted_IP_patterns: ");
          if (whitelisted_IP_patterns.size() < 1)  System.err.println("[none]");
          else {
