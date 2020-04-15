@@ -514,8 +514,6 @@ public class IPv4_client_authorization_engine {
          System.err.println("verbosity = " + verbosity);
          System.err.println();
 
-      // System.err.println("blacklisted_FQDN_patterns: " + blacklisted_FQDN_patterns); // works, but the output format is crappy
-
          System.err.print("blacklisted_FQDN_patterns: ");
          if (blacklisted_FQDN_patterns.size() < 1)  System.err.println("[none]");
          else {
@@ -528,8 +526,6 @@ public class IPv4_client_authorization_engine {
          } // end if
 
          System.err.println();
-
-      // System.err.println("whitelisted_FQDN_patterns: " + whitelisted_FQDN_patterns); // works, but the output format is crappy
 
          System.err.print("whitelisted_FQDN_patterns: ");
          if (whitelisted_FQDN_patterns.size() < 1)  System.err.println("[none]");
@@ -544,9 +540,31 @@ public class IPv4_client_authorization_engine {
 
          System.err.println();
 
-         System.err.println("blacklisted_IP_patterns: " + blacklisted_IP_patterns);
+//       System.err.println("blacklisted_IP_patterns: " + blacklisted_IP_patterns);
+         System.err.print("blacklisted_IP_patterns: ");
+         if (blacklisted_IP_patterns.size() < 1)  System.err.println("[none]");
+         else {
+           System.err.println();
+           int index = 0;
+           for (IPv4_pattern IP_pattern : blacklisted_IP_patterns) {
+             System.err.println("  " + IP_pattern + ( (index < blacklisted_IP_patterns.size() - 1) ? ',' : '.'));
+             ++index;
+           } // end for
+         } // end if
+
          System.err.println();
-         System.err.println("whitelisted_IP_patterns: " + whitelisted_IP_patterns);
+//       System.err.println("whitelisted_IP_patterns: " + whitelisted_IP_patterns);
+         System.err.print("whitelisted_IP_patterns: ");
+         if (whitelisted_IP_patterns.size() < 1)  System.err.println("[none]");
+         else {
+           System.err.println();
+           int index = 0;
+           for (IPv4_pattern IP_pattern : whitelisted_IP_patterns) {
+             System.err.println("  " + IP_pattern + ( (index < whitelisted_IP_patterns.size() - 1) ? ',' : '.'));
+             ++index;
+           } // end for
+         } // end if
+
          System.err.println("-------------------------------------------");
 
       } // end if
