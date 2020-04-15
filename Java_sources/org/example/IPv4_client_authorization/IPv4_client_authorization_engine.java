@@ -114,11 +114,44 @@ public class IPv4_client_authorization_engine {
     verbosity = verbosity_in;
     final String IP_pattern_regex = "(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)";
 
+    boolean in_the_middle_of_a_multiline_comment = false; // this _MUST_ be initialized to false or the parser will fail _spectacularly_
     while (input.ready()) {
       final String unstripped_line = input.readLine();
       if (verbosity > 8)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: line before stripping: ''" + unstripped_line + "''\033[0m"); // dark-grey text on a black bkgr.
-      final String line = unstripped_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
-      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after  stripping: ''" + line + "''");
+
+ // the next line [pun intended ;-)]: _intentionally_ not "final"
+      String line = unstripped_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove until-end-of-line comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after stripping: ''" + line + "''");
+
+      if (in_the_middle_of_a_multiline_comment) {
+        final int index_of_asterisk_slash = line.indexOf("*/");
+        if (index_of_asterisk_slash >= 0) { // equivalently: if (line.contains("*/")) {
+        final String to_ignore = line.substring(0, index_of_asterisk_slash); // so I can cut down on the verbosity when this is empty
+          if (verbosity > 0 && to_ignore.length() > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: ignoring ''" + to_ignore + "'' because it seems to be part of a multi-line comment.");
+          line = line.substring(index_of_asterisk_slash + 2);
+          // equivalently to the preceding line [pun not intended ;-)]:  line = line.replaceFirst("^.*?\\*/", ""); // important: the '?' makes the corresponding regex component "reluctant", i.e. non-greedy
+          if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after stripping the remainder of a multi-line comment: ''" + line + "''");
+          in_the_middle_of_a_multiline_comment = false;
+        } else { // in_the_middle_of_a_multiline_comment and/but _not_ index_of_asterisk_slash >= 0
+          if (verbosity > 0 && line.length() > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: ignoring ''" + line + "'' because it seems to be part of a multi-line comment.");
+          continue; // go back to the start of the input loop... I hope!  ;-)
+        } // end if
+      } // end if
+
+      // now, get rid of any _single-line_ "/* ... */"-style comments that a whackadoo may have used to comment out only _part_ of a line
+      line = line.replaceAll("/\\*.*?\\*/", ""); // important: the '?' makes the corresponding regex component "reluctant", i.e. non-greedy; this is needed so as to not accidentally remove input "in the middle" in a test case such as "/* comment 1 */ valid input /* comment 2 */"
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after stripping single-line /* ... */ comments: ''" + line + "''");
+
+      // this must come _after_ the stripping of any _single-line_ "/* ... */"-style comments
+      final int index_of_slash_asterisk = line.indexOf("/*");
+      if (index_of_slash_asterisk >= 0) { // equivalently: if (line.contains("/*")) {
+        in_the_middle_of_a_multiline_comment = true;
+        final String to_ignore = line.substring(index_of_slash_asterisk); // so I can cut down on the verbosity when this is empty
+        if (verbosity > 0 && to_ignore.length() > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: ignoring ''" + to_ignore + "'' because it seems to be part of a multi-line comment.");
+        line = line.substring(0, index_of_slash_asterisk);
+        if (verbosity > 1)  System.err.println("INFO: in IPv4_client_authorization_engine: line after removing the part that seems to be the start of a multiline comment: ''" + line + "''");
+      }
+
 
       if (line.equalsIgnoreCase("require site-local")) {
         // first, detect that this is a redundant statement, if it is, and act accordingly based on strictness
