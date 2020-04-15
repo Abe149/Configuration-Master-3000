@@ -19,11 +19,12 @@ strategy whitelisting # This means that whitelisting rules are acceptable in thi
 require loopback
 
 # _NO_ regex symbols are allowed/recognized/{handled specially} in FQDN literals, so a period is handled as a _literal_ period
-whitelist FQDN literal localhost # this works
+# whitelist FQDN literal localhost # this works
 
 whitelist FQDN literal loca.host # this should _not_ work, since in an FQDN literal the '.' character is _not_ "magical", unlike in an FQDN _pattern_
 
 whitelist FQDN literal this.is.a.test.of.the.emergency.broadcast.system
+whitelist FQDN literal insane_test_of_literalization___().*$^+[]{}|?\___
 
 
 # whitelist FQDN pattern localhost     # this works
