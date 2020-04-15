@@ -178,7 +178,17 @@ public class IPv4_client_authorization_engine {
         in.matches(".*" + regex_for_chars_believed_INvalid_in_FQDNs + ".*")
        ) {
 
-      System.err.println("\033[93mWARNING: an FQDN was given [“" + in.replaceAll("(" + regex_for_chars_believed_INvalid_in_FQDNs + "*)", "\033[31m$1\033[93m") + "”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--\033[31m" + in.replaceAll(regex_for_chars_believed_VALID_in_FQDNs + '*', "") + "\033[93m-->\033[0m");
+      String colorized_FQDN = "";
+      // gonna do this in a quick-to-program-and-stupid way
+      for (char the_char : in.toCharArray()) {
+        if (("" + the_char).matches(regex_for_chars_believed_VALID_in_FQDNs)) // good
+          colorized_FQDN = colorized_FQDN + "\033[32m" + the_char;                    // green
+        else                                                                  //  bad
+          colorized_FQDN = colorized_FQDN + "\033[31m" + the_char;                    // red
+        // the "missing" '}' here is OK
+      }
+
+      System.err.println("\033[93mWARNING: an FQDN was given [“" + colorized_FQDN + "\033[93m”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--\033[31m" + in.replaceAll(regex_for_chars_believed_VALID_in_FQDNs + '*', "") + "\033[93m-->\033[0m");
     }
     return in;
   }
