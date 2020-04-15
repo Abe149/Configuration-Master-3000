@@ -21,10 +21,11 @@ public class IPv4_client_authorization_engine {
     private short from_inclusive,
                     to_inclusive; // can`t use "byte" here b/c -- in Java -- "byte" is always _signed_, leading to [0 … 255] being interpreted as [0 … -1]!!!  Sheesh.
 
-    public IPv4_pattern_element(short from_in, short to_in) { // ctor: simple integer inputs
+    public IPv4_pattern_element(short from_in, short to_in) throws Exception { // ctor: simple integer inputs
       // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255
       from_inclusive = from_in;
       to_inclusive   =   to_in;
+      check_for_backwardsness_and_handle_it_if_found();
     }
 
     private void validate_octet(short the_octet) throws Exception { // DRY
@@ -56,8 +57,25 @@ public class IPv4_client_authorization_engine {
         validate_octet(from_inclusive);
         validate_octet(  to_inclusive);
 
+        check_for_backwardsness_and_handle_it_if_found();
       } // end if
-    } // end of ctor
+    } // end of (String) ctor
+
+
+    private void check_for_backwardsness_and_handle_it_if_found() throws Exception {
+      // assumption embedded in the strings here: this only gets called from ctors
+
+      if (to_inclusive < from_inclusive) { // oops, user error: backwards, like President Skroob`s head
+        if (strictness_level > 0)  throw new Exception("In IPv4_client_authorization_engine: in a ctor of ''IPv4_pattern_element'', got an incorrectly-ordered pair: from " + from_inclusive + " to " + to_inclusive + ", and the strictness level was " + strictness_level + ' ');
+
+        if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: in a ctor of ''IPv4_pattern_element'', got an incorrectly-ordered pair: from " + from_inclusive + " to " + to_inclusive + ", but the strictness level was " + strictness_level + ", so we will try to fix it");
+        final short old___to_inclusive = to_inclusive;
+        to_inclusive = from_inclusive;
+        from_inclusive = old___to_inclusive;
+        if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: in a ctor of ''IPv4_pattern_element'': new range, after alleged automatic repair: from " + from_inclusive + " to " + to_inclusive + ' ');
+      }
+    }
+
 
     public int hashCode() { return from_inclusive*256 + to_inclusive; }
 
@@ -68,7 +86,7 @@ public class IPv4_client_authorization_engine {
     }
 
     public String toString() {
-      if (from_inclusive == to_inclusive)  return " " + to_inclusive + ' ';
+      if (from_inclusive == to_inclusive)              return " " + to_inclusive + ' ';
       if (0 == from_inclusive && 255 == to_inclusive)  return "*";
       return "[" + from_inclusive + " … " + to_inclusive + ']';
     }
@@ -83,15 +101,7 @@ public class IPv4_client_authorization_engine {
   private class IPv4_pattern {
     public final IPv4_pattern_element the_pattern[] = new IPv4_pattern_element[4]; // maybe TO DO: write [a] getter[s] and [a] setter[s], make this private?
 
-    public IPv4_pattern(byte a0, byte a1, byte b0, byte b1, byte c0, byte c1, byte d0, byte d1) { // ctor for when the data is known all at once
-      // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255
-      the_pattern[0] = new IPv4_pattern_element(a0, a1);
-      the_pattern[1] = new IPv4_pattern_element(b0, b1);
-      the_pattern[2] = new IPv4_pattern_element(c0, c1);
-      the_pattern[3] = new IPv4_pattern_element(d0, d1);
-    }
-
-    public IPv4_pattern() { // ctor for when the data is _not_ known all at once
+    public IPv4_pattern() { // ctor
       // try to make "users" crash if/when they try to read an element from this array without something valid having been assigned to it yet
       the_pattern[0] = null;
       the_pattern[1] = null;

@@ -1,0 +1,8 @@
+    public IPv4_pattern(byte a0, byte a1, byte b0, byte b1, byte c0, byte c1, byte d0, byte d1) { // ctor for when the data is known all at once 
+      // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255 
+      the_pattern[0] = new IPv4_pattern_element(a0, a1); 
+      the_pattern[1] = new IPv4_pattern_element(b0, b1); 
+      the_pattern[2] = new IPv4_pattern_element(c0, c1); 
+      the_pattern[3] = new IPv4_pattern_element(d0, d1); 
+    } 
+
