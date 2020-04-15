@@ -38,8 +38,6 @@ whitelist FQDN literal insane_test_of_literalization___().*$^+[]{}|?\___
 
 
 
-/* // commenting out _all_ the IP whitelist rules for now
-
 
 whitelist IP pattern 127.0.0.1
 
@@ -60,5 +58,3 @@ whitelist IP pattern   *.*.0.*
 whitelist IP pattern   *.*.*.1
 whitelist IP pattern   *.*.*.* # this would be _super_-dangerous in production if/when used without any requirements: without any requirements, it`s basically a way of saying "ALLOW FROM ALL"!
 
-
-*/
