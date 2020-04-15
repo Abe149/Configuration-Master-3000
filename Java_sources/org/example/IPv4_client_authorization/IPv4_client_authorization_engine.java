@@ -76,7 +76,7 @@ public class IPv4_client_authorization_engine {
     }
 
     public String toString() {
-      return " " + the_pattern[0] + '.' + the_pattern[1] + '.' + the_pattern[2] + '.' + the_pattern[3] + ' ';
+      return "«" + the_pattern[0] + '.' + the_pattern[1] + '.' + the_pattern[2] + '.' + the_pattern[3] + '»';
     }
 
     public boolean matches(byte IP[]) { // we need to "get clever" here to convert e.g. -1 to 255 ...  "thanks Java"  :-(
