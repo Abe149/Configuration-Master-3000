@@ -117,19 +117,43 @@ public class IPv4_client_authorization_engine {
     boolean in_the_middle_of_a_multiline_comment = false; // this _MUST_ be initialized to false or the parser will fail _spectacularly_
     while (input.ready()) {
       final String totally_unstripped_line = input.readLine();
-      if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: line before _any_ stripping: ''" + totally_unstripped_line + "''\033[0m"); // dark-grey text on a black bkgr.
+      if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: --- line before _any_ stripping: ''" + totally_unstripped_line + "'' ---\033[0m"); // dark-grey text on a black bkgr.
+
+      if (totally_unstripped_line.length() < 1) {
+        if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: the line was _totally_ empty, so intentionally going back to the top of the parser loop\033[0m"); // dark-grey text on a black bkgr.
+        continue;
+      }
 
       final String trimmed_line = totally_unstripped_line.trim();
       if (verbosity > 9)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: line after trimming: ''" + trimmed_line + "''\033[0m"); // dark-grey text on a black bkgr.
 
       if (trimmed_line.length() < 1) {
-        if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: the line was empty [at least after trimming], so intentionally going back to the top of the parser loop\033[0m"); // dark-grey text on a black bkgr.
+        if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: the line was empty after trimming, so intentionally going back to the top of the parser loop\033[0m"); // dark-grey text on a black bkgr.
         continue;
       }
 
  // the next line [pun intended ;-)]: _intentionally_ not "final"
-      String line = trimmed_line.replaceFirst("[#⍝].*", "").replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // remove until-end-of-line comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any
-      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after stripping: ''" + line + "''");
+      String line = trimmed_line.replaceFirst("[#⍝].*", "");
+      // .replaceAll(" +", " ").replaceFirst("^ ", "").replaceFirst(" $", ""); // USED TO DO ALL OF: remove until-end-of-line comments, squeeze multiple contiguous ASCII spaces into one, remove leading and trailing space if any // DE
+
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after stripping until-end-of-line comments: ''" + line + "''");
+
+      if (line.length() < 1) {
+        if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: the line was empty after the stripping of until-end-of-line comments, so intentionally going back to the top of the parser loop\033[0m"); // dark-grey text on a black bkgr.
+        continue;
+      }
+
+      line = line.trim();
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after re-trimming after stripping until-end-of-line comments: ''" + line + "''");
+
+      if (line.length() < 1) {
+        if (verbosity > 99)  System.err.println("\033[40;90mINFO: in IPv4_client_authorization_engine: the line was empty after re-trimming after the stripping of until-end-of-line comments, so intentionally going back to the top of the parser loop\033[0m"); // dark-grey text on a black bkgr.
+        continue;
+      }
+
+      line = line.replaceAll(" +", " ");
+      if (verbosity > 5)  System.err.println("INFO: in IPv4_client_authorization_engine: line after squeezing multiple contiguous ASCII spaces: ''" + line + "''");
+
 
       if (in_the_middle_of_a_multiline_comment) {
         final int index_of_asterisk_slash = line.indexOf("*/");
