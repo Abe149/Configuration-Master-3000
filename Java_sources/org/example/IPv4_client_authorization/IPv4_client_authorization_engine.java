@@ -114,7 +114,12 @@ public class IPv4_client_authorization_engine {
 
     if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 ");
 
-    final String IP_pattern_regex = "(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)";
+    final String                    IP_pattern_regex_for_each_element = "(\\d+|\\*)";
+
+    final String IP_pattern_regex = IP_pattern_regex_for_each_element + "\\." +
+                                    IP_pattern_regex_for_each_element + "\\." +
+                                    IP_pattern_regex_for_each_element + "\\." +
+                                    IP_pattern_regex_for_each_element;
 
     boolean in_the_middle_of_a_multiline_comment = false; // this _MUST_ be initialized to false or the parser will fail _spectacularly_
     while (input.ready()) {
@@ -306,7 +311,7 @@ public class IPv4_client_authorization_engine {
 
         if (strategy_types.blacklisting == the_active_strategy_type) {
 
-          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
+          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly, allow spaces in IP patterns
           final Matcher m1 = Pattern.compile(IP_pattern_regex).matcher(pattern); // sorry, I know it`s confusing
           final boolean matched_the_regex = m1.find(); // CRUCIAL
 
@@ -354,7 +359,7 @@ public class IPv4_client_authorization_engine {
 
         if (strategy_types.whitelisting == the_active_strategy_type) {
 
-          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly
+          final String pattern = line.split(" ")[3]; // TO DO: handle syntax errors more elegantly, allow spaces in IP patterns
           final Matcher m1 = Pattern.compile(IP_pattern_regex).matcher(pattern); // sorry, I know it`s confusing
           final boolean matched_the_regex = m1.find(); // CRUCIAL
 
