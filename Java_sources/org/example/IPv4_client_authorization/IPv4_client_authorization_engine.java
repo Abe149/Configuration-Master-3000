@@ -19,10 +19,11 @@ import java.util.Arrays;
 public class IPv4_client_authorization_engine {
 
   private class IPv4_pattern_element {
-    private byte from_inclusive,
-                   to_inclusive;
+    private short from_inclusive,
+                    to_inclusive; // can`t use "byte" here b/c -- in Java -- "byte" is always _signed_, leading to [0 … 255] being interpreted as [0 … -1]!!!  Sheesh.
 
-    public IPv4_pattern_element(byte from_in, byte to_in) { // ctor
+    public IPv4_pattern_element(short from_in, short to_in) { // ctor
+      // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255
       from_inclusive = from_in;
       to_inclusive   =   to_in;
     }
@@ -41,7 +42,8 @@ public class IPv4_client_authorization_engine {
       return "[" + from_inclusive + " … " + to_inclusive + ']';
     }
 
-    public boolean matches(byte IP_byte) {
+    public boolean matches(short IP_byte) { // we cannot [in any practical, convenient way] use Java`s "byte" type here  :-(
+      // TO DO: assert [or something] that the param. is in the range 0 ≤ param. ≤ 255
       return from_inclusive <= IP_byte && IP_byte <= to_inclusive;
     }
   }
@@ -50,11 +52,20 @@ public class IPv4_client_authorization_engine {
   private class IPv4_pattern {
     public final IPv4_pattern_element the_pattern[] = new IPv4_pattern_element[4]; // maybe TO DO: write [a] getter[s] and [a] setter[s], make this private?
 
-    public IPv4_pattern(byte a0, byte a1, byte b0, byte b1, byte c0, byte c1, byte d0, byte d1) { // ctor
+    public IPv4_pattern(byte a0, byte a1, byte b0, byte b1, byte c0, byte c1, byte d0, byte d1) { // ctor for when the data is known all at once
+      // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255
       the_pattern[0] = new IPv4_pattern_element(a0, a1);
       the_pattern[1] = new IPv4_pattern_element(b0, b1);
       the_pattern[2] = new IPv4_pattern_element(c0, c1);
       the_pattern[3] = new IPv4_pattern_element(d0, d1);
+    }
+
+    public IPv4_pattern() { // ctor for when the data is _not_ known all at once
+      // try to make "users" crash if/when they try to read an element from this array without something valid having been assigned to it yet
+      the_pattern[0] = null;
+      the_pattern[1] = null;
+      the_pattern[2] = null;
+      the_pattern[3] = null;
     }
 
     public int hashCode() { return the_pattern.hashCode(); } // I hope Java will Do The Right Thing for a change
@@ -68,21 +79,24 @@ public class IPv4_client_authorization_engine {
       return " " + the_pattern[0] + '.' + the_pattern[1] + '.' + the_pattern[2] + '.' + the_pattern[3] + ' ';
     }
 
-    public boolean matches(byte IP[]) {
+    public boolean matches(byte IP[]) { // we need to "get clever" here to convert e.g. -1 to 255 ...  "thanks Java"  :-(
       // maybe TO DO later: assert that the length of IP is 4
-      return the_pattern[0].matches(IP[0]) && the_pattern[1].matches(IP[1]) && the_pattern[2].matches(IP[2]) && the_pattern[3].matches(IP[3]);
+      return the_pattern[0].matches((short)(IP[0] & 255)) &&
+             the_pattern[1].matches((short)(IP[1] & 255)) &&
+             the_pattern[2].matches((short)(IP[2] & 255)) &&
+             the_pattern[3].matches((short)(IP[3] & 255));
     }
   }
 
 
 
   // strategic plan: the language accepts [Java] regexes, and when these regexes are processed there is an implicit leading '^' and an implicit trailing '$'
-  private Set<String>  blacklisted_FQDN_patterns = new HashSet<String>(); // maybe TO DO: replace String with Pattern here
-  private Set<String>  whitelisted_FQDN_patterns = new HashSet<String>(); // maybe TO DO: replace String with Pattern here
+  // maybe TO DO: replace String with Pattern here
+  private Set<String>       blacklisted_FQDN_patterns = new HashSet<String>();
+  private Set<String>       whitelisted_FQDN_patterns = new HashSet<String>();
 
-  // strategic plan: short[4], use values >=0 for literal numbers, -1 for '*'
-  private Set<short[]>   blacklisted_IP_patterns = new HashSet<short[]>();
-  private Set<short[]>   whitelisted_IP_patterns = new HashSet<short[]>();
+  private Set<IPv4_pattern>   blacklisted_IP_patterns = new HashSet<IPv4_pattern>();
+  private Set<IPv4_pattern>   whitelisted_IP_patterns = new HashSet<IPv4_pattern>();
 
   private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
 
@@ -208,33 +222,30 @@ public class IPv4_client_authorization_engine {
           octets_or_asterisks[2] = m1.group(3);
           octets_or_asterisks[3] = m1.group(4);
 
-          final short pattern_as_array_of_shorts[] = new short[4];
+          final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
 
-            if ("*".equals(octets_or_asterisks[index]))  pattern_as_array_of_shorts[index] = -1;
+            if ("*".equals(octets_or_asterisks[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
             else {
               final short the_octet = Short.parseShort(octets_or_asterisks[index]);
               // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
-              if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+              if (the_octet <   0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
-              if (the_octet > 255) {
-                if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-                if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-              } // end if
+              if (the_octet > 255)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position()); // no longer considering this to be "it`s OK, the invalid data will be ignored later, at pattern-matching time", as it was when the patterns were internally of type short[4]
 
-              pattern_as_array_of_shorts[index] = the_octet;
+              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(the_octet, the_octet); // e.g. 9 can be considered "mere syntactic sugar": 9 == [9 … 9]
 
             } // end if
 
           } // end for
 
-          if (blacklisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
+          if (blacklisted_IP_patterns.contains(new_IPv4_pattern)) {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           } else {
-            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding as a blacklist rule the internal-style IP pattern " + (pattern_as_array_of_shorts[0]>=0 ? ""+pattern_as_array_of_shorts[0] : '*') + '.' + (pattern_as_array_of_shorts[1]>=0 ? ""+pattern_as_array_of_shorts[1] : '*') + '.' + (pattern_as_array_of_shorts[2]>=0 ? ""+pattern_as_array_of_shorts[2] : '*') + '.' + (pattern_as_array_of_shorts[3]>=0 ? ""+pattern_as_array_of_shorts[3] : '*'));
+            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding as a blacklist rule the internal-style IP pattern " + new_IPv4_pattern);
           } // end if
-          blacklisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
+          blacklisted_IP_patterns.add(new_IPv4_pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
@@ -259,33 +270,30 @@ public class IPv4_client_authorization_engine {
           octets_or_asterisks[2] = m1.group(3);
           octets_or_asterisks[3] = m1.group(4);
 
-          final short pattern_as_array_of_shorts[] = new short[4];
+          final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
 
-            if ("*".equals(octets_or_asterisks[index]))  pattern_as_array_of_shorts[index] = -1;
+            if ("*".equals(octets_or_asterisks[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
             else {
               final short the_octet = Short.parseShort(octets_or_asterisks[index]);
               // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
               if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
 
-              if (the_octet > 255) {
-                if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-                if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, so this rule should never match;"       +" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-              } // end if
+              if (the_octet > 255)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position()); // no longer considering this to be "it`s OK, the invalid data will be ignored later, at pattern-matching time", as it was when the patterns were internally of type short[4]
 
-              pattern_as_array_of_shorts[index] = the_octet;
+              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(the_octet, the_octet); // e.g. 9 can be considered "mere syntactic sugar": 9 == [9 … 9]
 
             } // end if
 
           } // end for
 
-          if (whitelisted_IP_patterns.contains(pattern_as_array_of_shorts)) {
+          if (whitelisted_IP_patterns.contains(new_IPv4_pattern)) {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           } else {
-            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern " + (pattern_as_array_of_shorts[0]>=0 ? ""+pattern_as_array_of_shorts[0] : '*') + '.' + (pattern_as_array_of_shorts[1]>=0 ? ""+pattern_as_array_of_shorts[1] : '*') + '.' + (pattern_as_array_of_shorts[2]>=0 ? ""+pattern_as_array_of_shorts[2] : '*') + '.' + (pattern_as_array_of_shorts[3]>=0 ? ""+pattern_as_array_of_shorts[3] : '*'));
+            if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern " + new_IPv4_pattern);
           } // end if
-          whitelisted_IP_patterns.add(pattern_as_array_of_shorts); // should cause no harm to add it "again" when duplicate
+          whitelisted_IP_patterns.add(new_IPv4_pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in whitelist mode, so the input was wrong
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
@@ -343,38 +351,13 @@ public class IPv4_client_authorization_engine {
           } // end for
         }
 
-        for (short[] IP_pattern_array : blacklisted_IP_patterns) {
-          // cheating again: going to use string matching
-          String IP_pattern_regex = "^";
-          boolean bad_pattern = false;
-          for (short index = 0; index < 4; ++index) {
-            if (      IP_pattern_array[index] < -1) {
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, unacceptable when "+"strictness level > 1");
-              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, ignored it since " +"strictness level ≤ 0");
-              bad_pattern = true;
-            }
-            else if (-1 == IP_pattern_array[index]) // wildcard
-              IP_pattern_regex = IP_pattern_regex + "\\d+";
-            else if       (IP_pattern_array[index] >= 0 && IP_pattern_array[index] <= 255) // a normal octet
-              IP_pattern_regex = IP_pattern_regex + IP_pattern_array[index];
-            else { // IP_pattern_array[index] must be > 255
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, unacceptable when "+"strictness level > 1");
-              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, ignored it since " +"strictness level ≤ 0");
-              bad_pattern = true;
-            } // end if
-            if (index < 3)  IP_pattern_regex = IP_pattern_regex + "\\."; // IP octet separator
-          } // end for
+        for (IPv4_pattern the_IP_pattern : blacklisted_IP_patterns) {
           final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
-          if (bad_pattern) {
-            // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
-            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
-          } else { // _not_ a bad internal pattern
-            IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
-            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
-            if ((String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]).matches(IP_pattern_regex)) {
-              if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
-              return false;
-            } // end if
+
+          if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: considering the IPv4 pattern " + the_IP_pattern);
+          if (the_IP_pattern.matches(IP_addr_as_byte_array)) {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning false because a rule matched.");
+            return false;
           } // end if
         } // end for
 
@@ -393,38 +376,13 @@ public class IPv4_client_authorization_engine {
           if (it_matched)  return true;
         } // end for
 
-        for (short[] IP_pattern_array : whitelisted_IP_patterns) {
-          // cheating again: going to use string matching
-          String IP_pattern_regex = "^";
-          boolean bad_pattern = false;
-          for (short index = 0; index < 4; ++index) {
-            if (      IP_pattern_array[index] < -1) {
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, unacceptable when "+"strictness level > 1");
-              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was < -1, ignored it since " +"strictness level ≤ 0");
-              bad_pattern = true;
-            }
-            else if (-1 == IP_pattern_array[index]) // wildcard
-              IP_pattern_regex = IP_pattern_regex + "\\d+";
-            else if       (IP_pattern_array[index] >= 0 && IP_pattern_array[index] <= 255) // a normal octet
-              IP_pattern_regex = IP_pattern_regex + IP_pattern_array[index];
-            else { // IP_pattern_array[index] must be > 255
-              if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, unacceptable when "+"strictness level > 1");
-              System.err.println(                     "WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array element " + IP_pattern_array[index] + " was > 255, ignored it since " +"strictness level ≤ 0");
-              bad_pattern = true;
-            } // end if
-            if (index < 3)  IP_pattern_regex = IP_pattern_regex + "\\."; // IP octet separator
-          } // end for
+        for (IPv4_pattern the_IP_pattern : whitelisted_IP_patterns) {
           final byte[] IP_addr_as_byte_array = addr.getAddress(); // TO DO: check this has the right length, throw/WARN if not
-          if (bad_pattern) {
-            // there`s no need to check the strictness level and maybe throw here, since the code that sets "bad_pattern" would have already thrown before execution got here [i.e. to this comment`s "line"] if the pattern was bad in a way that this code can detect
-            System.err.println("WARNING: in IPv4_client_authorization_engine: internal error: an IP pattern-array`s contents [{" + IP_addr_as_byte_array[0] + ", " + IP_addr_as_byte_array[1] + ", " + IP_addr_as_byte_array[2] + ", " + IP_addr_as_byte_array[3] + "}] were bad; ignored it since strictness level ≤ 0; please tell Abe to debug this engine.  Allowing the matching loop to continue.");
-          } else { // _not_ a bad internal pattern
-            IP_pattern_regex = IP_pattern_regex + '$'; // just so it shows up correctly in the super-verbose output, when enabled
-            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: regex pattern for IP address computed by a transformation from an array of integers: ''" + IP_pattern_regex + "''");
-            if ((String.valueOf(IP_addr_as_byte_array[0]) + '.' + IP_addr_as_byte_array[1] + '.' + IP_addr_as_byte_array[2] + '.' + IP_addr_as_byte_array[3]).matches(IP_pattern_regex)) {
-              if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
-              return true;
-            } // end if
+
+          if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: considering the IPv4 pattern " + the_IP_pattern);
+          if (the_IP_pattern.matches(IP_addr_as_byte_array)) {
+            if (verbosity > 8)  System.err.println("INFO: in IPv4_client_authorization_engine: returning true because a rule matched.");
+            return true;
           } // end if
         } // end for
 
