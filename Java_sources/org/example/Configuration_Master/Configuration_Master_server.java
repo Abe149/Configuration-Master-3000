@@ -334,9 +334,12 @@ public class Configuration_Master_server {
 
 
         if (verbosity > 0) {
-            System.err.println("\nINFO: running with a verbosity level of " + verbosity);
+            System.err.println("\nINFO: running with a verbosity  level of " + verbosity);
+            System.err.println(  "INFO: running with a strictness level of " + strictness_level);
             System.err.println(  "INFO: planning to try to load data from directory at ''" + data_directory + "''.");
         }
+
+        if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 "); // belt and suspenders
 
 
         try {

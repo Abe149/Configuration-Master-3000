@@ -422,6 +422,8 @@ public class Configuration_Master_engine {
     strictness_level = strictness_level___in;
     strict_checking_mode_enabled = strictness_level > 0; // for "backwards compatibility" with CM3000`s "old" code, i.e. so I don`t need to replace e.g. "if (strict_checking_mode_enabled)" with "if (strictness_level > 0)" all over the place, and similarly in at least one spot where I used "strict_checking_mode_enabled" as the predicate in a ternary-operator expression
 
+    if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 ");
+
     typenames_to_types = new Hashtable<String, value_types>();
     for (value_types VT : value_types.values()) {
       typenames_to_types.put(VT.name(), VT);

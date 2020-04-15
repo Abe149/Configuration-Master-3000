@@ -109,8 +109,10 @@ public class IPv4_client_authorization_engine {
   // start of ctor
   public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, long verbosity_in) throws IOException {
     strictness_level = strictness_level___in;
-
     verbosity = verbosity_in;
+
+    if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 ");
+
     final String IP_pattern_regex = "(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)\\.(\\d+|\\*)";
 
     boolean in_the_middle_of_a_multiline_comment = false; // this _MUST_ be initialized to false or the parser will fail _spectacularly_
