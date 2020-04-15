@@ -1,0 +1,19 @@
+INFO: in IPv4_client_authorization_engine: set the strategy to whitelisting
+INFO: in IPv4_client_authorization_engine: adding requirement: loopback
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.0.0.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.0.0.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.0.*.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.0.*.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.*.0.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.*.0.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.*.*.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern 127.*.*.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.0.0.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.0.0.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.0.*.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.0.*.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.*.0.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.*.0.*
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.*.*.1
+INFO: in IPv4_client_authorization_engine: adding as a whitelist rule the internal-style IP pattern *.*.*.*
+

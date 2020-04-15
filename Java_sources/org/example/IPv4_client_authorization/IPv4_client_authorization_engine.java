@@ -18,15 +18,44 @@ import java.util.Arrays;
 
 public class IPv4_client_authorization_engine {
 
-
   private class IPv4_pattern_element {
     private byte from_inclusive,
                    to_inclusive;
+
+    public IPv4_pattern_element(byte from_in, byte to_in) { // ctor
+      from_inclusive = from_in;
+      to_inclusive   =   to_in;
+    }
+
+    public int hashCode() { return from_inclusive*256 + to_inclusive; }
+
+    public boolean equals(Object other) {
+      if (! (other instanceof IPv4_pattern_element))  return false;
+      final IPv4_pattern_element other_with_correct_type = (IPv4_pattern_element) other;
+      return from_inclusive == other_with_correct_type.from_inclusive && to_inclusive == other_with_correct_type.to_inclusive;
+    }
+
+    public String toString() {
+      if (from_inclusive == to_inclusive)  return " " + to_inclusive + ' ';
+      if (0 == from_inclusive && 255 == to_inclusive)  return "*";
+      return "[" + from_inclusive + " … " + to_inclusive + ']';
+    }
+
+    public boolean matches(byte IP_byte) {
+      return from_inclusive <= IP_byte && IP_byte <= to_inclusive;
+    }
   }
 
 
   private class IPv4_pattern {
-    public IPv4_pattern_element the_pattern[] = new IPv4_pattern_element[4]; // maybe TO DO: write [a] getter[s] and [a] setter[s], make this private?
+    public final IPv4_pattern_element the_pattern[] = new IPv4_pattern_element[4]; // maybe TO DO: write [a] getter[s] and [a] setter[s], make this private?
+
+    public IPv4_pattern(byte a0, byte a1, byte b0, byte b1, byte c0, byte c1, byte d0, byte d1) { // ctor
+      the_pattern[0] = new IPv4_pattern_element(a0, a1);
+      the_pattern[1] = new IPv4_pattern_element(b0, b1);
+      the_pattern[2] = new IPv4_pattern_element(c0, c1);
+      the_pattern[3] = new IPv4_pattern_element(d0, d1);
+    }
 
     public int hashCode() { return the_pattern.hashCode(); } // I hope Java will Do The Right Thing for a change
 
@@ -37,6 +66,11 @@ public class IPv4_client_authorization_engine {
 
     public String toString() {
       return " " + the_pattern[0] + '.' + the_pattern[1] + '.' + the_pattern[2] + '.' + the_pattern[3] + ' ';
+    }
+
+    public boolean matches(byte IP[]) {
+      // maybe TO DO later: assert that the length of IP is 4
+      return the_pattern[0].matches(IP[0]) && the_pattern[1].matches(IP[1]) && the_pattern[2].matches(IP[2]) && the_pattern[3].matches(IP[3]);
     }
   }
 
