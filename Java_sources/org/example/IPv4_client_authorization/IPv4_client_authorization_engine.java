@@ -304,10 +304,10 @@ public class IPv4_client_authorization_engine {
           final String pattern = literalize_regex(line.split(" ")[3]);
 
           if (whitelisted_FQDN_patterns.contains(pattern)) {
-            if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
-            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''whitelist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''whitelist FQDN literal'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
-          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
+          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''whitelist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
           whitelisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in whitelist mode, so the input was wrong
@@ -377,9 +377,9 @@ public class IPv4_client_authorization_engine {
 
             } catch (Exception e) {
 
-              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; location: " + input.get_description_of_input_and_current_position());
+              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; location: " + input.get_description_of_input_and_current_position());
 
-              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
+              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
 
               continue;
             } // end try...catch
@@ -427,9 +427,9 @@ public class IPv4_client_authorization_engine {
 
             } catch (Exception e) {
 
-              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; location: " + input.get_description_of_input_and_current_position());
+              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; location: " + input.get_description_of_input_and_current_position());
 
-              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
+              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
 
               continue;
             } // end try...catch
