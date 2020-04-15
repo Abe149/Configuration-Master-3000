@@ -36,8 +36,10 @@ whitelist FQDN literal insane_test_of_literalization___().*$^+[]{}|?\___
 # whitelist FQDN pattern .*local.*host.* # this works too
 
 
+whitelist IP pattern [126…128].[0…0].[0…1].[0…2] # spaces are _not_ tolerated in IP pattern "bodies" as of this writing
 
 
+/*
 
 whitelist IP pattern 127.0.0.1
 
@@ -58,3 +60,6 @@ whitelist IP pattern   *.*.0.*
 whitelist IP pattern   *.*.*.1
 whitelist IP pattern   *.*.*.* # this would be _super_-dangerous in production if/when used without any requirements: without any requirements, it`s basically a way of saying "ALLOW FROM ALL"!
 
+whitelist IP pattern   *.*.*.[10…100] # spaces are _not_ tolerated in IP pattern "bodies" as of this writing
+
+*/

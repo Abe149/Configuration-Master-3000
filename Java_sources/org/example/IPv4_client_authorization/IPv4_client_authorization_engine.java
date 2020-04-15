@@ -21,11 +21,43 @@ public class IPv4_client_authorization_engine {
     private short from_inclusive,
                     to_inclusive; // can`t use "byte" here b/c -- in Java -- "byte" is always _signed_, leading to [0 … 255] being interpreted as [0 … -1]!!!  Sheesh.
 
-    public IPv4_pattern_element(short from_in, short to_in) { // ctor
+    public IPv4_pattern_element(short from_in, short to_in) { // ctor: simple integer inputs
       // TO DO: assert [or something] that each of the param.s is in the range 0 ≤ param. ≤ 255
       from_inclusive = from_in;
       to_inclusive   =   to_in;
     }
+
+    private void validate_octet(short the_octet) throws Exception { // DRY
+      if (the_octet <   0)  throw new Exception("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]");
+
+      if (the_octet > 255)  throw new Exception("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255");
+    }
+
+    public IPv4_pattern_element(String input) throws Exception { // ctor: parse the input and create a pattern element
+      if (null == input)  throw new Exception("The IPv4_pattern_element(String) ctor got a null input");
+      // delegating ctors -- e.g. "this(0, 255);" -- don`t work in Java [at least not in 1.6] as something other than the first [only?] statement of a ctor
+      if      (input.equals("*"))  { from_inclusive = 0; to_inclusive = 255; }
+      else if (input.matches("\\d+")) {
+
+        final short the_octet = Short.parseShort(input);
+
+        validate_octet(the_octet);
+
+        from_inclusive = the_octet;
+          to_inclusive = the_octet;
+
+      } else if (input.matches("\\[\\d+…\\d+\\]")) { // TO DO: allow ASCII spaces inside the expression
+
+        Matcher m = Pattern.compile("\\[(\\d+)…(\\d+)\\]").matcher(input); // "this time, with _feeling_" ;-) ...  where "feeling" = "regex capture groups"
+        m.find(); // the "traditional-for-Java-regex" crucial sine-qua-{crash if you _are_ lucky, proceed with incorrect results if you are _not_}
+        from_inclusive = Short.parseShort(m.group(1));
+          to_inclusive = Short.parseShort(m.group(2));
+
+        validate_octet(from_inclusive);
+        validate_octet(  to_inclusive);
+
+      } // end if
+    } // end of ctor
 
     public int hashCode() { return from_inclusive*256 + to_inclusive; }
 
@@ -114,7 +146,7 @@ public class IPv4_client_authorization_engine {
 
     if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 ");
 
-    final String                    IP_pattern_regex_for_each_element = "(\\d+|\\*)";
+    final String                    IP_pattern_regex_for_each_element = "(\\d+|\\*|\\[\\d+…\\d+\\])";
 
     final String IP_pattern_regex = IP_pattern_regex_for_each_element + "\\." +
                                     IP_pattern_regex_for_each_element + "\\." +
@@ -327,18 +359,20 @@ public class IPv4_client_authorization_engine {
 
           final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
+            final String this_pattern_segment = pattern_segments[index];
+            if (null == this_pattern_segment)  throw new IOException("In IPv4_client_authorization_engine: an IP pattern segment was somehow found to be a null reference instead of a valid String reference");
 
-            if ("*".equals(pattern_segments[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
-            else {
-              final short the_octet = Short.parseShort(pattern_segments[index]);
-              // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
-              if (the_octet <   0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            try {
+              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(this_pattern_segment); // use the (String) ctor
 
-              if (the_octet > 255)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position()); // no longer considering this to be "it`s OK, the invalid data will be ignored later, at pattern-matching time", as it was when the patterns were internally of type short[4]
+            } catch (Exception e) {
 
-              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(the_octet, the_octet); // e.g. 9 can be considered "mere syntactic sugar": 9 == [9 … 9]
+              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; location: " + input.get_description_of_input_and_current_position());
 
-            } // end if
+              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
+
+              continue;
+            } // end try...catch
 
           } // end for
 
@@ -375,20 +409,23 @@ public class IPv4_client_authorization_engine {
 
           final IPv4_pattern new_IPv4_pattern = new IPv4_pattern(); // see how nicely that reads?  ;-)
           for (short index = 0; index < 4; ++index) {
+            final String this_pattern_segment = pattern_segments[index];
+            if (null == this_pattern_segment)  throw new IOException("In IPv4_client_authorization_engine: an IP pattern segment was somehow found to be a null reference instead of a valid String reference");
 
-            if ("*".equals(pattern_segments[index]))  new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element((short)0, (short)255); // '*' can be considered "mere syntactic sugar": '*' == [0 … 255]
-            else {
-              final short the_octet = Short.parseShort(pattern_segments[index]);
-              // negative numbers should be _absolutely_ impossible here [get the pun?  ;-)], since the regex uses the decimal-digit "macro" and _not_ any kind of magical regex for "an integer even if negative"
-              if (the_octet < 0)  throw new IOException("In IPv4_client_authorization_engine: an IP octet was somehow found to be negative [" + the_octet + "]; this is not supposed to be possible, i.e. the incorrect data should not have ''made it this far'' in the code; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+            try {
+              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(this_pattern_segment); // use the (String) ctor
 
-              if (the_octet > 255)  throw new IOException("In IPv4_client_authorization_engine: an IP octet [" + the_octet + "] was found to be > 255, unacceptable when strictness level > 0;"+" line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position()); // no longer considering this to be "it`s OK, the invalid data will be ignored later, at pattern-matching time", as it was when the patterns were internally of type short[4]
+            } catch (Exception e) {
 
-              new_IPv4_pattern.the_pattern[index] = new IPv4_pattern_element(the_octet, the_octet); // e.g. 9 can be considered "mere syntactic sugar": 9 == [9 … 9]
+              if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; location: " + input.get_description_of_input_and_current_position());
 
-            } // end if
+              if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: got an exception [" + e + "] while trying to construct an IP pattern segment object; probably the syntax was invalid; will try to overlook this, since strictness_level ≤ 0, and move on to the next line of input; location of source of exception: " + input.get_description_of_input_and_current_position());
+
+              continue;
+            } // end try...catch
 
           } // end for
+
 
           if (whitelisted_IP_patterns.contains(new_IPv4_pattern)) {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist IP pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
