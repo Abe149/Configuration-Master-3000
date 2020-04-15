@@ -1,6 +1,7 @@
 package org.example.IPv4_client_authorization;
 
-import org.example.shared.*;
+import        org.example.shared.*;
+import static org.example.shared.utility_class.*;
 
 import java.net.InetAddress;
 import java.util.Set;
@@ -233,12 +234,13 @@ public class IPv4_client_authorization_engine {
 
           // TO DO: handle syntax errors more elegantly
 
-          final String pattern = line.split(" ")[3].replaceAll("\\.", "\\\\."); // this line`s call to ".replaceAll" _looks_ insane, but testing shows that it _is_ correct; please see <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)> if you want to know why it looks like it does
+          final String pattern = literalize_regex(line.split(" ")[3]);
+
           if (blacklisted_FQDN_patterns.contains(pattern)) {
             if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
-          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
           blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
@@ -252,12 +254,13 @@ public class IPv4_client_authorization_engine {
 
           // TO DO: handle syntax errors more elegantly
 
-          final String pattern = line.split(" ")[3].replaceAll("\\.", "\\\\."); // this line`s call to ".replaceAll" _looks_ insane, but testing shows that it _is_ correct; please see <https://docs.oracle.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)> if you want to know why it looks like it does
+          final String pattern = literalize_regex(line.split(" ")[3]);
+
           if (whitelisted_FQDN_patterns.contains(pattern)) {
             if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
-          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN literal'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
           whitelisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in whitelist mode, so the input was wrong
@@ -275,7 +278,7 @@ public class IPv4_client_authorization_engine {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''blacklist FQDN pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
-          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''blacklist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
           blacklisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
 
         } else { // _not_ in blacklist mode, so the input was wrong
@@ -292,7 +295,7 @@ public class IPv4_client_authorization_engine {
             if (strictness_level > 1)  throw new IOException("In IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
             if (verbosity > 0)  System.err.println( "WARNING: in IPv4_client_authorization_engine: redundant ''whitelist FQDN pattern'' statement found, ignored it since " +"strictness level ≤ 0; line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
           }
-          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''whitelist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
+          else if (verbosity > 0)  System.err.println("INFO: in IPv4_client_authorization_engine: (non-redundant) ''whitelist FQDN pattern'' statement found, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position() + ", going to add the pattern ''" + pattern + "''");
           whitelisted_FQDN_patterns.add(pattern); // should cause no harm to add it "again" when duplicate
         } else { // _not_ in whitelist mode, so the input was wrong
           if (strictness_level > 0)  throw new IOException("In IPv4_client_authorization_engine: a statement was found that was incompatible with the strategy, unacceptable when "+"strictness level > 0, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
