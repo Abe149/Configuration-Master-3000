@@ -403,7 +403,7 @@ public class Configuration_Master_engine {
   // the next 3 lines: so non-ctor methods will be able to read these values without me needing to pass them around
   private boolean strict_checking_mode_enabled;
   private short   strictness_level;
-  private short   verbosity;
+  private long    verbosity;
 
 
   // start of ctor
@@ -411,7 +411,7 @@ public class Configuration_Master_engine {
                                debugFriendly_buffered_input   maturityLevel_aliases_input,
                                debugFriendly_buffered_input[] schema_inputs,
                                debugFriendly_buffered_input[] config_inputs,
-                               short                          verbosity_in,
+                               long                           verbosity_in,
                                short                          strictness_level___in,
                                boolean                        allow_empty_schema,
                                boolean                        allow_no_configurations

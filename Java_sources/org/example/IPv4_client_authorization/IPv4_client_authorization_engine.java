@@ -103,10 +103,11 @@ public class IPv4_client_authorization_engine {
   private boolean require_linkLocal = false;
   private boolean require_loopback  = false;
 
-  private short verbosity, strictness_level;
+  private long verbosity;
+  private short strictness_level;
 
   // start of ctor
-  public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, short verbosity_in) throws IOException {
+  public IPv4_client_authorization_engine(debugFriendly_buffered_input input, short strictness_level___in, long verbosity_in) throws IOException {
     strictness_level = strictness_level___in;
 
     verbosity = verbosity_in;

@@ -50,8 +50,8 @@ import java.net.URLDecoder;
 
 public class Configuration_Master_server {
 
-    private final static short default_verbosity = 5;
-    private static short verbosity = default_verbosity;
+    private final static long             default_verbosity = 5;
+    private       static long verbosity = default_verbosity;
 
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
@@ -317,7 +317,7 @@ public class Configuration_Master_server {
                 }
             } else if ("verbosity".equals(LHS)) {
                 try {
-                    final short new_verbosity = Short.parseShort(RHS);
+                    final long new_verbosity = Long.parseLong(RHS);
                     if (new_verbosity >= 0) {
                         if (verbosity > 0 || new_verbosity > 0) {
                             System.err.println("INFO: setting verbosity to " + new_verbosity + " according to CLI arg.");
