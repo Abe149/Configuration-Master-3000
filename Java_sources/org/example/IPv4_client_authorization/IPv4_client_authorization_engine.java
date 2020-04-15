@@ -457,28 +457,6 @@ public class IPv4_client_authorization_engine {
 
     if (verbosity > 8) {
 
-            /*
-
-
-
-  private Set<String>       blacklisted_FQDN_patterns = new HashSet<String>();
-  private Set<String>       whitelisted_FQDN_patterns = new HashSet<String>();
-
-  private Set<IPv4_pattern>   blacklisted_IP_patterns = new HashSet<IPv4_pattern>();
-  private Set<IPv4_pattern>   whitelisted_IP_patterns = new HashSet<IPv4_pattern>();
-
-  private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
-
-  // strategic plan: when strictness=0, ignore duplicate directives; when strictness=1, warn about them; when strictness>1, reject inputs with duplicate directives
-  private boolean require_siteLocal = false;
-  private boolean require_linkLocal = false;
-  private boolean require_loopback  = false;
-
-  private long verbosity;
-  private short strictness_level;
-
-            */
-
          System.err.println();
          System.err.println("IPv4_client_authorization_engine brain dump");
          System.err.println("-------------------------------------------");
@@ -491,10 +469,39 @@ public class IPv4_client_authorization_engine {
          System.err.println("strictness_level = " + strictness_level);
          System.err.println("verbosity = " + verbosity);
          System.err.println();
-         System.err.println("blacklisted_FQDN_patterns: " + blacklisted_FQDN_patterns);
-         System.err.println("whitelisted_FQDN_patterns: " + whitelisted_FQDN_patterns);
+
+      // System.err.println("blacklisted_FQDN_patterns: " + blacklisted_FQDN_patterns); // works, but the output format is crappy
+
+         System.err.print("blacklisted_FQDN_patterns: ");
+         if (blacklisted_FQDN_patterns.size() < 1)  System.err.println("[none]");
+         else {
+           System.err.println();
+           int index = 0;
+           for (String FQDN_pattern : blacklisted_FQDN_patterns) {
+             System.err.println("  “" + FQDN_pattern + '”' + ( (index < blacklisted_FQDN_patterns.size() - 1) ? ',' : '.'));
+             ++index;
+           } // end for
+         } // end if
+
          System.err.println();
+
+      // System.err.println("whitelisted_FQDN_patterns: " + whitelisted_FQDN_patterns); // works, but the output format is crappy
+
+         System.err.print("whitelisted_FQDN_patterns: ");
+         if (whitelisted_FQDN_patterns.size() < 1)  System.err.println("[none]");
+         else {
+           System.err.println();
+           int index = 0;
+           for (String FQDN_pattern : whitelisted_FQDN_patterns) {
+             System.err.println("  “" + FQDN_pattern + '”' + ( (index < whitelisted_FQDN_patterns.size() - 1) ? ',' : '.'));
+             ++index;
+           } // end for
+         } // end if
+
+         System.err.println();
+
          System.err.println("blacklisted_IP_patterns: " + blacklisted_IP_patterns);
+         System.err.println();
          System.err.println("whitelisted_IP_patterns: " + whitelisted_IP_patterns);
          System.err.println("-------------------------------------------");
 
