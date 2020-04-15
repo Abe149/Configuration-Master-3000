@@ -71,3 +71,7 @@ whitelist IP pattern <9.*.*.*
 whitelist IP pattern >9.*.*.*
 whitelist IP pattern ≤9.*.*.*
 whitelist IP pattern ≥9.*.*.*
+
+# testing code that warns us when we have a character in a literal FQDN that probably should not be there b/c the rule will never match
+whitelist FQDN literal insane_test_2_of_literalization___().*$^+[]{}|?\___
+whitelist FQDN literal insane_test_3_of_literalization___≠

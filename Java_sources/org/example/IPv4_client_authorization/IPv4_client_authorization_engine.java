@@ -166,6 +166,23 @@ public class IPv4_client_authorization_engine {
   }
 
 
+  private String warn_of_probably_invalidInFQDN_chars(String in) { // this function _must_ return its input unaltered
+  System.err.println("--in warn_of_probably_invalidInFQDN_chars--");
+    final String believed_valid_in_FQDN_regex = "[_A-Za-z0-9-.]"; // DRY
+     // I`m not sure ASCII underscore is valid in an FQDN, but I`m willing to give it the benefit of the doubt.
+     // Maybe upper-case letters -- even ASCII ones -- are _also_ not supposed to be in an FQDN?  I dunno.  Being tolerant about that, at least for now.
+    if (
+        verbosity > 0
+        &&
+        in.matches(".*" + believed_valid_in_FQDN_regex.replaceFirst("\\[", "[^") + ".*")
+        //                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^: "translate" "_must_ be in this list of char.s" to "must _not_ be in this list of char.s"
+       ) {
+
+      System.err.println("\033[31mWARNING: an FQDN was given [“" + in + "”] that has the following characters in it [in order] that probably will never occur in a valid FQDN [using “<--” and “-->” as delimiters around the next string b/c ‘-’ _is_ valid in FQDNs]: <--" + in.replaceAll(believed_valid_in_FQDN_regex + '*', "") + "-->\033[0m");
+    }
+    return in;
+  }
+
 
   // strategic plan: the language accepts [Java] regexes, and when these regexes are processed there is an implicit leading '^' and an implicit trailing '$'
   // maybe TO DO: replace String with Pattern here
@@ -325,7 +342,7 @@ public class IPv4_client_authorization_engine {
 
           // TO DO: handle syntax errors more elegantly
 
-          final String pattern = literalize_regex(line.split(" ")[3]);
+          final String pattern = literalize_regex(warn_of_probably_invalidInFQDN_chars(line.split(" ")[3]));
 
           if (blacklisted_FQDN_patterns.contains(pattern)) {
             if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''blacklist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
@@ -345,7 +362,7 @@ public class IPv4_client_authorization_engine {
 
           // TO DO: handle syntax errors more elegantly
 
-          final String pattern = literalize_regex(line.split(" ")[3]);
+          final String pattern = literalize_regex(warn_of_probably_invalidInFQDN_chars(line.split(" ")[3]));
 
           if (whitelisted_FQDN_patterns.contains(pattern)) {
             if (strictness_level > 1)  throw new IOException("IN IPv4_client_authorization_engine: redundant ''whitelist FQDN literal'' statement found, unacceptable when "+"strictness level > 1, line content [after comment stripping etc.] ''" + line +"'', " + input.get_description_of_input_and_current_position());
