@@ -15,8 +15,6 @@ ls -l / | sed -e 's/Apr/<=/' -e 's/Jun/==/' -e 's/Mar/>=/' | sort -k 5,5n -k 6,6
 
 TO DOs
 ------
-* write the brain dump code in/for "IPv4_client_authorization_engine.java"
-
 * find the remaining places in the code where an exception could be thrown even when strictness level is zero, make them predicated upon strictness level is > zero
 
 * [IN PROGRESS] break out the test cases into files that can be tested individually
@@ -39,16 +37,6 @@ TO DOs
   * reminder: '<' itself is now mere syntactic sugar; example: "<X" is syntactic sugar for "≤(X-1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
   * reminder: '>' itself is now mere syntactic sugar; example: ">X" is syntactic sugar for "≥(X+1)" [where everything inside the paren.s -- and the paren.s themselves -- is replaced by an ASCII decimal integer]
 
-* maybe this is too "pie in the sky", since it would be a lot of work for relatively-little benefit: in "IPv4_client_authorization_engine.java", upgrade the IP-pattern parsing and [query-time] matching so it supports not only literal decimal integers and '*' but also arithmetic expressions
-  * e.g. "< 7" [w/o the quotes], as syntactic sugar for "≤ 6", same as in the CM3000 engine
-  * e.g. "> 7" [w/o the quotes], as syntactic sugar for "≥ 8", same as in the CM3000 engine
-  * ranges that are inclusive at both ends, e.g. "[ 10 … 99 ]"
-  * inequality is probably useless in this context, and might even be confusing
-  * as long as not implementing inequality, maybe even '≤' & '≥' can be considered "mere syntactic sugar"
-    * e.g. "≤ 6" == [0 …   6]
-    * e.g. "≥ 9" == [9 … 255]
-  * '*'    can be considered "mere syntactic sugar": '*' == [0 … 255]
-  * e.g. 9 can be considered "mere syntactic sugar":   9 == [9 …   9]
 
 
 
@@ -74,3 +62,16 @@ DONE to-dos
       * what I _actually_ implemented: compare matches/results for conflicting values _including_ Java type, i.e. do _not_ consider 1 and "1" to be equivalent and therefor redundant-is-OK, in _all_ strictness levels... new "strictness level 2": requires multiple matches to be non-conflicting [conflicts are "OK" at levels 1 and below, i.e. 1 and 0, and the runtime will just return the first match after reporting the ambiguity to std. error]
     * [NOT TO DO after all] new "strictness level 3": compare matches/results for conflicting values _including_ the _CM3000_ type [e.g. positive_integer]
 
+* [DONE] write the brain dump code in/for "IPv4_client_authorization_engine.java" -- DONE as of 8d9d88e9817a0154e5273ae50f1ced8e1d98a752 [Wed Apr 15 06:55:35 2020 -0400]
+
+[DONE] DONE as of 1c4045b676c9d28ff76f151c89d76fbb7b2daa1e [Wed Apr 15 06:44:07 2020 -0400]
+  * maybe this is too "pie in the sky", since it would be a lot of work for relatively-little benefit: in "IPv4_client_authorization_engine.java", upgrade the IP-pattern parsing and [query-time] matching so it supports not only literal decimal integers and '*' but also arithmetic expressions
+    * e.g. "< 7" [w/o the quotes], as syntactic sugar for "≤ 6", same as in the CM3000 engine
+    * e.g. "> 7" [w/o the quotes], as syntactic sugar for "≥ 8", same as in the CM3000 engine
+    * ranges that are inclusive at both ends, e.g. "[ 10 … 99 ]"
+    * inequality is probably useless in this context, and might even be confusing
+    * as long as not implementing inequality, maybe even '≤' & '≥' can be considered "mere syntactic sugar"
+      * e.g. "≤ 6" == [0 …   6]
+      * e.g. "≥ 9" == [9 … 255]
+    * '*'    can be considered "mere syntactic sugar": '*' == [0 … 255]
+    * e.g. 9 can be considered "mere syntactic sugar":   9 == [9 …   9]
