@@ -454,14 +454,49 @@ public class IPv4_client_authorization_engine {
 
     } // end while
 
+
     if (verbosity > 8) {
 
-
-
-            // TO DO: brain dump
+            /*
 
 
 
+  private Set<String>       blacklisted_FQDN_patterns = new HashSet<String>();
+  private Set<String>       whitelisted_FQDN_patterns = new HashSet<String>();
+
+  private Set<IPv4_pattern>   blacklisted_IP_patterns = new HashSet<IPv4_pattern>();
+  private Set<IPv4_pattern>   whitelisted_IP_patterns = new HashSet<IPv4_pattern>();
+
+  private strategy_types the_active_strategy_type = null; // intentionally initializing to an invalid "value"
+
+  // strategic plan: when strictness=0, ignore duplicate directives; when strictness=1, warn about them; when strictness>1, reject inputs with duplicate directives
+  private boolean require_siteLocal = false;
+  private boolean require_linkLocal = false;
+  private boolean require_loopback  = false;
+
+  private long verbosity;
+  private short strictness_level;
+
+            */
+
+         System.err.println();
+         System.err.println("IPv4_client_authorization_engine brain dump");
+         System.err.println("-------------------------------------------");
+         System.err.println("require_linkLocal = " + require_linkLocal);
+         System.err.println("require_loopback  = " + require_loopback);
+         System.err.println("require_siteLocal = " + require_siteLocal);
+         System.err.println();
+         System.err.println("the_active_strategy_type = " + the_active_strategy_type);
+         System.err.println();
+         System.err.println("strictness_level = " + strictness_level);
+         System.err.println("verbosity = " + verbosity);
+         System.err.println();
+         System.err.println("blacklisted_FQDN_patterns: " + blacklisted_FQDN_patterns);
+         System.err.println("whitelisted_FQDN_patterns: " + whitelisted_FQDN_patterns);
+         System.err.println();
+         System.err.println("blacklisted_IP_patterns: " + blacklisted_IP_patterns);
+         System.err.println("whitelisted_IP_patterns: " + whitelisted_IP_patterns);
+         System.err.println("-------------------------------------------");
 
       } // end if
 
