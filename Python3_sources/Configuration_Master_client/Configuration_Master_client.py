@@ -56,11 +56,10 @@ def get_config(           namespace='*', key=None): # default value for "namespa
 
   # same interface as the Bash client
 
-  # consciously allowing the following to crash if the env. var.s are not in the env.
-  CONFIG_SERVER_URL     = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
+  config_server_URL     = get_server_URL()
   CONFIG_MATURITY_LEVEL = os.environ["CONFIG_MATURITY_LEVEL"]
 
-  the_request = request.Request(url = CONFIG_SERVER_URL + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(CONFIG_MATURITY_LEVEL), pathname2url(namespace), pathname2url(key))))
+  the_request = request.Request(url = config_server_URL + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(CONFIG_MATURITY_LEVEL), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
