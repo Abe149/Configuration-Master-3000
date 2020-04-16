@@ -14,7 +14,7 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
-  public int get_maturityLevel_integer_from_alias(String alias_in) {
+  public Integer get_maturityLevel_Integer_from_alias(String alias_in) {
     return maturityLevel_aliases.get(alias_in.toLowerCase());
   }
 
@@ -188,7 +188,7 @@ public class Configuration_Master_engine {
 
   private parsed_line_for_a_config parse_and_typecheck_a_line_for_a_config(String line, String source) throws IOException {
     maturityLevel_comparison_types the_MLC_kind                           = maturityLevel_comparison_types.equal_to;
-    int                            the_maturity_level_to_which_to_compare = -2; // _do_ use a negative value as a sentinel, but do _not_ use -1, since that value is "reserved" for the desugared integer value of the nonsensical MLC "<0"
+    Integer                        the_maturity_level_to_which_to_compare = -9; // _do_ use a negative value as a sentinel, but do _not_ use -1, since that value is "reserved" for the desugared integer value of the nonsensical MLC "<0"
     String                         the_namespace                          = null;
     String                         the_key                                = null;
     String                         the_value_str                          = null;
@@ -214,7 +214,13 @@ public class Configuration_Master_engine {
       if (the_maturity_level_to_which_to_compare < 0)
         throw new IOException("SYNTAX ERROR: negative integer in a maturity-level specification at " + source);
     } else {
-      the_maturity_level_to_which_to_compare = get_maturityLevel_integer_from_alias(the_MLC_spec_after_the_initial_char);
+      the_maturity_level_to_which_to_compare = get_maturityLevel_Integer_from_alias(the_MLC_spec_after_the_initial_char);
+      if (null == the_maturity_level_to_which_to_compare) {
+        final String base_msg = "Unable to find a match for an ML alias that was used in a configuration input line";
+        if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
+        if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
+        return null;
+      }
       if (the_maturity_level_to_which_to_compare < 0)
         throw new IOException("FLAGRANT SYSTEM ERROR: negative integer found in a maturity-level specification _after_ converting from an alias; not only is a negative mapping from an alias _bad_, but it should not even be _possible_ to have at this point in the program.  Source: " + source);
     }
