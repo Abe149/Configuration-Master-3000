@@ -870,7 +870,7 @@ public class Configuration_Master_engine {
     return get_configuration(maturity_level_of_query, namespace_of_query, key_of_query, false);
   }
 
-  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
+  private String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
 
     if (null == namespace_of_query || null == key_of_query)
       throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
