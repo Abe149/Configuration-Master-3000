@@ -63,8 +63,8 @@ whitelist IP pattern   *.*.*.[10…100] # spaces are _not_ tolerated in IP patte
 
 # spaces are _not_ tolerated in IP pattern "bodies" as of this writing
 
-# whitelist IP pattern [126…128].[0…0].[0…1].[0…2] # this works!!!
-  whitelist IP pattern [128…126].[0…0].[0…1].[0…2] # testing the automatic "repair" of reversed ranges
+  whitelist IP pattern [126…128].[0…0].[0…1].[0…2] # this works!!!
+# whitelist IP pattern [128…126].[0…0].[0…1].[0…2] # testing the automatic "repair" of reversed ranges
 
 # testing the inequality-expression subparsers
 whitelist IP pattern <9.*.*.*
