@@ -130,7 +130,7 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
-  private final String name_of_CM3000_internal_namespace = "Configuration Master 3000";
+  public final String name_of_CM3000_internal_namespace = "Configuration Master 3000"; // public so the server can use this constant too...  this is kinda hackish, but is better IMO than adding a "shared class" just for this one constant
 
   private parsed_line_for_a_schema parse_a_line_for_a_schema(String line, String source) throws IOException {
     String                         the_namespace = null;
@@ -882,19 +882,24 @@ public class Configuration_Master_engine {
   }
 
   public long // ...
-  /* ... */ get_configuration_as_long_or_throw_if_stringLike(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+  /* ... */ get_configuration_as_long_or_throw_if_stringLike(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException, NullPointerException {
     final config_algebraic_type temp = get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, false);
-    if (null == temp)  throw new IOException("In ''get_configuration_as_long_or_throw_if_stringLike'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its integer part");
+    if (null == temp)  throw new NullPointerException("In ''get_configuration_as_long_or_throw_if_stringLike'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its integer part");
     return temp.get_assuming_it_is_a_long();
   }
 
+  // the following short wrapper is needed b/c "get_configuration_as_long_or_throw_if_stringLike" can`t return null when it`s got no match, so a client of the "get_configuration_as_long_or_throw_if_stringLike" API [e.g. the CM3000 server when checking if a non-{hard-coded default} port number has been configured for it within the CM3000 framework] needs to either "look before it leaps" or "try ... catch", and I don`t want the CM3000 server to "try ... catch" for something as predictable/normal as "the port number is not configured", since that "catch" might then catch other things as well, which I don`t want it to do b/c doing so would make debugging more difficult [due to the catching of the exception being unexpected by me]
+  public boolean is_configuration_query_matched(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+    return null != get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, false);
+  }
+
   private String // ...
-  /* ... */ get_configuration_as_String(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException { // a wrapper for the dynamic [i.e. synthetic-query-based] internal testing
+  /* ... */ get_configuration_as_String(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException, NullPointerException { // a wrapper for the dynamic [i.e. synthetic-query-based] internal testing
     final config_algebraic_type temp = get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, the_query_is_synthetic___off_AKA_false_by_default);
     if (null == temp) {
       if (the_query_is_synthetic___off_AKA_false_by_default)  return null; // synthetic tests expect [in some cases, even need!] null results when there is no query match
       final String base_msg = "In ''get_configuration_as_String'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its String part";
-      if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
+      if (strictness_level > 0)  throw new NullPointerException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
       if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
       return null;
     }

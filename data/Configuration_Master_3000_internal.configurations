@@ -1,0 +1,8 @@
+# *␟Configuration Master 3000␟port number␟4430 # TEMPORARILY COMMENTED OUT UNTIL THE HARD-CODED-SCHEMA-ELEMENTS PART IS IMPLEMENTED
+
+# as of this writing, setting the above to anything other than 4430 [in ML 0] will break the dynamic testing,
+# i.e. the tests in "/Q_and_D_dynamic_tester.bash": both the Bash tests that are in that file itself,
+# and the Python3 tests that it "drives", i.e. as of this writing:
+#   /Python3_sources/Configuration_Master_client/test_001_.py
+#   /Python3_sources/Configuration_Master_client/test_002_.py
+#   /Python3_sources/Configuration_Master_client/test_003_.py

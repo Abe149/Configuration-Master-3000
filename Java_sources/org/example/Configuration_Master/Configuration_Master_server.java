@@ -418,6 +418,18 @@ public class Configuration_Master_server {
 
             int port_number = default_port_number; // _intentionally_ not "final"
 
+            if (the_engine.is_configuration_query_matched(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, "port number")) { // HARD-CODED key name
+                long configured_port_number = the_engine.get_configuration_as_long_or_throw_if_stringLike(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, "port number"); // HARD-CODED key name
+                if (configured_port_number < 0 || configured_port_number > 65535) { // belt and suspenders
+                    final String base_msg = "Something went wrong somewhere: according to the instantiated CM3000 engine, the port number upon which to bind the CM3000 server was " + configured_port_number + ", but this is an _invalid_ integer for an IP port number, and the CM3000 engine was supposed to catch this; did it only _warn_ about it [e.g. b/c the strictness level is ≤ 0, if it is]?";
+                    if (strictness_level > 0)  throw new IOException(base_msg);
+                    if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level [" + strictness_level + "] is ≤ 0\033[0m");
+                } else {
+                    port_number = (int) configured_port_number; // whoot!  there it is.
+                } // end if
+            } // end if
+
+
             // set up the socket address
             InetSocketAddress address = new InetSocketAddress(port_number);
 
