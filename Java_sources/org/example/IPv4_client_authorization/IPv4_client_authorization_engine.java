@@ -167,7 +167,6 @@ public class IPv4_client_authorization_engine {
 
 
   private String warn_of_probably_invalidInFQDN_chars(String in) { // this function _must_ return its input unaltered
-  System.err.println("--in warn_of_probably_invalidInFQDN_chars--");
     final String                                             regex_for_chars_believed_VALID_in_FQDNs = "[_A-Za-z0-9-.]"; // DRY
     final String regex_for_chars_believed_INvalid_in_FQDNs = regex_for_chars_believed_VALID_in_FQDNs.replaceFirst("\\[", "[^");
      // I`m not sure ASCII underscore is valid in an FQDN, but I`m willing to give it the benefit of the doubt.
