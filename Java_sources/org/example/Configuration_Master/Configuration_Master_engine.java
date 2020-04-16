@@ -130,6 +130,8 @@ public class Configuration_Master_engine {
 
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
+  private final String name_of_CM3000_internal_namespace = "Configuration Master 3000";
+
   private parsed_line_for_a_schema parse_a_line_for_a_schema(String line, String source) throws IOException {
     String                         the_namespace = null;
     String                         the_key       = null;
@@ -155,6 +157,12 @@ public class Configuration_Master_engine {
     }
 
     if (null == the_namespace || the_namespace.length() < 1 || null == the_key || the_key.length() < 1 || null == the_value_str || the_value_str.length() < 1)  return null;
+
+    if (name_of_CM3000_internal_namespace.equalsIgnoreCase(the_namespace)) {
+      final String base_msg = "Alterations to the schema of the internal namespace ''" + name_of_CM3000_internal_namespace + "'' are not allowed, from within schema files or otherwise... in line with content “" + line + "” at " + source;
+      if (strictness_level > 0)  throw new IOException(base_msg);
+      if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level [" + strictness_level + "] is ≤ 0\033[0m");
+    }
 
     return new parsed_line_for_a_schema(new tuple_for_key_of_a_schema(the_namespace, the_key), get_type_by_name_ignoring_case(the_value_str)); // TO DO: make this fail gracefully when the typename "value" is unknown/unrecognized
   } // end of "parse_a_line_for_a_schema"
