@@ -131,6 +131,7 @@ public class Configuration_Master_engine {
   private Hashtable<tuple_for_key_of_a_schema, value_types> the_schema;
 
   public final String name_of_CM3000_internal_namespace = "Configuration Master 3000"; // public so the server can use this constant too...  this is kinda hackish, but is better IMO than adding a "shared class" just for this one constant
+  public final String name_of_CM3000_key_for_port_number = "port number"; // public so the server can use this constant too...  this is kinda hackish, but is better IMO than adding a "shared class" just for this one constant
 
   private parsed_line_for_a_schema parse_a_line_for_a_schema(String line, String source) throws IOException {
     String                         the_namespace = null;
@@ -572,6 +573,17 @@ public class Configuration_Master_engine {
       }
 
       the_schema = new Hashtable<tuple_for_key_of_a_schema, value_types>();
+
+      // INTENTIONALLY hard-coded, i.e. expected/planned to remain so: the schema for the CM3000 internal configuration space
+          // REMINDER: tuple_for_key_of_a_schema(String namespace_in, String key_in) { // ctor
+      the_schema.put( // ...
+      /* ... */      new tuple_for_key_of_a_schema( // ...
+      /* ... */                                    name_of_CM3000_internal_namespace, // ...
+      /* ... */                                    name_of_CM3000_key_for_port_number // ...
+      /* ... */                                   ), // ...
+      /* ... */      value_types.IP_port_number // ...
+      /* ... */     );
+
       for (debugFriendly_buffered_input schema_input : schema_inputs) {
         while (schema_input.ready()) {
           String line = schema_input.readLine();

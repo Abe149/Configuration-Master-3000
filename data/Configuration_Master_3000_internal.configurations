@@ -1,4 +1,4 @@
-# *␟Configuration Master 3000␟port number␟4430 # TEMPORARILY COMMENTED OUT UNTIL THE HARD-CODED-SCHEMA-ELEMENTS PART IS IMPLEMENTED
+*␟Configuration Master 3000␟port number␟4430 # 4430 is the hard-coded default for all MLs, so this line is redundant until edited
 
 # as of this writing, setting the above to anything other than 4430 [in ML 0] will break the dynamic testing,
 # i.e. the tests in "/Q_and_D_dynamic_tester.bash": both the Bash tests that are in that file itself,

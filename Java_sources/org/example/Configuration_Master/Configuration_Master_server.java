@@ -416,15 +416,19 @@ public class Configuration_Master_server {
                 System.exit(0);
             }
 
+
             int port_number = default_port_number; // _intentionally_ not "final"
 
-            if (the_engine.is_configuration_query_matched(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, "port number")) { // HARD-CODED key name
-                long configured_port_number = the_engine.get_configuration_as_long_or_throw_if_stringLike(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, "port number"); // HARD-CODED key name
+            if (the_engine.is_configuration_query_matched(/* WIP HARD-CODED ML for the server itself: */0     , the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number)) {
+                long configured_port_number = the_engine.get_configuration_as_long_or_throw_if_stringLike(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number);
                 if (configured_port_number < 0 || configured_port_number > 65535) { // belt and suspenders
-                    final String base_msg = "Something went wrong somewhere: according to the instantiated CM3000 engine, the port number upon which to bind the CM3000 server was " + configured_port_number + ", but this is an _invalid_ integer for an IP port number, and the CM3000 engine was supposed to catch this; did it only _warn_ about it [e.g. b/c the strictness level is ≤ 0, if it is]?";
+                    final String base_msg = "Something went wrong somewhere: according to the instantiated CM3000 engine, the port number upon which to bind the CM3000 server was " + configured_port_number + ", but this is an _invalid_ integer for an IP port number, and the CM3000 engine was supposed to catch this; did it only _warn_ about it [e.g. b/c the strictness level is ≤ 0, if it is]?  The strictness_level in the server: " + strictness_level + " [assumptions to check: this propagated down to the engine`s ctor unchanged, and the engine didn`t mess it up in any way]";
                     if (strictness_level > 0)  throw new IOException(base_msg);
                     if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level [" + strictness_level + "] is ≤ 0\033[0m");
                 } else {
+                    final String report_without_ANSI_color = "IMPORTANT_INFO: setting the CM3000 server`s port number [was " + port_number + "] to " + configured_port_number + " ...";
+                    System.err.println("\033[7m" + report_without_ANSI_color + "\033[0m");
+                    myLogger.info(report_without_ANSI_color);
                     port_number = (int) configured_port_number; // whoot!  there it is.
                 } // end if
             } // end if
