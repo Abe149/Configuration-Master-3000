@@ -908,13 +908,7 @@ public class Configuration_Master_engine {
   private String // ...
   /* ... */ get_configuration_as_String(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException, NullPointerException { // a wrapper for the dynamic [i.e. synthetic-query-based] internal testing
     final config_algebraic_type temp = get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, the_query_is_synthetic___off_AKA_false_by_default);
-    if (null == temp) {
-      if (the_query_is_synthetic___off_AKA_false_by_default)  return null; // synthetic tests expect [in some cases, even need!] null results when there is no query match
-      final String base_msg = "In ''get_configuration_as_String'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its String part";
-      if (strictness_level > 0)  throw new NullPointerException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
-      if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
-      return null;
-    }
+    if (null == temp)  return null; // IMPORTANT REMINDER: don`t make this more complicated [again], i.e. don`t add [back] "throw if strict, warn otherwise" code, b/c null returned from the "real" query engine is _OK_: it just means "404, not found"
     return temp.get_as_String_even_if_the_value_is_an_integer();
   }
 

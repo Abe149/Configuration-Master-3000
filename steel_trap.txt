@@ -11,6 +11,11 @@ Useful [and complicated enough to be worth preserving here] Unix commands
 
 ls -l / | sed -e 's/Apr/<=/' -e 's/Jun/==/' -e 's/Mar/>=/' | sort -k 5,5n -k 6,6
 
+# re the next line: set the env. var. "ML" first, unless testing empty string on purpose
+curl -fkv https://localhost:4430/API_version_1/get:maturity_level=$ML,namespace=namespace_for_query_with_ML=$ML,key=key_for_query_with_ML=$ML; echo
+
+
+
 
 
 TO DOs
