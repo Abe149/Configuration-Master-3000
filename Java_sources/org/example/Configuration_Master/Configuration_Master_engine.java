@@ -302,33 +302,33 @@ public class Configuration_Master_engine {
     // now validate!
     switch (the_VT) {
       case nonnegative_integer:
-        if (the_value.get_as_long() < 0) {
+        if (the_value.get_assuming_it_is_a_long() < 0) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonnegative_integer”.  Source: " + source);
         }
         break;
 
       case    positive_integer:
-        if (the_value.get_as_long() < 1) {
+        if (the_value.get_assuming_it_is_a_long() < 1) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “positive_integer”.  Source: " + source);
         }
         break;
 
       case IP_port_number:
-        if (the_value.get_as_long() < 0 || the_value.get_as_long() > 65535) {
+        final long temp_long = the_value.get_assuming_it_is_a_long(); // DRY
+        if (temp_long < 0 || temp_long > 65535) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “IP_port_number”.  Source: " + source);
         }
         break;
 
       case nonempty_string:
-        if (the_value.get_as_String().length() < 1) {
+        if (the_value.get_assuming_it_is_a_String().length() < 1) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “nonempty_string”.  Source: " + source);
         }
         break;
 
       case URL:
-        // -- the next line: hand-rolled URL validation via regex...  the Java library version is likely to be better in some way
-        // if (the_value.get_as_String().length() < 1 || ! Pattern.matches("\\p{Alnum}+://[\\p{Alnum}-\\.]+(/\\p{Graph}*)?", the_value.get_as_String())) {
-        if (the_value.get_as_String().length() < 1 || ! is_this_string_a_valid_URL(the_value.get_as_String())) {
+        final String temp_String = the_value.get_assuming_it_is_a_String(); // DRY
+        if (temp_String.length() < 1 || ! is_this_string_a_valid_URL(temp_String)) {
           throw new IOException("Error while type checking; for key: " + the_key_of_the_config + " the value was " + the_value + " but the schema said the type was “URL”.  Source: " + source);
         }
         break;
@@ -374,17 +374,27 @@ public class Configuration_Master_engine {
       return ! use_string;
     }
   */
-    long get_as_long() {
+    long get_assuming_it_is_a_long() throws IOException {
+      if (use_string) {
+        final String base_msg = "a ''config_algebraic_type'' object was attempted to be gotten as a long when it was string-like, with string_value = " + stringize_safely(string_value);
+        if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
+        if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
+      }
       return integer_value;
     }
 
-    String get_as_String() {
+    String get_assuming_it_is_a_String() throws IOException {
+      if (! use_string) {
+        final String base_msg = "a ''config_algebraic_type'' object was attempted to be gotten as a String when it was integer-like, with integer_value = " + integer_value + ' ';
+        if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
+        if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
+      }
       return string_value;
     }
 
     String get_as_String_even_if_the_value_is_an_integer() { // for the main getter that provides this engine with its raison dêtre
       if (use_string)  return string_value;
-      return String.valueOf(integer_value);
+      return " " + String.valueOf(integer_value) + ' ';
     }
 
     // this is needed for the correct "asterisk validation" of the configurations, if not also for other things
@@ -781,8 +791,8 @@ public class Configuration_Master_engine {
         // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
         System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
         /* ... */    pred_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-        final String pred_result = get_configuration( // ...
-        /* ... */    pred_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
+        final String pred_result = get_configuration_as_String( // ...
+        /* ... */    pred_ML, the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
         if (pred_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == pred_result) {
@@ -812,8 +822,8 @@ public class Configuration_Master_engine {
         // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
         System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
         /* ... */    curr_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-        final String curr_result = get_configuration( // ...
-        /* ... */    curr_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
+        final String curr_result = get_configuration_as_String( // ...
+        /* ... */    curr_ML, the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
         if (curr_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
           if (null == curr_result) {
@@ -838,8 +848,8 @@ public class Configuration_Master_engine {
       // odd formatting of the next 2 statements: intentionally doing weird things with line breaks and spacing so as to make the e.g. "pred" in "pred_result" & "pred_ML" to line up vertically
       System.err.println("\033[35mINFO: about to check " + the_key_of_the_config + " \033[30;105musing ML = " + // ...
       /* ... */    succ_ML + "\033[0;35m in ''simple_overlappingML_config_finder''...\033[0m");
-      final String succ_result = get_configuration( // ...
-      /* ... */    succ_ML,                        the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
+      final String succ_result = get_configuration_as_String( // ...
+      /* ... */    succ_ML, the_namespace, the_key, true); // the true at the end: the_query_is_synthetic___off_AKA_false_by_default
 
       if (succ_ML < 0) { // when testing negative MLs, null in the result is a _good_ thing
         if (null == succ_result) {
@@ -866,11 +876,33 @@ public class Configuration_Master_engine {
 
 
   // working around the fact that Java doesn`t have defaults for param.s
-  public String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
-    return get_configuration(maturity_level_of_query, namespace_of_query, key_of_query, false);
+  public String // ...
+  /* ... */ get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException { // the primary interface; expected to be used for at least 98% of queries, so intentionally _not_ renaming this to e.g. "get_configuration_as_String"
+    return get_configuration_as_String(maturity_level_of_query, namespace_of_query, key_of_query, false);
   }
 
-  private String get_configuration(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
+  public long // ...
+  /* ... */ get_configuration_as_long_or_throw_if_stringLike(int maturity_level_of_query, String namespace_of_query, String key_of_query) throws IOException {
+    final config_algebraic_type temp = get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, false);
+    if (null == temp)  throw new IOException("In ''get_configuration_as_long_or_throw_if_stringLike'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its integer part");
+    return temp.get_assuming_it_is_a_long();
+  }
+
+  private String // ...
+  /* ... */ get_configuration_as_String(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException { // a wrapper for the dynamic [i.e. synthetic-query-based] internal testing
+    final config_algebraic_type temp = get_configuration_as___config_algebraic_type(maturity_level_of_query, namespace_of_query, key_of_query, the_query_is_synthetic___off_AKA_false_by_default);
+    if (null == temp) {
+      if (the_query_is_synthetic___off_AKA_false_by_default)  return null; // synthetic tests expect [in some cases, even need!] null results when there is no query match
+      final String base_msg = "In ''get_configuration_as_String'': got a null result [of type ''config_algebraic_type''] from the query engine, so cannot ask the object for its String part";
+      if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
+      if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
+      return null;
+    }
+    return temp.get_as_String_even_if_the_value_is_an_integer();
+  }
+
+  private config_algebraic_type // ...              // -- the real meat of the query engine -- //
+  /* ... */ get_configuration_as___config_algebraic_type(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
 
     if (null == namespace_of_query || null == key_of_query)
       throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
@@ -889,25 +921,19 @@ public class Configuration_Master_engine {
         final String report_without_ANSI_color = "a negative ML [" + maturity_level_of_query + "] was found in a synthetic query."; // this may not get used in the current execution
 
         if (maturity_level_of_query == -1) {
-          System.err.println(                            "INFO: " +    report_without_ANSI_color);
-        } else { // ML < -1
-          if (verbosity > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "033[0m"); // at all verbosity levels, even zero: ML < -1 is seriously bad, even in synthetic queries
-          if (strictness_level > 5) {
-            throw new IOException(                                     report_without_ANSI_color);
-          }
+          System.err.println(                "INFO: " +    report_without_ANSI_color);
+        } else { // ML < -1 => BUG
+          final String BUG_report_without_ANSI_color = "BUG CHECK: " + report_without_ANSI_color;
+          if (strictness_level > 5)  throw new IOException(BUG_report_without_ANSI_color);
+          System.err.println("\033[31mWARNING: " +         BUG_report_without_ANSI_color + "033[0m"); // at all verbosity levels, even zero: ML < -1 is seriously bad in synthetic queries
         }
 
       } else { // _not_ the_query_is_synthetic
 
         final String report_without_ANSI_color = "a negative ML [" + maturity_level_of_query + "] was found in a non-synthetic query."; // this may not get used in the current execution
 
-        if (verbosity > 0) {
-          System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "033[0m");
-        }
-
-        if (strictness_level > 5) {
-          throw new IOException(                   report_without_ANSI_color);
-        }
+        if (strictness_level > 5)  throw new IOException(                   report_without_ANSI_color);
+        if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + report_without_ANSI_color + "033[0m");
 
       } // end if
     } // end if
@@ -965,7 +991,7 @@ public class Configuration_Master_engine {
     // reminder to self: do _not_ enclose the following switch block in "if (strict_checking_mode_enabled)" or similar
     switch (the_matches.size()) {
       case 0:  return null; // nothing found, so cause the server to "return" a 404 by indicating that a match was not found
-      case 1:  return the_matches.get(0).get_as_String_even_if_the_value_is_an_integer(); // only 1 match, so no chance that there is a conflict
+      case 1:  return the_matches.get(0); // only 1 match, so no chance that there is a conflict
       default: // the "fun" case
         if (verbosity > 3) {
           System.err.println("TESTING 24: _did_ get to the fun case [in the run-time (AKA query-processing-time)] conflict/redundancy checker/catcher.");
@@ -994,7 +1020,7 @@ public class Configuration_Master_engine {
         } // end for
         if (all_the_same) {
           if (verbosity > 5)  dump_multiple_matches("INFO: multiple matches, but apparently all with the same value [after type erasure of CM3000 types]", the_matching_KeyOfConfig_objects, the_matches, "93");
-          return first_match.get_as_String_even_if_the_value_is_an_integer();
+          return first_match;
         } else { // not all the same, therefor bad  :-(
           if (strictness_level >= 2) {
             report_match_set_and_throw("Data conflict: a collection of matches was found to contain different results, even when ignoring CM3000 types.", the_matching_KeyOfConfig_objects, the_matches);
@@ -1002,7 +1028,7 @@ public class Configuration_Master_engine {
             System.exit(-4);
           } else { // non-strict
             if (verbosity > 5)  dump_multiple_matches("WARNING: multiple matches; since engine has strictness_level < 2, going to return the first match...", the_matching_KeyOfConfig_objects, the_matches, "31");
-            return first_match.get_as_String_even_if_the_value_is_an_integer();
+            return first_match;
           }
         }
 
@@ -1010,7 +1036,7 @@ public class Configuration_Master_engine {
     } // end switch
 
     return null; // this is here just to shut up the stupid Java compiler about "missing return statement": this line should never be reached
-  } // end of "get_configuration"
+  } // end of "get_configuration_as___config_algebraic_type"
 
 
   private void report_match_set_and_throw(String                               base_report,
