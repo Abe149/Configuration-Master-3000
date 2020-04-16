@@ -5,7 +5,7 @@ if [ "$0" = sh -o "$0" = /bin/sh -o "$0" = /usr/bin/sh -o "$0" = bash -o "$0" = 
   return 1
 fi
 
-export CONFIG_SERVER_URL='https://localhost:4430/'
+# export CONFIG_SERVER_URL='https://localhost:4430/' # commented out to test the improvements made to "get_config.bash" on April 16 2020
 
 # tests that are expected to succeed when not _too_ strict
 
