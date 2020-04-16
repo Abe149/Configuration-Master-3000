@@ -14,6 +14,25 @@ assert sys.version_info[0] >= 3
 API_version_to_use = 1
 API_version_prefix = "/API_version_" + str(API_version_to_use)
 
+def get_server_URL():
+  config_server_env_var_name = "CONFIG_SERVER_URL" # DRY
+  config_server_URL = ""
+  if config_server_env_var_name in os.environ:
+    config_server_URL = os.environ[config_server_env_var_name].strip()
+
+  if not config_server_URL:
+    config_server_URL_pathname="/etc/Configuration_Master_3000/server_URL" # for clarity, i.e. for readability of code
+    file = open(config_server_URL_pathname, 'r')
+    config_server_URL = file.readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+
+  if not config_server_URL:
+    config_server_URL = "https://localhost:4430/" # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
+
+  # the next line: not doing a "return" of this value right away, so that it will be easier for me to add more debug output later
+  config_server_URL = config_server_URL.rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
+  return config_server_URL
+
+
 def get_test():
   CONFIG_SERVER_URL = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
 
