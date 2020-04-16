@@ -23,7 +23,12 @@ def get_test():
     return fileLike.read().decode("utf-8")
 
 
-def get_config(namespace='*', key=None): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
+def get_config_as_integer(namespace='*', key=None): # default value for "namespace": see below for explanation
+  # NOTE: this will probably propagate an exception [from int(str)] when the returned data is not parsable as an int
+  #       _intentionally_ _not_ doing anything about that here; let the caller deal with it if they made a mistake
+  return int(get_config(namespace=namespace, key=key))
+
+def get_config(           namespace='*', key=None): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
 
   # if not namespace:  raise ValueError("in Configuration Master 3000 client: empty namespace given")
   exception_prefix = "in Configuration Master 3000 client: " # DRY
