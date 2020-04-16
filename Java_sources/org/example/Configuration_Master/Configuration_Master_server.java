@@ -53,6 +53,8 @@ public class Configuration_Master_server {
     private final static long             default_verbosity = 5;
     private       static long verbosity = default_verbosity;
 
+    private static int default_port_number = 4430; // IMPORTANT hard-coded-default value: 4430 instead of 443 on purpose, to enable non-root use without a socket-forwarding process that runs as root
+
     private final static Logger myLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME); // <https://www.vogella.com/tutorials/Logging/article.html>, <https://docs.oracle.com/javase/7/docs/api/java/util/logging/Logger.html>, <https://docs.oracle.com/javase/6/docs/api/java/util/logging/Logger.html>
 
     private static IPv4_client_authorization_engine my_client_authorization_engine;
@@ -414,10 +416,10 @@ public class Configuration_Master_server {
                 System.exit(0);
             }
 
-
+            int port_number = default_port_number; // _intentionally_ not "final"
 
             // set up the socket address
-            InetSocketAddress address = new InetSocketAddress(4430); // IMPORTANT hard-coded value: 4430 instead of 443 on purpose, for non-root use
+            InetSocketAddress address = new InetSocketAddress(port_number);
 
             // initialise the HTTPS server
             HttpsServer httpsServer = HttpsServer.create(address, 0);
