@@ -199,26 +199,38 @@ public class Configuration_Master_server {
             }
             http_assert(he, maturity_level >= 0, 400, "internal error while trying to parse maturity level from HTTP input");
 
+            String response = null; // I _had_ to initialize this -- even though I did not want to do so! -- in order to shut up the stupid Java compiler about "variable response might not have been initialized"  :-(
             try {
-              final String response = the_engine.get_configuration(maturity_level, namespace, key);
-              http_assert(he, response!=null, 404, "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + stringize_safely(namespace) + ", key=" + stringize_safely(key));
-
-              if (verbosity > 1) {
-                System.err.println("INFO: result of query: " + stringize_safely(response) + '\n');
-              }
-
-              he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-              he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
-              he.sendResponseHeaders(200, response.getBytes().length);
-              OutputStream os = he.getResponseBody();
-              os.write(response.getBytes());
-              os.close();
+                response = the_engine.get_configuration(maturity_level, namespace, key);
             } catch (IOException ioe) {
-              http_assert(he, false, 500, "The Configuration Master engine threw/propagated the following exception: " + ioe);
+                http_assert(he, false, 500, "The Configuration Master engine threw/propagated the following exception: " + ioe);
+                System.exit(-2); // due to the _intentional_ false in the preceding line, this line should never be reached
+            } catch (NullPointerException npe) {
+                http_assert(he, false, 500, "The Configuration Master engine threw/propagated the following exception: " + npe);
+                System.exit(-3); // due to the _intentional_ false in the preceding line, this line should never be reached
             }
 
-        }
-    }
+            if (verbosity > 2) {
+              System.err.println("INFO: result of query [_before_ replacing null with 404 message if necessary]: " + stringize_safely(response) + '\n');
+            }
+
+            final int HTTP_status_to_return = (null == response) ? 404 : 200;
+
+            if (null == response)  response = "the Configuration Master engine did not find a match for the given query of: maturity_level=" + maturity_level + ", namespace=" + stringize_safely(namespace) + ", key=" + stringize_safely(key);
+
+            if (verbosity > 1) {
+              System.err.println("INFO: result of query [_after_ replacing null with 404 message if necessary]: " + stringize_safely(response) + '\n');
+            }
+
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
+            he.sendResponseHeaders(HTTP_status_to_return, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+
+        } // end of:  public void handle(HttpExchange he) throws IOException
+    } // end of class "GetHandler"
 
 
     private static short strictness_level = 0; // moved here, i.e. outside of "main", so I can report it to the outside world

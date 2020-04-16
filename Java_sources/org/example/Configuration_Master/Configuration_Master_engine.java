@@ -916,7 +916,7 @@ public class Configuration_Master_engine {
   /* ... */ get_configuration_as___config_algebraic_type(int maturity_level_of_query, String namespace_of_query, String key_of_query, boolean the_query_is_synthetic___off_AKA_false_by_default) throws IOException {
 
     if (null == namespace_of_query || null == key_of_query)
-      throw new IOException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
+      throw new NullPointerException("Internal program error in “get_configuration”: a param. was null that is not allowed to be null.");
 
     if (verbosity > 1) {
       System.err.println("\nINFO: maturity_level_of_query=" + maturity_level_of_query + ", namespace_of_query=" + stringize_safely(namespace_of_query) + ", key_of_query=" + stringize_safely(key_of_query) + '\n');
