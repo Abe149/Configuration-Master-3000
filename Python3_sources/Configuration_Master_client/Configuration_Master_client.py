@@ -22,8 +22,7 @@ def get_server_URL():
 
   if not config_server_URL:
     config_server_URL_pathname="/etc/Configuration_Master_3000/server_URL" # for clarity, i.e. for readability of code
-    file = open(config_server_URL_pathname, 'r')
-    config_server_URL = file.readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+    config_server_URL = open(config_server_URL_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
 
   if not config_server_URL:
     config_server_URL = "https://localhost:4430/" # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
@@ -33,10 +32,36 @@ def get_server_URL():
   return config_server_URL
 
 
-def get_test():
-  CONFIG_SERVER_URL = os.environ["CONFIG_SERVER_URL"].rstrip('/') # we need to string trailing slashes from the URL so we can ensure _exactly_ one slash between the end of the "authority" [i.e. either hosthame or IP by itself or hosthame or IP followed immediately by ":<port number>" and the start of "get"
+def can_parse_to_int(str_in):
+  if not str_in:  return False
+  try:
+    _ = int(str_in)
+    return True
+  except ValueError:
+    return False
 
-  the_request = request.Request(url = CONFIG_SERVER_URL + API_version_prefix + "/test")
+def get_ML(): # can return either an int or an str
+  config_ML_env_var_name = "CONFIG_MATURITY_LEVEL" # DRY
+  config_ML = ""
+  if config_ML_env_var_name in os.environ:
+    config_ML = os.environ[config_ML_env_var_name].strip()
+
+  if config_ML and (not can_parse_to_int(config_ML) or (int(config_ML) >= 0)):
+    return config_ML
+
+  config_ML_pathname="/etc/Configuration_Master_3000/maturity_level" # for clarity, i.e. for readability of code
+  config_ML = open(config_ML_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+
+  if config_ML and (not can_parse_to_int(config_ML) or (int(config_ML) >= 0)):
+    return config_ML
+    
+  return 0 # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
+
+
+def get_test():
+  config_server_URL = get_server_URL()
+
+  the_request = request.Request(url = config_server_URL + API_version_prefix + "/test")
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
@@ -56,10 +81,7 @@ def get_config(           namespace='*', key=None): # default value for "namespa
 
   # same interface as the Bash client
 
-  config_server_URL     = get_server_URL()
-  CONFIG_MATURITY_LEVEL = os.environ["CONFIG_MATURITY_LEVEL"]
-
-  the_request = request.Request(url = config_server_URL + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(CONFIG_MATURITY_LEVEL), pathname2url(namespace), pathname2url(key))))
+  the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(get_ML()), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")

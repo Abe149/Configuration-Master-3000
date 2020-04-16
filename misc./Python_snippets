@@ -1,0 +1,8 @@
+def can_parse_to_int(str_in):
+  if not str_in:  return False
+  try:
+    _ = int(str_in)
+    return True
+  except ValueError:
+    return False
+
