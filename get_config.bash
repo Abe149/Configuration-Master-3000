@@ -60,7 +60,7 @@ if [ -z "$key" ]; then
   fi
   exit 5
 fi
-key=`echo $key | sed 's/ /%20/g'` # Q-and-D URL encoding
+key=`echo -n $key | xxd -p | tr -d '\n' | sed 's/../%&/g'`
 
 # the "-k" flag in the cURL invocation is to work around HTTPS servers with broken certificates; remove the 'k' if you want strictness
 curl -fk "$CONFIG_SERVER_URL$API_LEVEL_PREFIX/get:maturity_level=$config_maturity_level,namespace=$namespace,key=$key" -w '\n'
