@@ -351,7 +351,7 @@ public class Configuration_Master_server {
         if (verbosity > 0) {
             System.err.println("\nINFO: running with a verbosity  level of " + verbosity);
             System.err.println(  "INFO: running with a strictness level of " + strictness_level);
-            System.err.println(  "INFO: planning to try to load data from directory at ''" + data_directory + "''.");
+            System.err.println(  "INFO: planning to try to load data from directory at ''" + data_directory + "''");
         }
 
         if (strictness_level > 0 && verbosity < 0)  throw new IOException("{verbosity [" + verbosity + "] < 0} and/but strictness_level [" + strictness_level + "] > 0 "); // belt and suspenders
@@ -432,12 +432,14 @@ public class Configuration_Master_server {
 
             int port_number = default_port_number; // _intentionally_ not "final"
 
-            if (the_engine.is_configuration_query_matched(/* WIP HARD-CODED ML for the server itself: */0     , the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number)) {
-                long configured_port_number = the_engine.get_configuration_as_long_or_throw_if_stringLike(/* WIP */0, the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number);
+            final int the_ML_for_the_server_itself = get_the_ML_for_the_server_itself();
+
+            if (the_engine.is_configuration_query_matched(the_ML_for_the_server_itself, the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number)) {
+                long configured_port_number = the_engine.get_configuration_as_long_or_throw_if_stringLike(the_ML_for_the_server_itself, the_engine.name_of_CM3000_internal_namespace, the_engine.name_of_CM3000_key_for_port_number);
                 if (configured_port_number < 0 || configured_port_number > 65535) { // belt and suspenders
                     final String base_msg = "Something went wrong somewhere: according to the instantiated CM3000 engine, the port number upon which to bind the CM3000 server was " + configured_port_number + ", but this is an _invalid_ integer for an IP port number, and the CM3000 engine was supposed to catch this; did it only _warn_ about it [e.g. b/c the strictness level is ≤ 0, if it is]?  The strictness_level in the server: " + strictness_level + " [assumptions to check: this propagated down to the engine`s ctor unchanged, and the engine didn`t mess it up in any way]";
                     if (strictness_level > 0)  throw new IOException(base_msg);
-                    if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level [" + strictness_level + "] is ≤ 0\033[0m");
+                    if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level is ≤ 0\033[0m");
                 } else {
                     final String report_without_ANSI_color = "IMPORTANT_INFO: setting the CM3000 server`s port number [was " + port_number + "] to " + configured_port_number + " ...";
                     System.err.println("\033[7m" + report_without_ANSI_color + "\033[0m");
@@ -536,6 +538,62 @@ public class Configuration_Master_server {
 
             System.exit(-1);
         }
-    }
+    } // end of "main"
 
-}
+
+    private static int get_the_ML_for_the_server_itself() { // as of this writing, this is only used for getting the port # from the engine if configured there
+
+        { // an unpredicated inner scope, to prevent the escape of variables into the next section of this function
+            final String ML_env_var_name = "CONFIG_MATURITY_LEVEL"; // HARD-CODED
+
+            System.err.println("\nDEBUG: ML_env_var_name = ''" + ML_env_var_name + "''");
+
+            String ML_from_env_if_there = System.getenv(ML_env_var_name);
+            if (null ==  ML_from_env_if_there) {
+                if (verbosity > 0)  System.err.println("INFO: could not find ''" + ML_env_var_name + "'' in the environment, so continuing to try to find the ML elsewhere");
+            } else {
+                ML_from_env_if_there = ML_from_env_if_there.trim(); // just in case of errant surrounding spaces
+                if (ML_from_env_if_there.length() > 0) { // ignore empty [possibly modulo leading/trailing/both spaces] env. var.s
+                    try {
+                        final Integer temp_ML_Integer = the_engine.get_maturityLevel_Integer_from_string_containing_either___decimal_ASCII_integer___or_alias(ML_from_env_if_there);
+                        if (null == temp_ML_Integer) {
+                            if (verbosity > 0)  System.err.println("\033[31mWARNING: unable to make sense of the env. var. ''" + ML_env_var_name + "''`s value [''" + ML_from_env_if_there + "''], so continuing to try to find the ML elsewhere\033[0m");
+                        } else if (temp_ML_Integer < 0) {
+                            if (verbosity > 0)  System.err.println("\033[31mWARNING: got a negative integer from parsing/de-aliasing the env. var. ''" + ML_env_var_name + "''`s value [''" + ML_from_env_if_there + "''], so continuing to try to find the ML elsewhere\033[0m");
+                        } else {
+                            return temp_ML_Integer; // success!  decoded to a non-negative integer
+                        } // end if
+                    } catch (IOException ioe) {
+                        if (verbosity > 0)  System.err.println("\033[31mWARNING: got the exception ''" + ioe + "'' while trying to make sense of the env. var. ''" + ML_env_var_name + "''`s value [''" + ML_from_env_if_there + "''], so continuing to try to find the ML elsewhere\033[0m");
+                    }
+                } // end if
+            } // end if
+        } // end of unpredicated inner scope
+
+        final String pathname = "/etc/Configuration_Master_3000/maturity_level"; // HARD-CODED
+        if (verbosity > 0)  System.err.println("INFO: a currently-valid [''currently'' b/c the ML aliases are configurable] value for ''CONFIG_MATURITY_LEVEL'' was not found in the environment, so about to try to get it from ''" + pathname + "''");
+
+        try {
+            final BufferedReader my_BR = new BufferedReader(new FileReader(pathname));
+            final String maturity_level_string = my_BR.readLine().replaceFirst("[#⍝].*", "").trim(); // allow for comments and unneeded ASCII spaces
+            final Integer temp_ML_Integer = the_engine.get_maturityLevel_Integer_from_string_containing_either___decimal_ASCII_integer___or_alias(maturity_level_string);
+            if (null == temp_ML_Integer) {
+                if (verbosity > 0)  System.err.println("\033[31mWARNING: unable to make sense of the input [''" + maturity_level_string + "''] obtained by reading the first line of the pathname ''" + pathname + "'', so resorting to the hard-coded last-resort ML value of zero [i.e. a developer`s workstation/VM]\033[0m");
+                return 0;
+            }
+            if (temp_ML_Integer < 0) { // this could have been an "else if" to the preceding "if"
+                if (verbosity > 0)  System.err.println("\033[31mWARNING: got a negative number from decoding the input ''" + maturity_level_string + "'' obtained by reading the first line of the pathname ''" + pathname + "'', so resorting to the hard-coded last-resort ML value of zero [i.e. a developer`s workstation/VM]\033[0m");
+                return 0;
+            }
+            return temp_ML_Integer; // success!  decoded to a non-negative integer // note: this could have been an "else" to the preceing "if"
+        } catch (FileNotFoundException fnfe) {
+            if (verbosity > 0)  System.err.println("\033[31mWARNING: unable to find a file [or a symlink to a file, and so forth] at ''" + pathname + "'', so resorting to the hard-coded last-resort ML value of zero [i.e. a developer`s workstation/VM]\033[0m");
+            return 0;
+        } catch (IOException ioe) {
+            if (verbosity > 0)  System.err.println("\033[31mWARNING: unable to read a line from a file [or a symlink to a file, and so forth] at ''" + pathname + "'' -- got I/O exception " + ioe + " -- so resorting to the hard-coded last-resort ML value of zero [i.e. a developer`s workstation/VM]\033[0m");
+            return 0;
+        } // end try
+
+    } // end of "get_the_ML_for_the_server_itself"
+
+} // end of class "Configuration_Master_server"

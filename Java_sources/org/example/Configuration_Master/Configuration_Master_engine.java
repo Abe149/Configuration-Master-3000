@@ -14,8 +14,31 @@ public class Configuration_Master_engine {
 
   private Hashtable<String, Integer> maturityLevel_aliases;
 
-  public Integer get_maturityLevel_Integer_from_alias(String alias_in) {
-    return maturityLevel_aliases.get(alias_in.toLowerCase());
+  public Integer get_maturityLevel_Integer_from_alias(String alias_in) { // can return null meaning "I don`t know"
+    if (null == alias_in)  return null;
+    // maybe TO DO: make this verbose when an alias is not found?
+    // maybe TO DO: belt-and-suspenders check for negative values?
+    // intentionally _not_ to do: throw when an alias is not found [it`s better IMO to return null here and let the caller give a more-precise explanation of where things went wrong when it receives the null and strictness > 0]
+    return maturityLevel_aliases.get(alias_in.toLowerCase()); // _intentionally_ no "trim()" here, as all the known callers already do it [it should only be a tiny performance hit to add it here, but why bother: currently leaving it as a bug if the caller didn`t already trim before calling this with the relevant input]
+  }
+  // reminder: use the preceding function _only_ when the input String is either an alias or "nonsense", _not_ when it is [or even _might_ be] a String representation of an ASCII decimal integer [b/c in that case it won`t work "as expected"]!  [maybe TO DO: remove this method, use only the more-tolerant alternative that uses "parseInt" to read integers when that`s what the input contains?]
+
+  public Integer get_maturityLevel_Integer_from_string_containing_either___decimal_ASCII_integer___or_alias(String input) throws IOException { // can return null meaning "I don`t know"
+    if (null == input)  return null;
+    input = input.trim(); // IIRC, Java`s "parseInt" & "friends" [e.g. "parseShort"] are all pissy about surrounding spaces and throw when they find them [at least for _leading_ spaces]
+    int maturity_level = -1;
+    try {
+      maturity_level = Integer.parseInt(input);
+      if (maturity_level < 0) {
+        final String base_msg = "A maturity-level string input was found to contain a negative integer";
+        if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] was > 0");
+        if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring it because the strictness level [" + strictness_level + "] is ≤ 0\033[0m");
+        return null; // in case strictness_level is ≤ 0; this tells a "slight lie", as it maps {incorrect/invalid input} to "I don`t know"
+      } // end if
+      return maturity_level;
+    } catch (NumberFormatException nfe) { // not necessarily a problem: the input might be an alias
+      return get_maturityLevel_Integer_from_alias(input); // will return null if the callee returns null
+    }
   }
 
   private class tuple_for_key_of_a_config {
