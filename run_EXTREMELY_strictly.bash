@@ -14,7 +14,7 @@ for countdown in {9..1}; do
   sleep 1s
 done
 
-pushd `dirname "$0"` > /dev/null
+pushd $(dirname `readlink -e "$0"`) > /dev/null
 ant && java -jar ./Build/jars/Configuration_Master.jar verbosity=9 "$@" strictness_level=9 # "strictness_level=9" is _after_ “"$@"” here on _purpose_, to ensure that this script will operate like it says in its filename
 result="$?"
 /usr/bin/env echo -e "\nResult code: $result"
