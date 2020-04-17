@@ -32,10 +32,10 @@ def get_server_URL():
   return config_server_URL
 
 
-def can_parse_to_int(str_in):
-  if not str_in:  return False
+def can_convert_to_int(arg):
+  if not arg:  return False
   try:
-    _ = int(str_in)
+    _ = int(arg)
     return True
   except ValueError:
     return False
@@ -46,13 +46,13 @@ def get_ML(): # can return either an int or an str
   if config_ML_env_var_name in os.environ:
     config_ML = os.environ[config_ML_env_var_name].strip()
 
-  if config_ML and (not can_parse_to_int(config_ML) or (int(config_ML) >= 0)):
+  if config_ML and ((not can_convert_to_int(config_ML)) or (int(config_ML) >= 0)):
     return config_ML
 
   config_ML_pathname="/etc/Configuration_Master_3000/maturity_level" # for clarity, i.e. for readability of code
   config_ML = open(config_ML_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
 
-  if config_ML and (not can_parse_to_int(config_ML) or (int(config_ML) >= 0)):
+  if config_ML and ((not can_convert_to_int(config_ML)) or (int(config_ML) >= 0)):
     return config_ML
     
   return 0 # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
