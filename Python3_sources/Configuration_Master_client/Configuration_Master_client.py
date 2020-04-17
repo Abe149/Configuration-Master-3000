@@ -87,7 +87,7 @@ def get_config(           namespace='*', key=None): # default value for "namespa
 
   # same interface as the Bash client
 
-  the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(get_ML()), pathname2url(namespace), pathname2url(key))))
+  the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(str(get_ML())), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")

@@ -7,7 +7,7 @@
 import Configuration_Master_client, os
 
 def test(key):
-  print ("in maturity level " + Configuration_Master_client.get_ML() + ", namespace '*' [i.e. only matches config.s that are present in all namespaces at least in this ML]:\n\t " + ("%-70s" % ("for key = ''" + key + "'':")) + " result = (integer: " + str(Configuration_Master_client.get_config_as_integer(key=key)) + ')')
+  print ("in maturity level " + str(Configuration_Master_client.get_ML()) + ", namespace '*' [i.e. only matches config.s that are present in all namespaces at least in this ML]:\n\t " + ("%-70s" % ("for key = ''" + key + "'':")) + " result = (integer: " + str(Configuration_Master_client.get_config_as_integer(key=key)) + ')')
   print ()
 
 print ()
