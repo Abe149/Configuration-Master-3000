@@ -22,7 +22,10 @@ def get_server_URL():
 
   if not config_server_URL:
     config_server_URL_pathname="/etc/Configuration_Master_3000/server_URL" # for clarity, i.e. for readability of code
-    config_server_URL = open(config_server_URL_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+    try:
+      config_server_URL = open(config_server_URL_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+    except:
+      pass
 
   if not config_server_URL:
     config_server_URL = "https://localhost:4430/" # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
@@ -50,7 +53,10 @@ def get_ML(): # can return either an int or an str
     return config_ML
 
   config_ML_pathname="/etc/Configuration_Master_3000/maturity_level" # for clarity, i.e. for readability of code
-  config_ML = open(config_ML_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+  try:
+    config_ML = open(config_ML_pathname, 'r').readline().split('#', 2)[0].split('⍝', 2)[0].strip()
+  except:
+    pass
 
   if config_ML and ((not can_convert_to_int(config_ML)) or (int(config_ML) >= 0)):
     return config_ML
