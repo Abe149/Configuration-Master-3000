@@ -73,12 +73,19 @@ def get_test():
     return fileLike.read().decode("utf-8")
 
 
-def get_config_as_integer(namespace='*', key=None): # default value for "namespace": see below for explanation
+def get_config_as_Boolean(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
+  import re
+  temp = get_config(namespace=namespace, key=key, ML=ML)
+  if re.match(".*(false|no|off| 0 )"    , temp.lower(), re.IGNORECASE):  return False # no need for a trailing ".*" in the regex
+  if re.match(".*(true|yes|on| 1 | -1 )", temp.lower(), re.IGNORECASE):  return  True # no need for a trailing ".*" in the regex
+  raise ValueError("in Configuration Master 3000 client: SYNTAX ERROR while trying to get as a Boolean: ''" + temp + "''")
+
+def get_config_as_integer(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
   # NOTE: this will probably propagate an exception [from int(str)] when the returned data is not parsable as an int
   #       _intentionally_ _not_ doing anything about that here; let the caller deal with it if they made a mistake
-  return int(get_config(namespace=namespace, key=key))
+  return int(get_config(namespace=namespace, key=key, ML=ML))
 
-def get_config(           namespace='*', key=None): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
+def get_config(           namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
 
   # if not namespace:  raise ValueError("in Configuration Master 3000 client: empty namespace given")
   exception_prefix = "in Configuration Master 3000 client: " # DRY
@@ -87,7 +94,7 @@ def get_config(           namespace='*', key=None): # default value for "namespa
 
   # same interface as the Bash client
 
-  the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(str(get_ML())), pathname2url(namespace), pathname2url(key))))
+  the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(str(ML)), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
