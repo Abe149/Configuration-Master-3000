@@ -379,24 +379,27 @@ public class Configuration_Master_engine {
     }
   }
 
+  private enum config_algebraic_type_mode { integer, string }; // putting this inside "config_algebraic_type" didn`t work, so therefor the cumbersome name  :-(
+
   // every configuration value is currently assumed to be either {an integer compatible with a "long"} or {"string-like"}
   private class config_algebraic_type {
-    private boolean use_string;
+
+    private config_algebraic_type_mode mode;
     private long  integer_value;
     private String string_value;
 
     public config_algebraic_type(long in) {
       integer_value = in;
-      use_string = false;
+      mode = config_algebraic_type_mode.integer;
     }
 
     public config_algebraic_type(String in) {
       string_value = in;
-      use_string = true;
+      mode = config_algebraic_type_mode.string;
     }
 
     boolean is_internally_a_String() {
-      return use_string;
+      return config_algebraic_type_mode.string == mode;
     }
 
   /* nah, changed my mind: exposes internal details of this class too much
@@ -405,7 +408,7 @@ public class Configuration_Master_engine {
     }
   */
     long get_assuming_it_is_a_long() throws IOException {
-      if (use_string) {
+      if (config_algebraic_type_mode.string == mode) {
         final String base_msg = "a ''config_algebraic_type'' object was attempted to be gotten as a long when it was string-like, with string_value = " + stringize_safely(string_value);
         if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
         if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
@@ -414,7 +417,7 @@ public class Configuration_Master_engine {
     }
 
     String get_assuming_it_is_a_String() throws IOException {
-      if (! use_string) {
+      if (config_algebraic_type_mode.string != mode) {
         final String base_msg = "a ''config_algebraic_type'' object was attempted to be gotten as a String when it was integer-like, with integer_value = " + integer_value + ' ';
         if (strictness_level > 0)  throw new IOException(base_msg + ", and the strictness level [" + strictness_level + "] > 0");
         if (verbosity        > 0)  System.err.println("\033[31mWARNING: " + base_msg + "; ignoring b/c the strictness level [" + strictness_level + "] ≤ 0\033[0m");
@@ -423,25 +426,27 @@ public class Configuration_Master_engine {
     }
 
     String get_as_String_even_if_the_value_is_an_integer() { // for the main getter that provides this engine with its raison dêtre
-      if (use_string)  return string_value;
+      if (config_algebraic_type_mode.string == mode)  return string_value;
+      // TO DO: support Booleans here
       return " " + String.valueOf(integer_value) + ' ';
     }
 
     // this is needed for the correct "asterisk validation" of the configurations, if not also for other things
     public boolean equals(config_algebraic_type other) {
       if (null == other)                                       return false; // embedded assumption: "this" can never be null
-      if (use_string != other.use_string)                      return false;
-      if (! use_string)                                        return integer_value == other.integer_value;
-      if (null == string_value || null == other.string_value)  return string_value == other.string_value; // _intentionally_ comparing pointers
+      if (mode != other.mode)                                  return false;
+      if (config_algebraic_type_mode.string != mode)           return integer_value == other.integer_value;
+      if (null == string_value || null == other.string_value)  return  string_value == other.string_value; // _intentionally_ comparing pointers
       return string_value.equals(other.string_value);
     }
 
     public String toString() { // for debugging etc.
-      return " config_algebraic_type<use_string=" + use_string + ", integer_value=" + integer_value + ", string_value=" + stringize_safely(string_value) + "> ";
+      return " config_algebraic_type<mode=" + mode + ", integer_value=" + integer_value + ", string_value=" + stringize_safely(string_value) + "> ";
     }
 
     public String toString_concisely() { // for the "brain dump"
-      return use_string ? stringize_safely(string_value) : (" " + integer_value + ' '); // spaces in the integer case in case the result of this method might come up "too close" to another ASCII decimal digit
+      // TO DO: support Booleans here
+      return (config_algebraic_type_mode.string == mode) ? stringize_safely(string_value) : (" " + integer_value + ' '); // spaces in the integer case in case the result of this method might come up "too close" to another ASCII decimal digit
     }
   } // end of class "config_algebraic_type"
 
