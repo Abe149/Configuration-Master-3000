@@ -199,7 +199,7 @@ public class Configuration_Master_engine {
       if (
              (the_key_of_the_config.the_namespace.equalsIgnoreCase(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
           &&
-             (the_key_of_the_config.the_key.equalsIgnoreCase(key_to_compare.the_key) || "*".equals(key_to_compare.the_key))
+              the_key_of_the_config.the_key.equalsIgnoreCase(key_to_compare.the_key)
          )
       {
         return the_schema.get(key_to_compare);
