@@ -91,4 +91,18 @@
 # =3␟Namespace 1␟test key name for a port number␟   -1 ⍝  bad
 # =4␟Namespace 1␟test key name for a port number␟65536 ⍝  bad
 
+ =0␟*␟test key name for a Boolean␟0
+ =1␟*␟test key name for a Boolean␟1
+ =2␟*␟test key name for a Boolean␟-1
+ =3␟*␟test key name for a Boolean␟false
+ =4␟*␟test key name for a Boolean␟False
+ =5␟*␟test key name for a Boolean␟true
+ =6␟*␟test key name for a Boolean␟True
+ =7␟*␟test key name for a Boolean␟on
+ =8␟*␟test key name for a Boolean␟off
+ =9␟*␟test key name for a Boolean␟no
+=10␟*␟test key name for a Boolean␟yes
+
+
+
 ### below this line: not yet supported ###

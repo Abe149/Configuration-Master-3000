@@ -1,6 +1,8 @@
 package org.example.Configuration_Master;
 
 public enum value_types {
+  Boolean,
+
               integer,
   nonnegative_integer,
      positive_integer,

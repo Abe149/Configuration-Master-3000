@@ -297,6 +297,13 @@ public class Configuration_Master_engine {
       throw new IOException("Error while type checking; do you have a configuration that is not represented in the schema?  Key: " + the_key_of_the_config + "; source: " + source);
     }
     switch (the_VT) {
+      case Boolean:
+        the_value_str = the_value_str.replaceFirst("[⍝# ].*", ""); // allow trailing "garbage", e.g. a comment; pointless to trim [again] here b/c "the_value_str = the_split[3].trim();" [above] already took care of the left, and the ' ' in "[⍝# ]" here takes care of the right
+        if      (the_value_str.matches("(?i)^(false"+"|off|"+"no|" +"0"   +")$"))  the_value = new config_algebraic_type(false);
+        else if (the_value_str.matches("(?i)^(true" +"|on|" +"yes|"+"1|-1"+")$"))  the_value = new config_algebraic_type( true);
+        else throw new IOException("SYNTAX ERROR: expected something that could be interpreted as a Boolean, got ''" + the_value_str + "''; source: " + source);
+        break;
+
       case             integer:
       case nonnegative_integer:
       case    positive_integer:
@@ -379,7 +386,7 @@ public class Configuration_Master_engine {
     }
   }
 
-  private enum config_algebraic_type_mode { integer, string }; // putting this inside "config_algebraic_type" didn`t work, so therefor the cumbersome name  :-(
+  private enum config_algebraic_type_mode { Boolean, integer, string }; // putting this inside "config_algebraic_type" didn`t work, so therefor the cumbersome name  :-(
 
   // every configuration value is currently assumed to be either {an integer compatible with a "long"} or {"string-like"}
   private class config_algebraic_type {
@@ -396,6 +403,11 @@ public class Configuration_Master_engine {
     public config_algebraic_type(String in) {
       string_value = in;
       mode = config_algebraic_type_mode.string;
+    }
+
+    public config_algebraic_type(boolean in) {
+      integer_value = in ? 1 : 0; // simple "atonement" for the fact that Bools don`t convert to integers easily in Java
+      mode = config_algebraic_type_mode.Boolean;
     }
 
     boolean is_internally_a_String() {
@@ -426,8 +438,12 @@ public class Configuration_Master_engine {
     }
 
     String get_as_String_even_if_the_value_is_an_integer() { // for the main getter that provides this engine with its raison dêtre
-      if (config_algebraic_type_mode.string == mode)  return string_value;
-      // TO DO: support Booleans here
+      if (config_algebraic_type_mode.string  == mode)  return string_value;
+
+      if (config_algebraic_type_mode.Boolean == mode)
+        return (0 == integer_value) ? "false / False / 0 / off / no" // ...
+        /* ... */                   : "true / True / 1 / -1 / on / yes";
+
       return " " + String.valueOf(integer_value) + ' ';
     }
 
@@ -445,8 +461,18 @@ public class Configuration_Master_engine {
     }
 
     public String toString_concisely() { // for the "brain dump"
-      // TO DO: support Booleans here
-      return (config_algebraic_type_mode.string == mode) ? stringize_safely(string_value) : (" " + integer_value + ' '); // spaces in the integer case in case the result of this method might come up "too close" to another ASCII decimal digit
+
+      // God, please forgive me for learning how to think like a Haskell programmer.  ;-)
+
+      return (config_algebraic_type_mode.string == mode) // ...
+      /* ... */ ? // ...
+      /* ... */ stringize_safely(string_value) // ...
+      /* ... */ : // ...
+      /* ... */   (config_algebraic_type_mode.Boolean == mode) // ...
+      /* ... */     ? // ...
+      /* ... */     ((0 == integer_value) ? "false" : "true") // ...
+      /* ... */     : // ...
+      /* ... */     (" " + integer_value + ' '); // spaces in the integer case in case the result of this method might come up "too close" to another ASCII decimal digit
     }
   } // end of class "config_algebraic_type"
 
