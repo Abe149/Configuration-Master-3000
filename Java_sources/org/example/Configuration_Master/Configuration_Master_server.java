@@ -234,6 +234,107 @@ public class Configuration_Master_server {
     } // end of class "GetHandler"
 
 
+    public static class GetTypeHandler implements HttpHandler { // maybe TO DO: make this "extend" "GetHandler" so as to inherit the impl. of "http_assert" rather than copy+paste it?
+        private String my_prefix;
+
+        public GetTypeHandler(String prefix_in) {
+            my_prefix = prefix_in;
+        }
+
+        protected static void http_assert(HttpExchange he, boolean assertion, int status, String desc) throws IOException {
+            if (! assertion) {
+                final String base_response = "Assertion failed: " + desc;
+                final String extended_response = base_response + "; returning HTTP status code " + String.valueOf(status);
+                System.err.println("\033[31m" + extended_response + "\033[0m");
+                final String extended_response_plus_newline = extended_response + '\n';
+                myLogger.warning(extended_response_plus_newline);
+
+                final byte[] extended_response_plus_newline_arrayOfBytes = extended_response_plus_newline.getBytes();
+                he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
+                he.sendResponseHeaders(status, extended_response_plus_newline_arrayOfBytes.length);
+                OutputStream os = he.getResponseBody();
+                os.write(extended_response_plus_newline_arrayOfBytes);
+                os.close();
+                throw new IOException();
+            }
+        }
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+
+            myLogger.info("Protocol: " + he.getProtocol());
+            myLogger.info("HTTP request method: " + he.getRequestMethod());
+            myLogger.info("Request URI [toASCIIString()]: ''" + he.getRequestURI().toASCIIString() + "''");
+            myLogger.info("Request URI [toString()]: ''" + he.getRequestURI().toString() + "''");
+
+
+            final String raw_URI = he.getRequestURI().toString();
+            assert raw_URI.startsWith(my_prefix); // reminder to self: this is mostly-useless, since Java ignores assertions by default :-(
+            final String prefixStripped_URI = raw_URI.substring(my_prefix.length());
+            myLogger.info("Request URI [toString()], prefix-stripped: ''" + prefixStripped_URI + "''");
+
+            final String[] request_components = prefixStripped_URI.split(","); // IMPORTANT string constant
+            // myLogger.info("Request components: " + request_components); // useless output...  thanks, Java  :-(
+
+            String namespace = "", key = "";
+
+            for (String rc : request_components) {
+                myLogger.info("Request component: ''" + rc + "''");
+
+                final String[] split_for_careful_despacing = rc.split("=", 2); // the 2 here really means "split _once_"; "thanks, Java" [<https://docs.oracle.com/javase/6/docs/api/java/lang/String.html#split(java.lang.String,%20int)>]
+
+                // in principle, I could assert here if the array length of the split isn`t exactly 2 [TO DO?]
+
+                final String LHS = URLDecoder.decode(split_for_careful_despacing[0]).trim().toLowerCase();
+                final String RHS = URLDecoder.decode(split_for_careful_despacing[1]).trim().toLowerCase();
+                myLogger.info("Request component after per-subcomponent decoding and trimming: LHS=''" + LHS + "'', RHS=''" + RHS + "''");
+
+                if (LHS.equals("namespace")) {
+                    http_assert(he, "".equals(namespace), 400, "each request must include exactly one namespace");
+                    namespace = RHS;
+                    myLogger.info("Namespace of request: ''" + namespace + "''");
+                }
+
+                if (LHS.equals("key")) {
+                    http_assert(he, "".equals(key), 400, "each request must include exactly one key");
+                    key = RHS;
+                    myLogger.info("Key of request: ''" + key + "''");
+                }
+            }
+
+            http_assert(he, ! "".equals(namespace            ), 400, "each request must include a namespace");
+            http_assert(he, ! "".equals(key                  ), 400, "each request must include a key");
+
+            String response = null; // I _had_ to initialize this -- even though I did not want to do so! -- in order to shut up the stupid Java compiler about "variable response might not have been initialized"  :-(
+            try {
+                response = "" + the_engine.get_type_by_namespace_and_key(namespace, key);
+            } catch (NullPointerException npe) {
+                http_assert(he, false, 500, "The Configuration Master engine threw/propagated the following exception: " + npe);
+                System.exit(-4); // due to the _intentional_ false in the preceding line, this line should never be reached
+            }
+
+            if (verbosity > 2) {
+              System.err.println("INFO: result of schema query [_before_ replacing null with 404 message if necessary]: " + stringize_safely(response) + '\n');
+            }
+
+            final int HTTP_status_to_return = (null == response) ? 404 : 200;
+
+            if (null == response)  response = "the Configuration Master engine did not find a [schema] match for the given query of: namespace=" + stringize_safely(namespace) + ", key=" + stringize_safely(key);
+
+            if (verbosity > 1) {
+              System.err.println("INFO: result of schema query [_after_ replacing null with 404 message if necessary]: " + stringize_safely(response) + '\n');
+            }
+
+            he.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+            he.getResponseHeaders().add("content-type", "text/plain; charset=utf-8");
+            he.sendResponseHeaders(HTTP_status_to_return, response.getBytes().length);
+            OutputStream os = he.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+
+        } // end of:  public void handle(HttpExchange he) throws IOException
+    } // end of class "GetTypeHandler"
+
     private static short strictness_level = 0; // moved here, i.e. outside of "main", so I can report it to the outside world
 
     static Configuration_Master_engine the_engine;
@@ -512,8 +613,25 @@ public class Configuration_Master_server {
 
             final String                                     get_prefix_1 = "/get:"; // DRY; I need this for the param. to the ctor of "GetHandler"
             final String get_prefix_2 = API_version_prefix + get_prefix_1;           // DRY; I need this for the param. to the ctor of "GetHandler"
-            httpsServer.createContext(get_prefix_1, new GetHandler(get_prefix_1));
-            httpsServer.createContext(get_prefix_2, new GetHandler(get_prefix_2));
+            httpsServer.createContext(               get_prefix_1,
+            /* ... */                 new GetHandler(get_prefix_1));
+            //                                 these ^^^^^^^^^^^^ _MUST_ match or "all bets are off"
+
+            httpsServer.createContext(               get_prefix_2,
+            /* ... */                 new GetHandler(get_prefix_2));
+            //                                 these ^^^^^^^^^^^^ _MUST_ match or "all bets are off"
+
+
+            final String                                     get_prefix_3 = "/get_type:"; // DRY; I need this for the param. to the ctor of "GetHandler"
+            final String get_prefix_4 = API_version_prefix + get_prefix_3;                // DRY; I need this for the param. to the ctor of "GetHandler"
+            httpsServer.createContext(                   get_prefix_3, // ...
+            /* ... */                 new GetTypeHandler(get_prefix_3));
+            //                                     these ^^^^^^^^^^^^ _MUST_ match or "all bets are off"
+
+            httpsServer.createContext(                   get_prefix_4, // ...
+            /* ... */                 new GetTypeHandler(get_prefix_4));
+            //                                     these ^^^^^^^^^^^^ _MUST_ match or "all bets are off"
+
 
             // intentionally not DRY-ifiying "/get_strictness_level" here, since the variable`s name would be just as long as the string
             httpsServer.createContext(                     "/get_strictness_level", new GetStrictnessLevelHandler()); // HARD-CODED
