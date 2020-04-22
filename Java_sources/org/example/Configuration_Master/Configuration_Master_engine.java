@@ -61,6 +61,7 @@ public class Configuration_Master_engine {
 
     @Override
     public boolean equals(Object o) {
+      if (null == o)                                        return false;
       if (! tuple_for_key_of_a_config.class.isInstance(o))  return false;
       final tuple_for_key_of_a_config other = (tuple_for_key_of_a_config) o;
       return the_MLC_kind.equals(other.the_MLC_kind) && (the_maturity_level_to_which_to_compare == other.the_maturity_level_to_which_to_compare) && the_namespace.equalsIgnoreCase(other.the_namespace) && the_key.equalsIgnoreCase(other.the_key);
@@ -97,6 +98,7 @@ public class Configuration_Master_engine {
 
     @Override
     public boolean equals(Object o) {
+      if (null == o)                                        return false;
       if (! tuple_for_key_of_a_schema.class.isInstance(o))  return false;
       final tuple_for_key_of_a_schema other = (tuple_for_key_of_a_schema) o;
       return the_namespace.equalsIgnoreCase(other.the_namespace) && the_key.equalsIgnoreCase(other.the_key);
@@ -192,14 +194,18 @@ public class Configuration_Master_engine {
   } // end of "parse_a_line_for_a_schema"
 
 
-  private value_types get_type_from_schema(tuple_for_key_of_a_config the_key_of_the_config) {
-    if (null == the_key_of_the_config.the_namespace || null == the_key_of_the_config.the_key)  return null;
+  public value_types get_type_by_namespace_and_key(String namespace_in, String key_in) { // for use in the server
+    return get_type_from_schema(new tuple_for_key_of_a_schema(namespace_in, key_in));
+  }
+
+  private value_types get_type_from_schema(tuple_for_key_of_a_schema the_key_of_the_schema) {
+    if (null == the_key_of_the_schema.the_namespace || null == the_key_of_the_schema.the_key)  return null;
 
     for (tuple_for_key_of_a_schema key_to_compare : the_schema.keySet()) {
       if (
-             (the_key_of_the_config.the_namespace.equalsIgnoreCase(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
+             (the_key_of_the_schema.the_namespace.equalsIgnoreCase(key_to_compare.the_namespace) || "*".equals(key_to_compare.the_namespace))
           &&
-              the_key_of_the_config.the_key.equalsIgnoreCase(key_to_compare.the_key)
+              the_key_of_the_schema.the_key.equalsIgnoreCase(key_to_compare.the_key)
          )
       {
         return the_schema.get(key_to_compare);
@@ -292,7 +298,7 @@ public class Configuration_Master_engine {
       new tuple_for_key_of_a_config(the_MLC_kind, the_maturity_level_to_which_to_compare, the_namespace, the_key);
 
     // first, just parse; we will validate later
-    value_types the_VT = get_type_from_schema(the_key_of_the_config);
+    value_types the_VT = get_type_from_schema(new tuple_for_key_of_a_schema(the_namespace, the_key));
     if (null == the_VT) {
       throw new IOException("Error while type checking; do you have a configuration that is not represented in the schema?  Key: " + the_key_of_the_config + "; source: " + source);
     }
