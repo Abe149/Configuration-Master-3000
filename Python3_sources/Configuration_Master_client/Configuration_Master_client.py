@@ -64,28 +64,61 @@ def get_ML(): # can return either an int or an str
   return 0 # HARD-CODED fallback default value that should work well on a developer`s workstation/VM
 
 
-def get_test():
-  config_server_URL = get_server_URL()
+def get_config_as_Boolean(namespace='*', key=None, ML=str(get_ML())): # DEPRECATED ambiguous API function name; wrapping for backwards compatibility "for now" [until 2.0, non-inclusive?]
+  print ("WARNING: deprecated CM3000 Python client API function name ''" + get_subroutine_name() + "'' used.")
+  return   get___config_as_Boolean___or_exception(namespace=namespace, key=key, ML=ML)
 
-  the_request = request.Request(url = config_server_URL + API_version_prefix + "/test")
+def get___config_as_Boolean___or_NoneType(namespace='*', key=None, ML=str(get_ML())):
+  try:
+    return get___config_as_Boolean___or_exception(namespace=namespace, key=key, ML=ML)
+  except:
+    return None
+  return None # just in case
 
-  with request.urlopen(the_request) as fileLike:
-    return fileLike.read().decode("utf-8")
-
-
-def get_config_as_Boolean(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
+def get___config_as_Boolean___or_exception(namespace='*', key=None, ML=str(get_ML())):
   import re
-  temp = get_config(namespace=namespace, key=key, ML=ML)
+  temp = get___config_as_string___or_exception(namespace=namespace, key=key, ML=ML)
   if re.match(".*(false|no|off| 0 )"    , temp.lower(), re.IGNORECASE):  return False # no need for a trailing ".*" in the regex
   if re.match(".*(true|yes|on| 1 | -1 )", temp.lower(), re.IGNORECASE):  return  True # no need for a trailing ".*" in the regex
   raise ValueError("in Configuration Master 3000 client: SYNTAX ERROR while trying to get as a Boolean: ''" + temp + "''")
 
-def get_config_as_integer(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
-  # NOTE: this will probably propagate an exception [from int(str)] when the returned data is not parsable as an int
-  #       _intentionally_ _not_ doing anything about that here; let the caller deal with it if they made a mistake
-  return int(get_config(namespace=namespace, key=key, ML=ML))
 
-def get_config(           namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
+def get_config_as_integer(namespace='*', key=None, ML=str(get_ML())): # DEPRECATED ambiguous API function name; wrapping for backwards compatibility "for now" [until 2.0, non-inclusive?]
+  print ("WARNING: deprecated CM3000 Python client API function name ''" + get_subroutine_name() + "'' used.")
+  return   get___config_as_integer___or_exception(namespace=namespace, key=key, ML=ML)
+
+def get___config_as_integer___or_NoneType(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
+  try:
+    return get___config_as_integer___or_exception(namespace=namespace, key=key, ML=ML)
+  except:
+    return None
+  return None # just in case
+
+def get___config_as_integer___or_exception(namespace='*', key=None, ML=str(get_ML())): # default value for "namespace": see below for explanation
+  # NOTE: this will propagate an exception [from int(str)] when the returned data is not parsable as an int
+  #       _intentionally_ _not_ doing anything about that here; let the caller deal with it if they made a mistake
+  return int(get___config_as_string___or_exception(namespace=namespace, key=key, ML=ML))
+
+
+
+# default values for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level;
+#                                 giving "key" a default value b/c otherwise [given that "namespace" has a default value]
+#                                 "key" would have to come _before_ "namespace"
+
+
+
+def get_config(           namespace='*', key=None, ML=str(get_ML())): # DEPRECATED ambiguous API function name; wrapping for backwards compatibility "for now" [until 2.0, non-inclusive?]
+  print ("WARNING: deprecated CM3000 Python client API function name ''" + get_subroutine_name() + "'' used.")
+  return get___config_as_string___or_exception(namespace=namespace, key=key, ML=ML)
+
+def get___config_as_string___or_NoneType (namespace='*', key=None, ML=str(get_ML())):
+  try:
+    return get___config_as_string___or_exception(namespace=namespace, key=key, ML=ML)
+  except:
+    return None
+  return None # just in case
+
+def get___config_as_string___or_exception(namespace='*', key=None, ML=str(get_ML())):
 
   # if not namespace:  raise ValueError("in Configuration Master 3000 client: empty namespace given")
   exception_prefix = "in Configuration Master 3000 client: " # DRY
@@ -97,11 +130,31 @@ def get_config(           namespace='*', key=None, ML=str(get_ML())): # default 
   the_request = request.Request(url = get_server_URL() + API_version_prefix + ("/get:maturity_level=%s,namespace=%s,key=%s" % (pathname2url(str(ML)), pathname2url(namespace), pathname2url(key))))
 
   with request.urlopen(the_request) as fileLike:
+    return str(fileLike.read().decode("utf-8")) # the "str()" here is probably unnecessary, but just "making sure" [given Python]
+
+
+
+
+# thanks to <https://stackoverflow.com/questions/251464/how-to-get-a-function-name-as-a-string>, more specifically <https://stackoverflow.com/questions/251464/how-to-get-a-function-name-as-a-string/36228241#36228241>
+
+def get_subroutine_name():
+  import traceback
+  return traceback.extract_stack(None, 2)[0][2]
+
+
+
+
+
+### from here on down: API functions that have not yet been disambiguated as to their error behavior [exception vs. None] ###
+
+
+def get_test():
+  config_server_URL = get_server_URL()
+
+  the_request = request.Request(url = config_server_URL + API_version_prefix + "/test")
+
+  with request.urlopen(the_request) as fileLike:
     return fileLike.read().decode("utf-8")
-
-
-
-
 
 
 def get_type(namespace='*', key=None): # default value for "namespace": only match the key if it`s set for _all_ namespaces within the relevant maturity level; giving "key" a default value b/c otherwise [given that "namespace" has a default value] "key" would have to come _before_ "namespace"
