@@ -1,0 +1,9 @@
+[note added May 3 2021 after re-reading enough of my code to remind myself how most of the code works
+ and therefore to re-understand what the various data files are for]
+
+*** the data files intended to be "installed" in "/etc/Configuration_Master_3000/" are currently all for the benefit of [as of this writing, "the",
+*** i.e. the one-and-only, written-in-Python-I-think-Python3] client[s], so this directory could ["should"?] have been named something like
+*** "/etc/Configuration_Master_3000_clients/" or "/etc/Configuration_Master_3000_client_data/" or perhaps
+*** "/etc/Configuration_Master_3000/client/" or "/etc/Configuration_Master_3000/clients/" or "/etc/Configuration_Master_3000/client_data/";
+*** all the possible choices on the preceding line [i.e. the 3 most-recent choices] would leave "room" for e.g.
+*** "/etc/Configuration_Master_3000/server/" or "/etc/Configuration_Master_3000/server_data/"
